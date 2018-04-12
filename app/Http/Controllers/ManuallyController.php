@@ -2,21 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\TransactionMedicine;
+use App\TransactionMedicineDetail;
 use DB;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Redirector;
+use Illuminate\Support\Facades\Session;
+use Illuminate\View\View;
 
 class ManuallyController extends Controller
 {
 	protected $rules = [
-		'payment_id' => 'nullable',
 		'doctor_id' => 'required',
 		'registered_id' => 'nullable',
 		'medical_record_number' => 'required',
+        'medicine_date' => 'required',
 		'care_type' => 'required',
-		'approval_status' => 'nullable',
-		'payment_detail_date' => 'nullable',
-		'payment_detail_status' => 'nullable',
+		'receipt_number' => 'nullable',
 	];
 
 
@@ -37,7 +40,9 @@ class ManuallyController extends Controller
      */
     public function create()
     {
-        return view('manually.create');
+        $model = new TransactionMedicine();
+        
+        return view('manually.create', compact('model'));
     }
 
     /**
@@ -49,7 +54,29 @@ class ManuallyController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, $this->rules);
+        $rules = [];
+        if (isset($request->count)) {
+            foreach ($request->count as $key => $medicine) {
+                $rules['medicine_id.' . $key] = 'required';
+            }
+        }
+        
+        $this->validate($request, $this->rules + $rules);
+        
+        $model = new TransactionMedicine();
+        $model->fill($request->all());
+        $model->save();
+        if (isset($request->count)) {
+            foreach ($request->count as $key => $medicine) {
+                $detail = new TransactionMedicineDetail();
+                $detail->transaction_medicine_id = $model->id;
+                $detail->medicine_id = $request->medicine_id[$medicine];
+                $detail->name = $request->medicine_label[$medicine];
+                $detail->quantity = $request->quantity[$medicine];
+                $detail->how_to_use = $request->how_to_use[$medicine];
+                $detail->save();
+            }
+        }
         
         \Session::flash('success', 'Success');
         
@@ -65,9 +92,9 @@ class ManuallyController extends Controller
      */
     public function show($id)
     {
-        $model = \App\Concept::findOrFail($id);
+        $model = \App\TransactionMedicine::findOrFail($id);
 
-        return view('admin.concept.show', compact('model'));
+        return view('manually.show', compact('model'));
     }
 
     /**
@@ -79,9 +106,9 @@ class ManuallyController extends Controller
      */
     public function edit($id)
     {
-        $model = \App\Concept::findOrFail($id);
+        $model = TransactionMedicine::findOrFail($id);
 
-        return view('admin.concept.edit', compact('model'));
+        return view('manually.edit', compact('model'));
     }
 
     /**
@@ -96,17 +123,29 @@ class ManuallyController extends Controller
     {
 		$rules = $this->rules;
         $this->validate($request, $rules);
-		
-		$model = \App\Concept::findOrFail($id);
-		
-        $requestData = $request->all();
-		
-		$model->fill($requestData);
+        
+		$model = TransactionMedicine::findOrFail($id);
+		$model->fill($request->all());
         $model->save();
+        if (isset($request->count)) {
+            foreach ($request->count as $key => $medicine) {
+                $detail = TransactionMedicineDetail::find($request->detail_id[$medicine]);
+                if (!$detail) {
+                    $detail = new TransactionMedicineDetail();
+                }
+                $detail->transaction_medicine_id = $model->id;
+                $detail->medicine_id = $request->medicine_id[$medicine];
+                $detail->name = $request->medicine_label[$medicine];
+                $detail->quantity = $request->quantity[$medicine];
+                $detail->how_to_use = $request->how_to_use[$medicine];
+                $detail->drink = $request->drink[$medicine];
+                $detail->save();
+            }
+        }
 		
         Session::flash('success', 'Concept updated!');
 
-        return redirect('admin/concept');
+        return redirect('manually');
     }
 
     /**
@@ -118,11 +157,18 @@ class ManuallyController extends Controller
      */
     public function destroy($id)
     {
-        return redirect('admin/concept');
-		
-        Session::flash('success', 'Concept deleted!');
+        TransactionMedicine::destroy($id);
+        
+        Session::flash('success', 'Delete deleted!');
 
-        return redirect('admin/concept');
+        return redirect('manually');
+    }
+    
+    public function printPreview($id)
+    {
+        $model = TransactionMedicine::findOrFail($id);
+        
+        return view('manually.print-preview', compact('model'));
     }
 	
 	/**
@@ -131,15 +177,26 @@ class ManuallyController extends Controller
 	public function listIndex(Request $request)
     {
         DB::statement(DB::raw('set @rownum=0'));
-        $model = \App\TransactionMedicine::select([
+        $model = TransactionMedicine::select([
 					DB::raw('@rownum  := @rownum  + 1 AS rownum'), 'transaction_medicine.*'
 				]);
 
          $datatables = app('datatables')->of($model)
+            ->editColumn('doctor_id', function ($model) {
+                return $model->mmDoctor->nama_dokter;
+            })
+            ->editColumn('medical_record_number', function ($model) {
+                return $model->medical_record_number . ' - ' . $model->mmPatient->nama;
+            })
+            ->editColumn('care_type', function ($model) {
+                return $model->getCareTypeLabel();
+            })
             ->addColumn('action', function ($model) {
-                return //'<a href="concept/'.$model->id.'" class="btn btn-xs btn-success rounded" data-toggle="tooltip" title="" data-original-title="'. trans('systems.edit') .'"><i class="fa fa-eye"></i></a> '
-						 '<a href="concept/'.$model->id.'/edit" class="btn btn-xs btn-primary rounded" data-toggle="tooltip" title="" data-original-title="'. trans('systems.edit') .'"><i class="fa fa-pencil"></i></a> ';
-						//. '<a onclick="modalDelete('.$model->id.')" class="btn btn-xs btn-danger rounded" data-toggle="tooltip" title="" data-original-title="'. trans('systems.delete') .'"><i class="fa fa-trash"></i></a>';
+                $printUrl = route('manually.print-preview', ['id' => $model->id]);
+                $editUrl = route('manually.edit', ['id' => $model->id]);
+                return "<a href='{$printUrl}' target='_blank' class='btn btn-xs btn-success btn-rounded' data-toggle='tooltip' title='Print'><i class='fa fa-print'></i></a> "
+                    . "<a href='{$editUrl}' class='btn btn-xs btn-primary btn-rounded' data-toggle='tooltip' title='Edit'><i class='fa fa-edit'></i></a> "
+                    . "<a href='#' onclick='deleteRecord({$model->id})' class='btn btn-xs btn-danger btn-rounded' data-toggle='tooltip' title='Hapus'><i class='fa fa-trash'></i></a>";
             });
 
         if ($keyword = $request->get('search')['value']) {

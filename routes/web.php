@@ -21,5 +21,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/home', 'HomeController@index')->name('home');
     
     Route::get('/manually/data', ['as' => 'manually.data', 'uses' => 'ManuallyController@listIndex']);
+    Route::get('/manually/print-preview/{id}', ['as' => 'manually.print-preview', 'uses' => 'ManuallyController@printPreview']);
 	Route::resource('/manually', 'ManuallyController');
+    
+	Route::get('/setting', ['as' => 'setting.index', 'uses' => 'SettingController@index']);
+	Route::patch('/setting', ['as' => 'setting.index', 'uses' => 'SettingController@update']);
+    
+    Route::get('doctor/find', ['as' => 'doctor.find', 'uses' => 'AjaxController@findDoctor']);
+    Route::get('medicine/find', ['as' => 'medicine.find', 'uses' => 'AjaxController@findMedicine']);
+    Route::get('patient/find', ['as' => 'patient.find', 'uses' => 'AjaxController@findPatient']);
+    Route::get('medicine/how-to-use', ['as' => 'medicine.how-to-use', 'uses' => 'AjaxController@findMedicineHowToUse']);
 });

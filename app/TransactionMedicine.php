@@ -7,17 +7,6 @@ class TransactionMedicine extends BaseModel
     const CARE_TYPE_OUTPATIENT = 0;
     const CARE_TYPE_INPATIENT = 1;
     
-    const PAYMENT_DETAIL_STATUS_RUNNING = 0;
-    const PAYMENT_DETAIL_STATUS_DONE = 1;
-    const PAYMENT_DETAIL_STATUS_CANCEL = 2;
-    const PAYMENT_DETAIL_STATUS_FIRST_CALLED = 3;
-    const PAYMENT_DETAIL_STATUS_PROCCESS = 4;
-    const PAYMENT_DETAIL_STATUS_RETUR = 5;
-    
-    const APPROVAL_STATUS_SAVE = 1;
-    const APPROVAL_STATUS_APPROVE = 2;
-    const APPROVAL_STATUS_CANCEL = 3;
-    
     /**
      * The table associated with the model.
      * 
@@ -33,12 +22,10 @@ class TransactionMedicine extends BaseModel
     protected $fillable = [
         'doctor_id',
         'registered_id',
-        'payment_id',
         'medical_record_number',
-        'car_type',
-        'payment_detail_status',
-        'payment_detail_date',
-        'approval_status',
+        'care_type',
+        'medicine_date',
+        'receipt_number',
         'created_at',
         'updated_at',
     ];
@@ -51,24 +38,47 @@ class TransactionMedicine extends BaseModel
         ];
     }
     
-    public static function paymentDetaiLStatusLabels()
+    public function getCareTypeLabel()
     {
-        return [
-            self::PAYMENT_DETAIL_STATUS_RUNNING => 'Berjalan',
-            self::PAYMENT_DETAIL_STATUS_DONE => 'Selesai',
-            self::PAYMENT_DETAIL_STATUS_CANCEL => 'Batal',
-            self::PAYMENT_DETAIL_STATUS_FIRST_CALLED => 'Pertama dipanggil',
-            self::PAYMENT_DETAIL_STATUS_PROCCESS => 'Proses',
-            self::PAYMENT_DETAIL_STATUS_RETUR => 'Retur',
-        ];
+        $list = self::careTypeLabels();
+        return $list[$this->care_type] ? $list[$this->care_type] : $this->care_type;
     }
     
-    public static function approvalStatusLabels()
+    public function mmDoctor()
     {
-        return [
-            self::APPROVAL_STATUS_SAVE => 'Simpan',
-            self::APPROVAL_STATUS_APPROVE => 'Approve',
-            self::APPROVAL_STATUS_CANCEL => 'Batal',
-        ];
+        return $this->hasOne('\App\MmDoctor', 'id_dokter', 'doctor_id');
+    }
+    
+    public function mmPatient()
+    {
+        return $this->hasOne('App\MmPatient', 'no_rekam_medis', 'medical_record_number');
+    }
+    
+    public function transactionMedicineDetail()
+    {
+        return $this->hasMany('App\TransactionMedicineDetail', 'transaction_medicine_id', 'id');
+    }
+    
+    public function getFormattedMedicineDate()
+    {
+        return \Carbon\Carbon::parse($this->medicine_date)->format('d/m/y');
+    }
+    
+    public function getNameAndAge()
+    {
+        $name = ($this->mmPatient) ? $this->mmPatient->nama : null;
+        $age = ($this->mmPatient->tanggal_lahir) ? \Carbon\Carbon::parse($this->mmPatient->tanggal_lahir)->age : null;
+        
+        return $name . ' / ' . $age . 'th';
+    }
+    
+    public function getName()
+    {
+        return ($this->mmPatient) ? $this->mmPatient->nama : null;
+    }
+    
+    public function getDob()
+    {
+        return $age = ($this->mmPatient->tanggal_lahir) ? \Carbon\Carbon::parse($this->mmPatient->tanggal_lahir)->format('d/m/Y') : null;
     }
 }

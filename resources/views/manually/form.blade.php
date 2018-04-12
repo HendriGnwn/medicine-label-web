@@ -9,72 +9,58 @@
 @endif
 <div class="row">
     <div class="col-md-6">
-        <div aria-required="true" class="form-group required form-group-default {{ $errors->has('payment_id') ? 'has-error' : ''}}">
-            {!! Form::label('payment_id', 'Kode Pembayaran') !!}
-            {!! Form::text('payment_id', null, ['class' => 'form-control']) !!}
-            {!! $errors->first('payment_id', '<p class="help-block">:message</p>') !!}
-        </div>
-    </div>
-    <div class="col-md-6">
         <div aria-required="true" class="form-group required form-group-default {{ $errors->has('registered_id') ? 'has-error' : ''}}">
             {!! Form::label('registered_id', 'Kode Pendaftaran') !!}
-            {!! Form::text('registered_id', null, ['class' => 'form-control']) !!}
+            {!! Form::number('registered_id', null, ['class' => 'form-control', 'type'=>'number']) !!}
             {!! $errors->first('registered_id', '<p class="help-block">:message</p>') !!}
         </div>
     </div>
     <div class="col-md-6">
+        <div aria-required="true" class="form-group required form-group-default {{ $errors->has('receipt_number') ? 'has-error' : ''}}">
+            {!! Form::label('receipt_number', 'Nomor Resep') !!}
+            {!! Form::number('receipt_number', null, ['class' => 'form-control', 'type'=>'number']) !!}
+            {!! $errors->first('receipt_number', '<p class="help-block">:message</p>') !!}
+        </div>
+    </div>
+    <div class="col-md-6">
         <div aria-required="true" class="form-group required form-group-default {{ $errors->has('medical_record_number') ? 'has-error' : ''}}">
-            {!! Form::label('medical_record_number', 'Nomor Rekam Medis') !!}
-            {!! Form::text('medical_record_number', null, ['class' => 'form-control']) !!}
+            {!! Form::label('medical_record_number', 'Nomor Rekam Medis*') !!}
+            {!! Form::select('medical_record_number', [], null, ['class' => 'form-control', 'required'=>true]) !!}
             {!! $errors->first('medical_record_number', '<p class="help-block">:message</p>') !!}
         </div>
     </div>
     <div class="col-md-6">
-        <div aria-required="true" class="form-group required form-group-default {{ $errors->has('payment_detail_date') ? 'has-error' : ''}}">
-            {!! Form::label('payment_detail_date', 'Tanggal Tipe Pembayaran') !!}
-            {!! Form::text('payment_detail_date', null, ['class' => 'form-control datepicker']) !!}
-            {!! $errors->first('payment_detail_date', '<p class="help-block">:message</p>') !!}
+        <div aria-required="true" class="form-group required form-group-default {{ $errors->has('medicine_date') ? 'has-error' : ''}}">
+            {!! Form::label('medicine_date', 'Tanggal*') !!}
+            {!! Form::text('medicine_date', null, ['class' => 'form-control datepicker', 'required'=>true]) !!}
+            {!! $errors->first('medicine_date', '<p class="help-block">:message</p>') !!}
         </div>
     </div>
     <div class="col-md-6">
         <div aria-required="true" class="form-group required form-group-default {{ $errors->has('doctor_id') ? 'has-error' : ''}}">
-            {!! Form::label('doctor_id', 'Dokter') !!}
-            {!! Form::select('doctor_id', [''=>'Pilih'] + \App\TransactionMedicine::paymentDetailStatusLabels(), null, ['class' => 'form-control select2']) !!}
+            {!! Form::label('doctor_id', 'Dokter*') !!}
+            {!! Form::select('doctor_id', [], null, ['class' => 'form-control', 'required'=>true]) !!}
             {!! $errors->first('doctor_id', '<p class="help-block">:message</p>') !!}
         </div>
     </div>
     <div class="col-md-6">
         <div aria-required="true" class="form-group required form-group-default {{ $errors->has('care_type') ? 'has-error' : ''}}">
-            {!! Form::label('care_type', 'Tipe Rawatan') !!}
-            {!! Form::select('care_type', [''=>'Pilih'] + \App\TransactionMedicine::careTypeLabels(), null, ['class' => 'form-control select2']) !!}
+            {!! Form::label('care_type', 'Tipe Rawatan*') !!}
+            {!! Form::select('care_type', [''=>'Pilih'] + \App\TransactionMedicine::careTypeLabels(), null, ['class' => 'form-control select2', 'required'=>true]) !!}
             {!! $errors->first('care_type', '<p class="help-block">:message</p>') !!}
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div aria-required="true" class="form-group required form-group-default {{ $errors->has('payment_detail_status') ? 'has-error' : ''}}">
-            {!! Form::label('payment_detail_status', 'Status Tipe Pembayaran') !!}
-            {!! Form::select('payment_detail_status', [''=>'Pilih'] + \App\TransactionMedicine::paymentDetailStatusLabels(), null, ['class' => 'form-control select2']) !!}
-            {!! $errors->first('payment_detail_status', '<p class="help-block">:message</p>') !!}
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div aria-required="true" class="form-group required form-group-default {{ $errors->has('approval_status') ? 'has-error' : ''}}">
-            {!! Form::label('approval_status', 'Status Persetujuan') !!}
-            {!! Form::select('approval_status', [''=>'Pilih'] + \App\TransactionMedicine::approvalStatusLabels(), null, ['class' => 'form-control select2']) !!}
-            {!! $errors->first('approval_status', '<p class="help-block">:message</p>') !!}
         </div>
     </div>
 </div>
         
 <table class="table table-condensed table-hover" id="medicine-detail">
     <tr>
-        <th style="width:50%">Obat</th>
-        <th style="width:10%">Jumlah</th>
-        <th style="width:30%">Harga</th>
-        <th style="width:10%"></th>
+        <th style="width:40%; vertical-align: middle;">Obat*</th>
+        <th style="width:20%; vertical-align: middle;">Jumlah*</th>
+        <th style="width:20%; vertical-align: middle;">Aturan Pakai (sehari)*</th>
+        <th style="width:20%; vertical-align: middle;"><button type="button" name="add" id="add" class="btn btn-primary btn-sm"><i class="fa fa-plus-square"></i></button></th>
     </tr>
 </table>
-<button type="button" name="add" id="add" class="btn btn-primary"><i class="fa fa-plus-square"></i></button>
+
 <br/>
 <br/>
 
@@ -83,24 +69,118 @@
 
 @push('script')
 <script>
-    var i = 1;
+    var i = 0;
     $('#add').click(function() {
-        i++;
         $('#medicine-detail').append('' +
             '<tr id="row-'+i+'" >' +
-                '<td>{!! Form::select("medicine_id[]", [""=>"Pilih"] + \App\TransactionMedicine::approvalStatusLabels(), null, ["class" => "form-control select2"]) !!}</td>' +
-                '<td>{!! Form::text("quantity[]", null, ["class" => "form-control"]) !!}</td>' +
-                '<td>{!! Form::text("price[]", null, ["class" => "form-control"]) !!}</td>' +
-                '<td><button type="button" id="'+ i +'" class="btn btn-danger btn-remove"><i class="fa fa-trash"></i></button></td>' +
+                '<td>' +
+                    '<input type="hidden" name="count[]" value="'+ i +'" />' +
+                    '<input type="hidden" name="medicine_label['+i+']" id="medicine_label_'+i+'" value="" />' +
+                    '<select class="form-control" name="medicine_id['+i+']" id="medicine_id_'+i+'" required></select>' +
+                '</td>' +
+                '<td>' +
+                    '<input type="number" class="form-control" name="quantity[]" required />' +
+                '</td>' +
+                '<td>' +
+                    '<input type="text" class="form-control" name="how_to_use[]" id="how_to_use_'+i+'" required />' +
+                '</td>' +
+                '<td><button type="button" id="'+ i +'" class="btn btn-danger btn-sm" onclick="clickRemove('+i+')"><i class="fa fa-trash"></i></button></td>' +
             '</tr>');
+        $('#medicine_id_' + i).select2({
+            width: 'resolve',
+            placeholder: "Obat",
+            minimumInputLength: 2,
+            ajax: {
+                url: "{{ route('medicine.find') }}",
+                dataType: 'json',
+                data: function (params) {
+                    return {
+                        q: $.trim(params.term)
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                },
+                cache: true
+            }
+        });
+        $('#medicine_id_' + i).on('select2:select', function (e) {
+            $("#medicine_label_"+ (i-1)).val(e.params.data.text);
+        });
+        $('#how_to_use_' + i).autocomplete({
+            source: function( request, response ) {
+                $.ajax( {
+                    url: "{{route('medicine.how-to-use')}}",
+                    data: {
+                        term: request.term,
+                        medicine_id: $('#medicine_id_' + (i-1)).val()
+                    },
+                    success: function( data ) {
+                        response( data );
+                    }
+                });
+            },
+            select: function( event, ui ) {
+                console.log( "Selected: " + ui.item.value + " aka " + ui.item.id );
+            }  
+        });
+        i++;
     });
     
-$('.select2').select2({
-    width: 'resolve'
-});
-$('.datepicker').datepicker({
-    autoclose: true,
-    format: 'yyyy-mm-dd'
-});
+    function clickRemove(i) {
+        $('#row-'+i+'').remove();  
+    }
+    
+    $('.select2').select2({
+        width: 'resolve'
+    });
+
+    $('#doctor_id').select2({
+        placeholder: "ID Unit - Nama Dokter",
+        minimumInputLength: 2,
+        ajax: {
+            url: "{{ route('doctor.find') }}",
+            dataType: 'json',
+            data: function (params) {
+                return {
+                    q: $.trim(params.term)
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data
+                };
+            },
+            cache: true
+        }
+    });
+    
+    $('#medical_record_number').select2({
+        placeholder: "No Rekam Medis - Nama Pasien",
+        minimumInputLength: 2,
+        ajax: {
+            url: "{{ route('patient.find') }}",
+            dataType: 'json',
+            data: function (params) {
+                return {
+                    q: $.trim(params.term)
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data
+                };
+            },
+            cache: true
+        }
+    });
+
+    $('.datepicker').datepicker({
+        autoclose: true,
+        format: 'yyyy-mm-dd',
+        todayHighlight: true
+    });
 </script>
 @endpush

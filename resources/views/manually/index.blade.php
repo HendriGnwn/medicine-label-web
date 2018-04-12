@@ -6,7 +6,7 @@
     <div class="panel-heading">@yield('headerTitle')</div>
 
     <div class="panel-body">
-        <form action="" method="post" id="form-search">
+<!--        <form action="" method="post" id="form-search">
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group">
@@ -26,19 +26,19 @@
                 </div>
             </div>
         </form>
-        <br/><br/>
+        <br/><br/>-->
         
         <input type="hidden" id="delete_value" name="delete_value"/>
         <div class="table-overflow">
             <table id="concept-table" class="table table-lg table-hover" width="100%">
                 <thead>
                     <tr>
-                        <th>*</th>
-                        <th>Medicine Record</th>
-                        <th>Tipe Rawat</th>
-                        <th>Doctor</th>
-                        <th>Payment</th>
-                        <th></th>
+                        <th style='width:5%'>*</th>
+                        <th style='width:30%'>Nomor Medis Medis</th>
+                        <th style='width:30%'>Dokter</th>
+                        <th style='width:15%'>Tipe Rawat</th>
+                        <th style='width:10%'>Dibuat</th>
+                        <th style='width:15%'></th>
                     </tr>
                 </thead>
             </table>
@@ -54,7 +54,7 @@ oTable = $('#concept-table').DataTable({
     processing: true,
     serverSide: true,
     dom: 'lBfrtip',
-    order:  [[ 3, "asc" ]],
+    order:  [[ 4, "desc" ]],
     pagingType: 'full_numbers',
     buttons: [
         {
@@ -108,9 +108,9 @@ oTable = $('#concept-table').DataTable({
     columns: [
 		{ data: "rownum", name: "rownum" },
 		{ data: "medical_record_number", name: "medical_record_number" },
-		{ data: "medical_record_number", name: "medical_record_number" },
-		{ data: "medical_record_number", name: "medical_record_number" },
-		{ data: "medical_record_number", name: "medical_record_number" },
+		{ data: "doctor_id", name: "doctor_id" },
+		{ data: "care_type", name: "care_type" },
+		{ data: "created_at", name: "created_at" },
         { data: "action", name: "action", searchable: false, orderable: false },
     ],
 });
@@ -124,14 +124,11 @@ $('#formsearch').submit(function () {
 
 oTable.page.len(25).draw();
 
-function modalDelete(id) {
-    $('#modal-delete').modal('show');
-    $('#delete_value').val(id);
-}
-
-function deleteRecord(){
-    $('#modal-delete').modal('hide');
-    var id = $('#delete_value').val();
+function deleteRecord(id){
+    var confirm = window.confirm("Apakah Anda yakin akan menghapus data ini?");
+    if (confirm == false) {
+        return false;
+    }
     $.ajax({
         url: '{{route("manually.index")}}' + "/" + id + '?' + $.param({"_token" : '{{ csrf_token() }}' }),
         type: 'DELETE',
