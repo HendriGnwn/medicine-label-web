@@ -109,4 +109,4 @@ CREATE TABLE `user` (
 INSERT INTO `user` (`id`, `name`, `email`, `password`, `remember_token`, `role`, `created_at`, `updated_at`) VALUES
 (1,	'Administrator',	'admin.label@rs.com',	'$2y$10$Crl/mrqZRG7lR3bCtLZ4bODRfwHgwsAAiywfu1QkNACR.mQu31Xna',	'YspUzD5XFNrkIN1M9sazlt4zpxHTCY5OpmUqQPiPJ73t3vetwExAiLZBJnLZ',	NULL,	'2018-04-04 02:16:48',	'2018-04-04 02:16:48');
 
--- 2018-04-12 04:30:02
+-- 2018-04-13 04:25:13
