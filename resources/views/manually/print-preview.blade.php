@@ -73,23 +73,23 @@
     <div class="content">
         <p>Dokter : {{ $model->mmDoctor->nama_dokter }}</p>
         <div style="width:50%;float:left;">
-            <p>No Resep : {{ $model->receipt_number }}</p>
+            <p>No Resep {{ $model->receipt_number }}</p>
         </div>
         <div style="width:50%;float:right;text-align: right;">
             <p>Tgl  {{ $model->getFormattedMedicineDate() }}</p>
         </div>
-        <p>Nama : {{ $model->getName() }}</p>
+        <p>Nama {{ $model->getName() }}</p>
         <div style="width:50%;float:left;">
-            <p>Tgl Lahir : {{ $model->getDob() }}</p>
+            <p>Tgl Lahir {{ $model->getDob() }}</p>
         </div>
         <div style="width:50%;float:right;text-align: right;">
-            <p>No RM : {{ $model->medical_record_number }}</p>
+            <p>No RM {{ $model->medical_record_number }}</p>
         </div>
         <div style="width:80%;float:left;">
-            <p>Nama Obat / Exp : {{ $detail->getMedicineNameAndExp() }}</p>
+            <p>Nama Obat / Exp {{ $detail->getMedicineNameAndExp() }}</p>
         </div>
         <div style="width:20%;float:right;text-align: right;">
-            <p>Qty : {{ $detail->quantity }}</p>
+            <p>Qty {{ $detail->quantity }}</p>
         </div>
         
         <br/><br/><br/>

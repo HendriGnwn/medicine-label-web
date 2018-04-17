@@ -9,6 +9,10 @@ class User extends Authenticatable
 {
     use Notifiable;
     
+    const ROLE_SUPERADMIN = 1;
+    const ROLE_APOTEKER = 5;
+    const ROLE_DOCTOR = 10;
+    
     protected $table = 'user';
 
     /**
@@ -17,7 +21,14 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'dcl_user_id', 
+        'nip', 
+        'name', 
+        'username', 
+        'password',
+        'role',
+        'apoteker_name',
+        'apoteker_sik',
     ];
 
     /**
@@ -28,4 +39,14 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+    
+    public function dclUser()
+    {
+        return $this->hasOne('\App\DclUser', 'user_id', 'dcl_user_id');
+    }
+    
+    public function mmDoctors()
+    {
+        return $this->hasMany('\App\MmDoctor', 'nip', 'nip');
+    }
 }
