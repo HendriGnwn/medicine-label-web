@@ -1,49 +1,26 @@
 @extends('layouts.admin')
-@section('headerTitle', 'List Manually')
+@section('headerTitle', 'Daftar User')
 
 @section('content')
 <div class="panel panel-default">
-    <div class="panel-heading">@yield('headerTitle')</div>
-
+    <div class="panel-heading">
+        @yield('headerTitle')
+    </div>
     <div class="panel-body">
-<!--        <form action="" method="post" id="form-search">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="medical_record" class="control-label">Nomor Rekam Medis</label>
-                        <input id="medical_record" type="text" class="form-control" name="medical_record" />
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="payment_id" class="control-label">Kode Pembayaran</label>
-                        <input id="payment_id" type="text" class="form-control" name="payment_id" />
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <br/>
-                    <button type="submit" name="submit" class="btn btn-primary">Search</button>
-                </div>
-            </div>
-        </form>
-        <br/><br/>-->
-        
+        <a href="{{ route('user.create') }}" class="btn btn-primary">Tambah User</a>
+        <br/><br/>
         <input type="hidden" id="delete_value" name="delete_value"/>
         <div class="table-overflow">
             <table id="concept-table" class="table table-lg table-hover" width="100%">
                 <thead>
                     <tr>
                         <th style='width:5%'>*</th>
-                        <th style='width:10%'>No Registrasi</th>
-                        <th style='width:10%'>No Resep</th>
-                        <th style='width:20%'>Nomor Medis Medis</th>
-                        <th style='width:20%'>Dokter</th>
-                        <th style='width:10%'>Tipe Rawat</th>
-                        <th style='width:10%'>Dibuat</th>
-                        <th style='width:10%'>Diedit</th>
-                        <th style='width:10%'>Dibuat Oleh</th>
-                        <th style='width:10%'>Diedit Oleh</th>
-                        <th style='width:10%'></th>
+                        <th style='width:20%'>Nama</th>
+                        <th style='width:20%'>Username</th>
+                        <th style='width:10%'>Role</th>
+                        <th style='width:15%'>Dibuat</th>
+                        <th style='width:15%'>Diedit</th>
+                        <th style='width:8%'></th>
                     </tr>
                 </thead>
             </table>
@@ -59,7 +36,7 @@ oTable = $('#concept-table').DataTable({
     processing: true,
     serverSide: true,
     dom: 'lBfrtip',
-    order:  [[ 6, "desc" ]],
+    order:  [[ 4, "desc" ]],
     pagingType: 'full_numbers',
     buttons: [
         {
@@ -105,22 +82,18 @@ oTable = $('#concept-table').DataTable({
     },
     lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
     ajax: {
-    url: '{!! route('manually.data') !!}',
+    url: '{!! route('user.data') !!}',
         data: function (d) {
             d.range = $('input[name=drange]').val();
         }
     },
     columns: [
 		{ data: "rownum", name: "rownum", searchable: false },
-		{ data: "registered_id", name: "registered_id" },
-		{ data: "receipt_number", name: "receipt_number" },
-		{ data: "medical_record_number", name: "medical_record_number" },
-		{ data: "doctor_id", name: "doctor_id" },
-		{ data: "care_type", name: "care_type" },
+		{ data: "name", name: "name" },
+		{ data: "username", name: "username" },
+		{ data: "role", name: "role" },
 		{ data: "created_at", name: "created_at" },
 		{ data: "updated_at", name: "updated_at", visible: false },
-		{ data: "created_by", name: "created_by", visible: false },
-		{ data: "updated_by", name: "updated_by", visible: false },
         { data: "action", name: "action", searchable: false, orderable: false },
     ],
     createdRow: function ( row, data, index ) {
@@ -149,7 +122,7 @@ function deleteRecord(id){
         return false;
     }
     $.ajax({
-        url: '{{route("manually.index")}}' + "/" + id + '?' + $.param({"_token" : '{{ csrf_token() }}' }),
+        url: '{{route("user.index")}}' + "/" + id + '?' + $.param({"_token" : '{{ csrf_token() }}' }),
         type: 'DELETE',
         complete: function(data) {
             oTable.draw();

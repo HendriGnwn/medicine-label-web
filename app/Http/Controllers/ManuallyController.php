@@ -30,6 +30,10 @@ class ManuallyController extends Controller
      */
     public function index()
     {
+        if (!\Auth::user()->getIsRoleSuperadmin()) {
+            abort('403', 'Unauthorized this action.');
+        }
+        
         return view('manually.index');
     }
 
@@ -61,10 +65,12 @@ class ManuallyController extends Controller
             }
         }
         
+        $user = \Auth::user();
         $this->validate($request, $this->rules + $rules);
         
         $model = new TransactionMedicine();
         $model->fill($request->all());
+        $model->created_by = $user->id;
         $model->save();
         if (isset($request->count)) {
             foreach ($request->count as $key => $medicine) {
@@ -80,7 +86,15 @@ class ManuallyController extends Controller
         
         \Session::flash('success', 'Success');
         
-        return redirect('manually');
+        if ($user->getIsRolePharmacist()) {
+            $redirect = route('transaction-medicine.pharmacist');
+        } else if ($user->getIsRoleDoctor()) {
+            $redirect = route('transaction-medicine.doctor');
+        } else {
+            $redirect = route('manually');
+        }
+        
+        return redirect($redirect);
     }
 
     /**
@@ -124,8 +138,10 @@ class ManuallyController extends Controller
 		$rules = $this->rules;
         $this->validate($request, $rules);
         
+        $user = \Auth::user();
 		$model = TransactionMedicine::findOrFail($id);
 		$model->fill($request->all());
+        $model->updated_by = $user->id;
         $model->save();
         if (isset($request->count)) {
             foreach ($request->count as $key => $medicine) {
@@ -145,7 +161,15 @@ class ManuallyController extends Controller
 		
         Session::flash('success', 'Concept updated!');
 
-        return redirect('manually');
+        if ($user->getIsRolePharmacist()) {
+            $redirect = route('transaction-medicine.pharmacist');
+        } else if ($user->getIsRoleDoctor()) {
+            $redirect = route('transaction-medicine.doctor');
+        } else {
+            $redirect = route('manually');
+        }
+        
+        return redirect($redirect);
     }
 
     /**

@@ -2,7 +2,7 @@
     .row-label {
         width: 340.15748px;
 /*        height: 226.771654px;*/
-        height: 264.566929px;
+        height: 253.228346px;
         border: 1px solid #111;
         border-radius: 30px;
         margin-bottom: 15px;
@@ -48,7 +48,7 @@
     .content p {
         padding: 0;
         margin: 0;
-        margin-bottom: 5px;
+        margin-bottom: 1px;
     }
 </style>
 
@@ -62,8 +62,8 @@
             <div style="width:78%; float:left;">
                 <h3>INSTALASI FARMASI</h3>
                 <p>{{ \App\Setting::find(\App\Setting::SETTING_FIRST)->address }}</p>
-                <p>Apoteker : {{ \App\Setting::find(\App\Setting::SETTING_FIRST)->apoteker }}</p>
-                <p>SIK : {{ \App\Setting::find(\App\Setting::SETTING_FIRST)->sik }}</p>
+                <p>Apoteker : {{ \Auth::user()->apoteker_name }}</p>
+                <p>SIK : {{ \Auth::user()->apoteker_sik }}</p>
             </div>
             <div style="width:22%;float:right;">
                 <img src="{{ asset('files/rsmm-logo.png') }}" class="rsmm-logo" />
@@ -71,29 +71,29 @@
         </div>
     </div>
     <div class="content">
-        <p>Dokter : {{ $model->mmDoctor->nama_dokter }}</p>
+        <p>Dokter&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{ $model->mmDoctor->nama_dokter }}</p>
         <div style="width:50%;float:left;">
-            <p>No Resep {{ $model->receipt_number }}</p>
+            <p>No Resep&nbsp;&nbsp;&nbsp;&nbsp;: {{ $model->receipt_number }}</p>
         </div>
         <div style="width:50%;float:right;text-align: right;">
             <p>Tgl  {{ $model->getFormattedMedicineDate() }}</p>
         </div>
-        <p>Nama {{ $model->getName() }}</p>
+        <p>Nama&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{ $model->getName() }}</p>
         <div style="width:50%;float:left;">
-            <p>Tgl Lahir {{ $model->getDob() }}</p>
+            <p>Tgl Lahir&nbsp;&nbsp;&nbsp;&nbsp;: {{ $model->getDob() }}</p>
         </div>
         <div style="width:50%;float:right;text-align: right;">
-            <p>No RM {{ $model->medical_record_number }}</p>
+            <p>No RM : {{ $model->medical_record_number }}</p>
         </div>
-        <div style="width:80%;float:left;">
-            <p>Nama Obat / Exp {{ $detail->getMedicineNameAndExp() }}</p>
+        <div style="width:85%;float:left;">
+            <p>Obat / Exp : {{ $detail->getMedicineNameAndExp() }}</p>
         </div>
-        <div style="width:20%;float:right;text-align: right;">
-            <p>Qty {{ $detail->quantity }}</p>
+        <div style="width:15%;float:right;text-align: right;">
+            <p>Qty : {{ $detail->quantity }}</p>
         </div>
         
-        <br/><br/><br/>
-        <p class="text-center">Sehari {{ $detail->how_to_use }} {{ $detail->getItemSmallName() }}</p>
+        <br/><br/>
+        <p class="text-center" style="margin-top:8px">Sehari {{ $detail->how_to_use }} {{ $detail->getItemSmallName() }}</p>
         <p class="text-center">Sebelum / sesudah makan</p>
         <br/>
         <p style="text-align:center">................................................</p>

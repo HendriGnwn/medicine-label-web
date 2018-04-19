@@ -36,6 +36,7 @@
             {!! $errors->first('medicine_date', '<p class="help-block">:message</p>') !!}
         </div>
     </div>
+    @if (!\Auth::user()->getIsRoleDoctor())
     <div class="col-md-6">
         <div aria-required="true" class="form-group required form-group-default {{ $errors->has('doctor_id') ? 'has-error' : ''}}">
             {!! Form::label('doctor_id', 'Dokter*') !!}
@@ -43,6 +44,9 @@
             {!! $errors->first('doctor_id', '<p class="help-block">:message</p>') !!}
         </div>
     </div>
+    @else
+        {!! Form::hidden('doctor_id', \Auth::user()->getMmDoctorPrimaryKey()) !!}
+    @endif
     <div class="col-md-6">
         <div aria-required="true" class="form-group required form-group-default {{ $errors->has('care_type') ? 'has-error' : ''}}">
             {!! Form::label('care_type', 'Tipe Rawatan*') !!}

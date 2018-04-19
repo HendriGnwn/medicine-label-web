@@ -2,6 +2,8 @@
 
 namespace App;
 
+use Carbon\Carbon;
+
 class MmItem extends BaseModel
 {
     protected $connection = 'mysqlMm';
@@ -61,5 +63,36 @@ class MmItem extends BaseModel
     public function mmItemSmall()
     {
         return $this->hasOne('\App\MmItemSmall', 'id_barang_satuan_kecil', 'id_barang_satuan_kecil');
+    }
+    
+    public function mmMasterStocks()
+    {
+        return $this->hasMany('\App\MmMasterStock', 'id_barang', 'id_barang')->orderBy('id_stok', 'asc');
+    }
+    
+    public function mmAvailableMasterStocks()
+    {
+        return $this->mmMasterStocks()->where('stok', '>', 0);
+    }
+    
+    public function getItemExpiredAt()
+    {
+        if (is_null($this->mmAvailableMasterStocks))
+        {
+            return null;
+        }
+        
+        foreach ($this->mmAvailableMasterStocks as $masterStock) {
+            return $masterStock->kadaluarsa;
+        }
+    }
+    
+    public function getFormattedItemExpiredAt()
+    {
+        if (is_null($this->getItemExpiredAt())) {
+            return null;
+        }
+        
+        return Carbon::parse($this->getItemExpiredAt())->format('d/m/Y');
     }
 }

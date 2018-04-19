@@ -53,10 +53,19 @@ class AjaxController extends Controller
                 ->get();
         $results = [];
         foreach ($items as $item) {
-            $results[] = [
-                'id' => $item->id_barang,
-                'text' => $item->kode_barang . ' - ' . $item->nama_barang,
-            ];
+            if ($item->stok <= 0) {
+                $results[] = [
+                    'id' => $item->id_barang,
+                    'text' => $item->kode_barang . ' - ' . $item->nama_barang . ' (habis)',
+                    'disabled' => true,
+                ];
+            } else {
+                $results[] = [
+                    'id' => $item->id_barang,
+                    'text' => $item->kode_barang . ' - ' . $item->nama_barang,
+                ];
+            }
+            
         }
         
         return response()->json($results);

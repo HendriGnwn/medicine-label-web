@@ -10,7 +10,7 @@ class User extends Authenticatable
     use Notifiable;
     
     const ROLE_SUPERADMIN = 1;
-    const ROLE_APOTEKER = 5;
+    const ROLE_PHARMACIST = 5;
     const ROLE_DOCTOR = 10;
     
     protected $table = 'user';
@@ -45,8 +45,56 @@ class User extends Authenticatable
         return $this->hasOne('\App\DclUser', 'user_id', 'dcl_user_id');
     }
     
-    public function mmDoctors()
+    public function mmDoctor()
     {
-        return $this->hasMany('\App\MmDoctor', 'nip', 'nip');
+        return $this->hasOne('\App\MmDoctor', 'nip', 'nip');
+    }
+    
+    public function getMmDoctorPrimaryKey()
+    {
+        if (!$this->dclUser) {
+            return $this->mmDoctor ? $this->mmDoctor->id_dokter : null;
+        }
+        
+        if (!$this->dclUser->mmDoctors) {
+            return null;
+        }
+        
+        foreach ($this->dclUser->mmDoctors as $doctor) {
+            return $doctor->id_dokter;
+        }
+    }
+    
+    public static function roleLabels()
+    {
+        return [
+            self::ROLE_SUPERADMIN => 'Super Admin',
+            self::ROLE_DOCTOR => 'Dokter',
+            self::ROLE_PHARMACIST => 'Apoteker',
+        ];
+    }
+    
+    public function getRoleLabel()
+    {
+        $list = self::roleLabels();
+        return ($list[$this->role]) ? $list[$this->role] : $this->role;
+    }
+    
+    public function getIsRoleDoctor() {
+        return $this->role == self::ROLE_DOCTOR;
+    }
+    
+    public function getIsRolePharmacist() {
+        return $this->role == self::ROLE_PHARMACIST;
+    }
+    
+    public function getIsRoleSuperadmin() {
+        return $this->role == self::ROLE_SUPERADMIN;
+    }
+    
+    public static function getArrayListDoctors()
+    {
+        $model = User::where('role', self::ROLE_DOCTOR)->pluck('id')->toArray();
+        return $model;
     }
 }

@@ -31,4 +31,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('medicine/find', ['as' => 'medicine.find', 'uses' => 'AjaxController@findMedicine']);
     Route::get('patient/find', ['as' => 'patient.find', 'uses' => 'AjaxController@findPatient']);
     Route::get('medicine/how-to-use', ['as' => 'medicine.how-to-use', 'uses' => 'AjaxController@findMedicineHowToUse']);
+    
+    Route::get('/user/edit-profile', ['as' => 'user.edit-profile', 'uses' => 'UserController@editProfile']);
+    Route::get('/user/data', ['as' => 'user.data', 'uses' => 'UserController@listIndex']);
+    Route::resource('/user', 'UserController');
+    
+    Route::get('/transaction-medicine/doctor-data', ['as' => 'transaction-medicine.doctor-data', 'uses' => 'TransactionMedicineController@listDoctorData']);
+    Route::get('/transaction-medicine/doctor', ['as' => 'transaction-medicine.doctor', 'uses' => 'TransactionMedicineController@doctor']);
+    
+    Route::get('/transaction-medicine/pharmacist-data', ['as' => 'transaction-medicine.pharmacist-data', 'uses' => 'TransactionMedicineController@listPharmacistData']);
+    Route::get('/transaction-medicine/pharmacist', ['as' => 'transaction-medicine.pharmacist', 'uses' => 'TransactionMedicineController@pharmacist']);
 });

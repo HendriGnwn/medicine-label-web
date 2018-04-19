@@ -49,9 +49,14 @@ class TransactionMedicineDetail extends BaseModel
     public function getMedicineNameAndExp()
     {
         $name = ($this->mmItem) ? $this->mmItem->nama_barang : null;
-        $quantity = $this->quantity;
+        $quantity = ($this->mmItem) ? $this->mmItem->getFormattedItemExpiredAt() : null;;
         
-        return $name;// . ' / ' . $quantity;
+        $resultName = $name;
+        if (strlen($name) > 20) {
+            $resultName = substr($name, 0, 20) . ' ...';
+        }
+        
+        return $resultName . ' / ' . $quantity;
     }
     
     public function getItemSmallName()
