@@ -91,7 +91,7 @@ class ManuallyController extends Controller
         } else if ($user->getIsRoleDoctor()) {
             $redirect = route('transaction-medicine.doctor');
         } else {
-            $redirect = route('manually');
+            $redirect = route('manually.index');
         }
         
         return redirect($redirect);
