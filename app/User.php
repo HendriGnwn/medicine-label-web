@@ -94,7 +94,10 @@ class User extends Authenticatable
     
     public static function getArrayListDoctors()
     {
-        $model = User::where('role', self::ROLE_DOCTOR)->pluck('id')->toArray();
-        return $model;
+        $models = User::where('role', self::ROLE_DOCTOR)->pluck('id')->toArray();
+        $users = User::where('role', self::ROLE_SUPERADMIN)->pluck('id')->toArray();
+
+        //return array_merge($model, $users);
+        return $models;
     }
 }
