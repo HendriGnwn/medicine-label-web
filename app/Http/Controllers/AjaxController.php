@@ -20,14 +20,15 @@ class AjaxController extends Controller
         }
         
         $doctors = \App\MmDoctor::where('nama_dokter', 'like', "%$term%")
-                ->orWhere('id_unit', 'like', "%$term%")
+                ->orWhere('nip', 'like', "%$term%")
                 ->limit(20)
+                ->groupBy('nip')
                 ->get();
         $results = [];
         foreach ($doctors as $doctor) {
             $results[] = [
                 'id' => $doctor->id_dokter,
-                'text' => $doctor->id_unit . ' - ' . $doctor->nama_dokter,
+                'text' => $doctor->nip . ' - ' . $doctor->nama_dokter,
             ];
         }
         

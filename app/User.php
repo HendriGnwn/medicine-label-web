@@ -7,7 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable, \Illuminate\Database\Eloquent\SoftDeletes;
     
     const ROLE_SUPERADMIN = 1;
     const ROLE_PHARMACIST = 5;

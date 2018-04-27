@@ -142,7 +142,7 @@
     });
 
     $('#doctor_id').select2({
-        placeholder: "ID Unit - Nama Dokter",
+        placeholder: "NIP - Nama Dokter",
         minimumInputLength: 2,
         ajax: {
             url: "{{ route('doctor.find') }}",

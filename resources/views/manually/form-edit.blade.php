@@ -216,7 +216,7 @@
     });
 
     $('#doctor_id').select2({
-        placeholder: "ID Unit - Nama Dokter",
+        placeholder: "NIP - Nama Dokter",
         minimumInputLength: 2,
         ajax: {
             url: "{{ route('doctor.find') }}",
@@ -234,8 +234,8 @@
             cache: true
         },
         initSelection: function (element, callback) {
-            $(element).html("<option value='{{$model->doctor_id}}' selected='selected'>{{ $model->mmDoctor->id_unit . ' - ' . $model->mmDoctor->nama_dokter }}</option>");
-            callback({id: {{$model->doctor_id}}, text: "{{ $model->mmDoctor->id_unit . ' - ' . $model->mmDoctor->nama_dokter }}" });
+            $(element).html("<option value='{{$model->doctor_id}}' selected='selected'>{{ $model->mmDoctor->nip . ' - ' . $model->mmDoctor->nama_dokter }}</option>");
+            callback({id: {{$model->doctor_id}}, text: "{{ $model->mmDoctor->nip . ' - ' . $model->mmDoctor->nama_dokter }}" });
         }
     });
     

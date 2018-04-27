@@ -92,7 +92,7 @@ oTable = $('#concept-table').DataTable({
             //className: 'btn btn-primary'
         },
         {extend: 'colvis', text: '<i class="fa fa-eye" data-toggle="tooltip" title="" data-original-title="Column visible"></i>'},
-        {extend: 'csv', text: '<i class="fa fa-file-excel-o" data-toggle="tooltip" title="" data-original-title="Export CSV"></i>'}
+        {extend: 'csv', text: '<i class="fa fa-file" data-toggle="tooltip" title="" data-original-title="Export CSV"></i>'}
     ],
     //sDom: "<'table-responsive fixed't><'row'<p i>> B",
     sPaginationType: "bootstrap",

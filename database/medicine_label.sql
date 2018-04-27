@@ -202,7 +202,8 @@ ALTER TABLE `transaction_medicine_detail`
 -- Indexes for table `user`
 --
 ALTER TABLE `user`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD `deleted_at` timestamp NULL AFTER `apoteker_sik`;
 
 --
 -- AUTO_INCREMENT for dumped tables
