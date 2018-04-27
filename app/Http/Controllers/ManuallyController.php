@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\TransactionMedicine;
 use App\TransactionMedicineDetail;
+use Carbon\Carbon;
 use DB;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -106,7 +107,7 @@ class ManuallyController extends Controller
      */
     public function show($id)
     {
-        $model = \App\TransactionMedicine::findOrFail($id);
+        $model = TransactionMedicine::findOrFail($id);
 
         return view('manually.show', compact('model'));
     }
@@ -215,6 +216,12 @@ class ManuallyController extends Controller
             ->editColumn('care_type', function ($model) {
                 return $model->getCareTypeLabel();
             })
+            ->editColumn('created_by', function ($model) {
+                return $model->getCreatedName();
+            })
+            ->editColumn('updated_by', function ($model) {
+                return $model->getUpdatedName();
+            })
             ->addColumn('action', function ($model) {
                 $printUrl = route('manually.print-preview', ['id' => $model->id]);
                 $editUrl = route('manually.edit', ['id' => $model->id]);
@@ -227,14 +234,19 @@ class ManuallyController extends Controller
             $datatables->filterColumn('rownum', 'whereRaw', '@rownum  + 1 like ?', ["%{$keyword}%"]);
         }
 
-//        if ($range = $datatables->request->get('range')) {
-//            $rang = explode(":", $range);
-//            if($rang[0] != "Invalid date" && $rang[1] != "Invalid date" && $rang[0] != $rang[1]){
-//                $datatables->whereBetween('concept.created_at', ["$rang[0] 00:00:00", "$rang[1] 23:59:59"]);
-//            }else if($rang[0] != "Invalid date" && $rang[1] != "Invalid date" && $rang[0] == $rang[1]) {
-//                $datatables->whereBetween('concept.created_at', ["$rang[0] 00:00:00", "$rang[1] 23:59:59"]);
-//            }
-//        }
+        if ($range = $datatables->request->get('created_range')) {
+            $rang = explode("-", $range);
+            $startDate = Carbon::parse($rang[0])->toDateString();
+            $endDate = Carbon::parse($rang[1])->toDateString();
+            $datatables->whereBetween('transaction_medicine.created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+        }
+        
+        if ($range = $datatables->request->get('updated_range')) {
+            $rang = explode("-", $range);
+            $startDate = Carbon::parse($rang[0])->toDateString();
+            $endDate = Carbon::parse($rang[1])->toDateString();
+            $datatables->whereBetween('transaction_medicine.updated_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+        }
 		
         return $datatables->make(true);
     }

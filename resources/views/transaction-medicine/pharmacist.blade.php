@@ -26,6 +26,36 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="filter-search-dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <form id="filter-search-form">
+                <div class="modal-header">
+                    <h4 style="margin-top:0px;margin-bottom:0px;">Filter Search<button type="button" class="close" data-dismiss="modal">&times;</button></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div aria-required="true" class="form-group required form-group-default">
+                                {!! Form::label('created_range', 'Tanggal Dibuat') !!}
+                                {!! Form::text('created_range', null, ['class' => 'form-control date-range form-sm']) !!}
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div aria-required="true" class="form-group required form-group-default">
+                                {!! Form::label('updated_range', 'Tanggal Diedit') !!}
+                                {!! Form::text('updated_range', null, ['class' => 'form-control date-range form-sm']) !!}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" name="search" class="btn btn-primary btn-rounded">Search</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('script')
@@ -38,8 +68,41 @@ oTable = $('#medicine-table').DataTable({
     order:  [[ 5, "desc" ]],
     pagingType: 'full_numbers',
     buttons: [
+        {
+            extend: 'print',
+            autoPrint: true,
+            customize: function ( win ) {
+                $(win.document.body)
+                    .css( 'padding', '2px' )
+                    .prepend(
+                        'Laporan Daftar Label<br/><font style="font-size:8px;margin-top:15px;">{{date('Y-m-d h:i:s')}}</font><br/><br/><br/>'
+                    );
+                $(win.document.body).find( 'div' )
+                    .css( {'padding': '2px', 'text-align': 'center', 'margin-top': '-50px'} )
+                    .prepend(
+                        ''
+                    );
+                $(win.document.body).find( 'table' )
+                    .addClass( 'compact' )
+                    .css( { 'font-size': '9px', 'padding': '2px' } );
+            },
+            title: '',
+            orientation: 'landscape',
+            exportOptions: {columns: ':visible'} ,
+            text: '<i class="fa fa-print" data-toggle="tooltip" title="" data-original-title="Print"></i>'
+        },
         {extend: 'colvis', text: '<i class="fa fa-eye"></i>'},
-        {extend: 'csv', text: '<i class="fa fa-file" data-toggle="tooltip" title="" data-original-title="Export CSV"></i>'}
+        {extend: 'csv', text: '<i class="fa fa-file" data-toggle="tooltip" title="" data-original-title="Export CSV"></i>'},
+        {
+            text: '<i class="fa fa-search"></i>&nbsp;&nbsp;Filter',
+            action: function ( e, dt, node, config ) {
+                $("#filter-search-dialog").modal({
+                    show: true,
+                    backdrop: 'static', 
+                    keyboard: false
+                });
+            }
+        }
     ],
     //sDom: "<'table-responsive fixed't><'row'<p i>> B",
     sPaginationType: "bootstrap",
@@ -55,6 +118,8 @@ oTable = $('#medicine-table').DataTable({
     url: '{!! route('transaction-medicine.pharmacist-data') !!}',
         data: function (d) {
             d.range = $('input[name=drange]').val();
+            d.created_range = $('input[name=created_range]').val();
+            d.updated_range = $('input[name=updated_range]').val();
         }
     },
     columns: [
@@ -80,12 +145,24 @@ oTable = $('#medicine-table').DataTable({
     },
 });
 
-$('#formsearch').submit(function () {
-    oTable.search( $('#search-table').val() ).draw();
-    return false;
-} );
+$('#filter-search-form').on('submit', function(e) {
+    $("#filter-search-dialog").modal('hide');
+    oTable.draw();
+    e.preventDefault();
+});
 
 oTable.page.len(25).draw();
+
+$('.date-range').daterangepicker({
+    autoUpdateInput: false
+});
+$('.date-range').on('apply.daterangepicker', function(ev, picker) {
+    $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+});
+
+$('.date-range').on('cancel.daterangepicker', function(ev, picker) {
+    $(this).val('');
+});
 
 </script>
 @endpush

@@ -23,6 +23,17 @@ class HomeController extends Controller
      */
     public function index()
     {
+        $user = \App\User::find(\Auth::user()->id);
+        if ($user->getIsRolePharmacist()) {
+            $redirect = route('transaction-medicine.pharmacist');
+        } else if ($user->getIsRoleDoctor()) {
+            $redirect = route('transaction-medicine.doctor');
+        } else {
+            $redirect = route('manually.index');
+        }
+        
+        return redirect($redirect);
+        
         return view('home');
     }
 }

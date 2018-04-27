@@ -6,28 +6,6 @@
     <div class="panel-heading">@yield('headerTitle')</div>
 
     <div class="panel-body">
-<!--        <form action="" method="post" id="form-search">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="medical_record" class="control-label">Nomor Rekam Medis</label>
-                        <input id="medical_record" type="text" class="form-control" name="medical_record" />
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="payment_id" class="control-label">Kode Pembayaran</label>
-                        <input id="payment_id" type="text" class="form-control" name="payment_id" />
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <br/>
-                    <button type="submit" name="submit" class="btn btn-primary">Search</button>
-                </div>
-            </div>
-        </form>
-        <br/><br/>-->
-        
         <input type="hidden" id="delete_value" name="delete_value"/>
         <div class="table-overflow">
             <table id="concept-table" class="table table-lg table-hover" width="100%">
@@ -50,6 +28,36 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="filter-search-dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <form id="filter-search-form">
+                <div class="modal-header">
+                    <h4 style="margin-top:0px;margin-bottom:0px;">Filter Search<button type="button" class="close" data-dismiss="modal">&times;</button></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div aria-required="true" class="form-group required form-group-default">
+                                {!! Form::label('created_range', 'Tanggal Dibuat') !!}
+                                {!! Form::text('created_range', null, ['class' => 'form-control date-range form-sm']) !!}
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div aria-required="true" class="form-group required form-group-default">
+                                {!! Form::label('updated_range', 'Tanggal Diedit') !!}
+                                {!! Form::text('updated_range', null, ['class' => 'form-control date-range form-sm']) !!}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" name="search" class="btn btn-primary btn-rounded">Search</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('script')
@@ -69,30 +77,34 @@ oTable = $('#concept-table').DataTable({
                 $(win.document.body)
                     .css( 'padding', '2px' )
                     .prepend(
-                        '<img src="{{asset('img/logo.png')}}" style="float:right; top:0; left:0;height: 40px;right: 10px;background: #101010;padding: 8px;border-radius: 4px" /><h5 style="font-size: 9px;margin-top: 0px;"><br/><font style="font-size:14px;margin-top: 5px;margin-bottom:20px;"> Report Concept</font><br/><br/><font style="font-size:8px;margin-top:15px;">{{date('Y-m-d h:i:s')}}</font></h5><br/><br/>'
+                        'Laporan Daftar Label<br/><font style="font-size:8px;margin-top:15px;">{{date('Y-m-d h:i:s')}}</font><br/><br/><br/>'
                     );
-
-
                 $(win.document.body).find( 'div' )
                     .css( {'padding': '2px', 'text-align': 'center', 'margin-top': '-50px'} )
                     .prepend(
                         ''
                     );
-
                 $(win.document.body).find( 'table' )
                     .addClass( 'compact' )
                     .css( { 'font-size': '9px', 'padding': '2px' } );
-
-
             },
             title: '',
             orientation: 'landscape',
             exportOptions: {columns: ':visible'} ,
-            text: '<i class="fa fa-print" data-toggle="tooltip" title="" data-original-title="Print"></i>',
-            //className: 'btn btn-primary'
+            text: '<i class="fa fa-print" data-toggle="tooltip" title="" data-original-title="Print"></i>'
         },
         {extend: 'colvis', text: '<i class="fa fa-eye" data-toggle="tooltip" title="" data-original-title="Column visible"></i>'},
-        {extend: 'csv', text: '<i class="fa fa-file" data-toggle="tooltip" title="" data-original-title="Export CSV"></i>'}
+        {extend: 'csv', text: '<i class="fa fa-file" data-toggle="tooltip" title="" data-original-title="Export CSV"></i>'},
+        {
+            text: '<i class="fa fa-search"></i>&nbsp;&nbsp;Filter',
+            action: function ( e, dt, node, config ) {
+                $("#filter-search-dialog").modal({
+                    show: true,
+                    backdrop: 'static', 
+                    keyboard: false
+                });
+            }
+        }
     ],
     //sDom: "<'table-responsive fixed't><'row'<p i>> B",
     sPaginationType: "bootstrap",
@@ -108,6 +120,8 @@ oTable = $('#concept-table').DataTable({
     url: '{!! route('manually.data') !!}',
         data: function (d) {
             d.range = $('input[name=drange]').val();
+            d.created_range = $('input[name=created_range]').val();
+            d.updated_range = $('input[name=updated_range]').val();
         }
     },
     columns: [
@@ -136,10 +150,11 @@ oTable = $('#concept-table').DataTable({
 
 $("#concept-table_wrapper > .dt-buttons").appendTo("div.export-options-container");
 
-$('#formsearch').submit(function () {
-    oTable.search( $('#search-table').val() ).draw();
-    return false;
-} );
+$('#filter-search-form').on('submit', function(e) {
+    $("#filter-search-dialog").modal('hide');
+    oTable.draw();
+    e.preventDefault();
+});
 
 oTable.page.len(25).draw();
 
@@ -156,6 +171,17 @@ function deleteRecord(id){
         }
     });
 }
+
+$('.date-range').daterangepicker({
+    autoUpdateInput: false
+});
+$('.date-range').on('apply.daterangepicker', function(ev, picker) {
+    $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+});
+
+$('.date-range').on('cancel.daterangepicker', function(ev, picker) {
+    $(this).val('');
+});
 
 </script>
 @endpush

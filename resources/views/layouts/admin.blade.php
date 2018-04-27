@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="{{ asset('vendor/datatables/css/buttons.dataTables.min.css') }}">
     <link href="{{ asset('vendor/select2/css/select2.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('vendor/bootstrap-datepicker/css/bootstrap-datepicker.min.css') }}" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ asset('vendor/bootstrap-daterangepicker/daterangepicker.css') }}" />
 <!--    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.1/css/responsive.dat aTables.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.5.1/css/buttons.dataTables.min.css" />-->
 </head>
@@ -53,9 +54,6 @@
                         @guest
                             <li><a href="{{ route('login') }}">Login</a></li>
                         @else
-                            <li class="{{ \Request::is('home') ? 'active' : '' }}">
-                                <a href="{{ route('home') }}">Dashboard</a>
-                            </li>
                             <li class="{{ \Request::is('manually/create') ? 'active' : '' }}">
                                 <a href="{{ route('manually.create') }}">Buat Baru</a>
                             </li>
@@ -133,6 +131,7 @@
     <!-- jQuery -->
     <script src="{{ asset('js/jquery.js') }}"></script>
     <script src="{{ asset('js/jquery-ui.js') }}"></script>
+    <script src="{{ asset('vendor/moment/min/moment.min.js')}}"></script>
     <!-- DataTables -->
     <script src="{{ asset('vendor/datatables/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('vendor/datatables/js/dataTables.responsive.min.js') }}"></script>
@@ -148,6 +147,7 @@
     <script src="{{ asset('js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('vendor/select2/js/select2.full.min.js')}}"></script>
     <script src="{{ asset('vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js')}}"></script>
+    <script src="{{ asset('vendor/bootstrap-daterangepicker/daterangepicker.js')}}"></script>
     @stack('script')
 </body>
 </html>
