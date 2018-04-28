@@ -2,13 +2,34 @@
 @section('headerTitle', 'Dashboard')
 
 @section('content')
-<div class="panel panel-default">
-    <div class="panel-heading">@yield('headerTitle')</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">Grafik 10 Obat teratas</div>
 
-    <div class="panel-body">
+            <div class="panel-body">
+                
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="panel panel-default">
+            <div class="panel-heading">Jumlah Pasien Hari ini</div>
 
+            <div class="panel-body">
+                
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="panel panel-default">
+            <div class="panel-heading">Jumlah Pasien 1 Bulan Terakhir</div>
 
-        You are logged in!
+            <div class="panel-body">
+                
+            </div>
+        </div>
     </div>
 </div>
+
 @endsection

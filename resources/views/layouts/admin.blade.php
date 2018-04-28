@@ -54,6 +54,9 @@
                         @guest
                             <li><a href="{{ route('login') }}">Login</a></li>
                         @else
+                            <li class="{{ \Request::is('home') ? 'active' : '' }}">
+                                <a href="{{ route('home') }}">Dashboard</a>
+                            </li>
                             <li class="{{ \Request::is('manually/create') ? 'active' : '' }}">
                                 <a href="{{ route('manually.create') }}">Buat Baru</a>
                             </li>
