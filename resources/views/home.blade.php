@@ -20,6 +20,11 @@
                     </tr>
                     @endforeach
                 </table>
+                <div class="text-center">
+                    <label class="label label-info">
+                        Semua waktu
+                    </label>
+                </div>
             </div>
         </div>
     </div>
@@ -29,6 +34,10 @@
 
             <div class="panel-body text-center">
                 <h1>{{ $countPatientNow }}</h1>
+                <label class="label label-info">
+                    {{ \Carbon\Carbon::now()->format('d M Y') }}
+                </label>
+                <br/>
                 <br/>
             </div>
         </div>
@@ -39,6 +48,10 @@
 
             <div class="panel-body text-center">
                 <h1>{{ $countPatientPreviousMonth }}</h1>
+                <label class="label label-info">
+                    {{ (new \Carbon\Carbon('first day of last month'))->format('d M Y')  }} - {{ (new \Carbon\Carbon('last day of last month'))->format('d M Y')  }}
+                </label>
+                <br/>
                 <br/>
             </div>
         </div>
