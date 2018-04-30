@@ -12,7 +12,6 @@
                 <thead>
                     <tr>
                         <th style='width:5%'>*</th>
-                        <th style='width:10%'>No Registrasi</th>
                         <th style='width:10%'>No Resep</th>
                         <th style='width:20%'>Nomor Medis Medis</th>
                         <th style='width:20%'>Dokter</th>
@@ -67,7 +66,7 @@ oTable = $('#concept-table').DataTable({
     processing: true,
     serverSide: true,
     dom: 'lBfrtip',
-    order:  [[ 6, "desc" ]],
+    order:  [[ 5, "desc" ]],
     pagingType: 'full_numbers',
     buttons: [
         {
@@ -126,7 +125,6 @@ oTable = $('#concept-table').DataTable({
     },
     columns: [
 		{ data: "rownum", name: "rownum", searchable: false },
-		{ data: "registered_id", name: "registered_id" },
 		{ data: "receipt_number", name: "receipt_number" },
 		{ data: "medical_record_number", name: "medical_record_number" },
 		{ data: "doctor_id", name: "doctor_id" },

@@ -9,13 +9,6 @@
 @endif
 <div class="row">
     <div class="col-md-6">
-        <div aria-required="true" class="form-group required form-group-default {{ $errors->has('registered_id') ? 'has-error' : ''}}">
-            {!! Form::label('registered_id', 'Kode Pendaftaran') !!}
-            {!! Form::number('registered_id', null, ['class' => 'form-control', 'type'=>'number']) !!}
-            {!! $errors->first('registered_id', '<p class="help-block">:message</p>') !!}
-        </div>
-    </div>
-    <div class="col-md-6">
         <div aria-required="true" class="form-group required form-group-default {{ $errors->has('receipt_number') ? 'has-error' : ''}}">
             {!! Form::label('receipt_number', 'Nomor Resep') !!}
             {!! Form::number('receipt_number', null, ['class' => 'form-control', 'type'=>'number']) !!}
@@ -23,17 +16,17 @@
         </div>
     </div>
     <div class="col-md-6">
-        <div aria-required="true" class="form-group required form-group-default {{ $errors->has('medical_record_number') ? 'has-error' : ''}}">
-            {!! Form::label('medical_record_number', 'Nomor Rekam Medis*') !!}
-            {!! Form::select('medical_record_number', [], null, ['class' => 'form-control', 'required'=>true]) !!}
-            {!! $errors->first('medical_record_number', '<p class="help-block">:message</p>') !!}
-        </div>
-    </div>
-    <div class="col-md-6">
         <div aria-required="true" class="form-group required form-group-default {{ $errors->has('medicine_date') ? 'has-error' : ''}}">
             {!! Form::label('medicine_date', 'Tanggal*') !!}
             {!! Form::text('medicine_date', null, ['class' => 'form-control datepicker', 'required'=>true]) !!}
             {!! $errors->first('medicine_date', '<p class="help-block">:message</p>') !!}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div aria-required="true" class="form-group required form-group-default {{ $errors->has('medical_record_number') ? 'has-error' : ''}}">
+            {!! Form::label('medical_record_number', 'Nomor Rekam Medis*') !!}
+            {!! Form::select('medical_record_number', [], null, ['class' => 'form-control', 'required'=>true]) !!}
+            {!! $errors->first('medical_record_number', '<p class="help-block">:message</p>') !!}
         </div>
     </div>
     @if (!\Auth::user()->getIsRoleDoctor())
@@ -61,7 +54,7 @@
         <th style="width:40%; vertical-align: middle;">Obat*</th>
         <th style="width:20%; vertical-align: middle;">Jumlah*</th>
         <th style="width:20%; vertical-align: middle;">Aturan Pakai (sehari)*</th>
-        <th style="width:20%; vertical-align: middle;"><button type="button" name="add" id="add" class="btn btn-primary btn-sm"><i class="fa fa-plus-square"></i></button></th>
+        <th style="width:20%; vertical-align: middle;"><button type="button" name="add" id="add" class="btn btn-primary btn-sm" title="Add"><i class="fa fa-plus-square"></i></button></th>
     </tr>
 </table>
 
@@ -88,11 +81,12 @@
                 '<td>' +
                     '<input type="text" class="form-control" name="how_to_use[]" id="how_to_use_'+i+'" required />' +
                 '</td>' +
-                '<td><button type="button" id="'+ i +'" class="btn btn-danger btn-sm" onclick="clickRemove('+i+')"><i class="fa fa-trash"></i></button></td>' +
+                '<td><button type="button" id="'+ i +'" class="btn btn-danger btn-sm" onclick="clickRemove('+i+')" title="Delete"><i class="fa fa-trash"></i></button></td>' +
             '</tr>');
         $('#medicine_id_' + i).select2({
             width: 'resolve',
             placeholder: "Obat",
+            allowClear: true,
             minimumInputLength: 2,
             ajax: {
                 url: "{{ route('medicine.find') }}",
@@ -143,6 +137,7 @@
 
     $('#doctor_id').select2({
         placeholder: "NIP - Nama Dokter",
+        allowClear: true,
         minimumInputLength: 2,
         ajax: {
             url: "{{ route('doctor.find') }}",
@@ -164,6 +159,7 @@
     $('#medical_record_number').select2({
         placeholder: "No Rekam Medis - Nama Pasien",
         minimumInputLength: 2,
+        allowClear: true,
         ajax: {
             url: "{{ route('patient.find') }}",
             dataType: 'json',

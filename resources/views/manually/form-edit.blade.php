@@ -9,13 +9,6 @@
 @endif
 <div class="row">
     <div class="col-md-6">
-        <div aria-required="true" class="form-group required form-group-default {{ $errors->has('registered_id') ? 'has-error' : ''}}">
-            {!! Form::label('registered_id', 'Kode Pendaftaran') !!}
-            {!! Form::number('registered_id', null, ['class' => 'form-control', 'type'=>'number']) !!}
-            {!! $errors->first('registered_id', '<p class="help-block">:message</p>') !!}
-        </div>
-    </div>
-    <div class="col-md-6">
         <div aria-required="true" class="form-group required form-group-default {{ $errors->has('receipt_number') ? 'has-error' : ''}}">
             {!! Form::label('receipt_number', 'Nomor Resep') !!}
             {!! Form::number('receipt_number', null, ['class' => 'form-control', 'type'=>'number']) !!}
@@ -23,17 +16,17 @@
         </div>
     </div>
     <div class="col-md-6">
-        <div aria-required="true" class="form-group required form-group-default {{ $errors->has('medical_record_number') ? 'has-error' : ''}}">
-            {!! Form::label('medical_record_number', 'Nomor Rekam Medis*') !!}
-            {!! Form::select('medical_record_number', [], null, ['class' => 'form-control', 'required'=>true]) !!}
-            {!! $errors->first('medical_record_number', '<p class="help-block">:message</p>') !!}
-        </div>
-    </div>
-    <div class="col-md-6">
         <div aria-required="true" class="form-group required form-group-default {{ $errors->has('medicine_date') ? 'has-error' : ''}}">
             {!! Form::label('medicine_date', 'Tanggal*') !!}
             {!! Form::text('medicine_date', null, ['class' => 'form-control datepicker', 'required'=>true]) !!}
             {!! $errors->first('medicine_date', '<p class="help-block">:message</p>') !!}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div aria-required="true" class="form-group required form-group-default {{ $errors->has('medical_record_number') ? 'has-error' : ''}}">
+            {!! Form::label('medical_record_number', 'Nomor Rekam Medis*') !!}
+            {!! Form::select('medical_record_number', [], null, ['class' => 'form-control', 'required'=>true]) !!}
+            {!! $errors->first('medical_record_number', '<p class="help-block">:message</p>') !!}
         </div>
     </div>
     @if (!\Auth::user()->getIsRoleDoctor())
@@ -167,6 +160,7 @@
         $('#medicine_id_' + i).select2({
             width: 'resolve',
             placeholder: "Obat",
+            allowClear: true,
             minimumInputLength: 2,
             ajax: {
                 url: "{{ route('medicine.find') }}",
@@ -212,11 +206,13 @@
     }
     
     $('.select2').select2({
-        width: 'resolve'
+        width: 'resolve',
+        allowClear: true
     });
 
     $('#doctor_id').select2({
         placeholder: "NIP - Nama Dokter",
+        allowClear: true,
         minimumInputLength: 2,
         ajax: {
             url: "{{ route('doctor.find') }}",
@@ -241,6 +237,7 @@
     
     $('#medical_record_number').select2({
         placeholder: "No Rekam Medis - Nama Pasien",
+        allowClear: true,
         minimumInputLength: 2,
         ajax: {
             url: "{{ route('patient.find') }}",

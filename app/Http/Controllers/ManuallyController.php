@@ -16,7 +16,6 @@ class ManuallyController extends Controller
 {
 	protected $rules = [
 		'doctor_id' => 'required',
-		'registered_id' => 'nullable',
 		'medical_record_number' => 'required',
         'medicine_date' => 'required',
 		'care_type' => 'required',

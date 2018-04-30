@@ -11,7 +11,6 @@
                 <thead>
                     <tr>
                         <th style='width:5%'>*</th>
-                        <th style='width:10%'>No Registrasi</th>
                         <th style='width:10%'>No Resep</th>
                         <th style='width:30%'>No Medis Medis</th>
                         <th style='width:10%'>Tipe Rawat</th>
@@ -65,7 +64,7 @@ oTable = $('#medicine-table').DataTable({
     processing: true,
     serverSide: true,
     dom: 'lBfrtip',
-    order:  [[ 5, "desc" ]],
+    order:  [[ 4, "desc" ]],
     pagingType: 'full_numbers',
     buttons: [
         {
@@ -124,7 +123,6 @@ oTable = $('#medicine-table').DataTable({
     },
     columns: [
 		{ data: "rownum", name: "rownum", searchable: false },
-		{ data: "registered_id", name: "registered_id" },
 		{ data: "receipt_number", name: "receipt_number" },
 		{ data: "medical_record_number", name: "medical_record_number" },
 		{ data: "care_type", name: "care_type" },
