@@ -39,6 +39,33 @@ class AjaxController extends Controller
      * @param Request $request
      * @return type
      */
+	public function findDoctorAndUnit(Request $request)
+    {
+        $term = trim($request->q);
+        if (empty($term)) {
+            return response()->json([]);
+        }
+        
+        $doctors = \App\MmDoctor::where('nama_dokter', 'like', "%$term%")
+                ->orWhere('id_unit', 'like', "%$term%")
+                ->limit(20)
+                ->groupBy('id_dokter')
+                ->get();
+        $results = [];
+        foreach ($doctors as $doctor) {
+            $results[] = [
+                'id' => $doctor->id_dokter,
+                'text' => $doctor->id_unit . ' - ' . $doctor->nama_dokter,
+            ];
+        }
+        
+        return response()->json($results);
+    }
+    
+    /**
+     * @param Request $request
+     * @return type
+     */
 	public function findMedicine(Request $request)
     {
         $term = trim($request->q);

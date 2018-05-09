@@ -6,6 +6,7 @@
             <name>medicine-label-web</name>
         </data>
         <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+            <word>php</word>
             <word>Sjamsudin</word>
         </spellchecker-wordlist>
     </configuration>

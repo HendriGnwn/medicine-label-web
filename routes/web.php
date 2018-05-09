@@ -28,6 +28,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::patch('/setting', ['as' => 'setting.index', 'uses' => 'SettingController@update']);
     
     Route::get('doctor/find', ['as' => 'doctor.find', 'uses' => 'AjaxController@findDoctor']);
+    Route::get('doctor/find-and-unit', ['as' => 'doctor.find-and-unit', 'uses' => 'AjaxController@findDoctorAndUnit']);
     Route::get('medicine/find', ['as' => 'medicine.find', 'uses' => 'AjaxController@findMedicine']);
     Route::get('patient/find', ['as' => 'patient.find', 'uses' => 'AjaxController@findPatient']);
     Route::get('medicine/how-to-use', ['as' => 'medicine.how-to-use', 'uses' => 'AjaxController@findMedicineHowToUse']);
@@ -41,4 +42,14 @@ Route::group(['middleware' => 'auth'], function () {
     
     Route::get('/transaction-medicine/pharmacist-data', ['as' => 'transaction-medicine.pharmacist-data', 'uses' => 'TransactionMedicineController@listPharmacistData']);
     Route::get('/transaction-medicine/pharmacist', ['as' => 'transaction-medicine.pharmacist', 'uses' => 'TransactionMedicineController@pharmacist']);
+    
+    Route::get('/transaction-add-medicine/list-index', ['as' => 'transaction-add-medicine.list-index', 'uses' => 'TransactionAddMedicineController@listIndex']);
+    Route::get('/transaction-add-medicine/index', ['as' => 'transaction-add-medicine.index', 'uses' => 'TransactionAddMedicineController@index']);
+    Route::get('/transaction-add-medicine/{id}/edit', ['as' => 'transaction-add-medicine.edit', 'uses' => 'TransactionAddMedicineController@edit']);
+    Route::patch('/transaction-add-medicine/{id}', ['as' => 'transaction-add-medicine.update', 'uses' => 'TransactionAddMedicineController@update']);
+    Route::get('/transaction-add-medicine/{id}/print', ['as' => 'transaction-add-medicine.print', 'uses' => 'TransactionAddMedicineController@printPreview']);
+    Route::post('/transaction-add-medicine/{id}/post-print', ['as' => 'transaction-add-medicine.post-print', 'uses' => 'TransactionAddMedicineController@postPrint']);
+    
+    Route::get('/report/list-index', ['as' => 'report.list-index', 'uses' => 'ReportController@listIndex']);
+    Route::get('/report/index', ['as' => 'report.index', 'uses' => 'ReportController@index']);
 });

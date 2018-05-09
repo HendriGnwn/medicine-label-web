@@ -66,13 +66,25 @@
                             </li>
                             @endif
                             @if (\Auth::user()->getIsRolePharmacist())
-                            <li class="{{ \Request::is('transaction-medicine/doctor') ? 'active' : '' }}">
+                            <li class="{{ \Request::is('transaction-medicine/pharmacist') ? 'active' : '' }}">
                                 <a href="{{ route('transaction-medicine.pharmacist') }}">Daftar Label</a>
+                            </li>
+                            <li class="{{ \Request::is('transaction-add-medicine/index') ? 'active' : '' }}">
+                                <a href="{{ route('transaction-add-medicine.index') }}">Daftar dari SIMRS</a>
+                            </li>
+                            <li class="{{ \Request::is('report/index') ? 'active' : '' }}">
+                                <a href="{{ route('report.index') }}">Laporan</a>
                             </li>
                             @endif
                             @if (\Auth::user()->getIsRoleSuperadmin())
                             <li class="{{ \Request::is('manually') ? 'active' : '' }}">
                                 <a href="{{ route('manually.index') }}">Daftar Label</a>
+                            </li>
+                            <li class="{{ \Request::is('transaction-add-medicine/index') ? 'active' : '' }}">
+                                <a href="{{ route('transaction-add-medicine.index') }}">Daftar dari SIMRS</a>
+                            </li>
+                            <li class="{{ \Request::is('report/index') ? 'active' : '' }}">
+                                <a href="{{ route('report.index') }}">Laporan</a>
                             </li>
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" v-pre>
