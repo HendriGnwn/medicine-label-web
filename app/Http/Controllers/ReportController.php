@@ -18,6 +18,7 @@ class ReportController extends Controller
      */
     public function index(Request $request)
     {
+        \DB::beginTransaction();
         $datePeriod = $request->get('date_period', Carbon::now()->format('m/d/Y'));
         $startDate = Carbon::parse($datePeriod)->toDateString() . ' 00:00:00';
         $endDate = Carbon::parse($datePeriod)->toDateString() . ' 23:59:59';
@@ -27,8 +28,11 @@ class ReportController extends Controller
             ->groupBy('mm_pasien_pendaftaran.id_pendaftaran')
             ->get();
         $medicines = \App\MmTransactionAddMedicine::whereBetween('mm_transaksi_add_obat.created_date', [$startDate, $endDate])
+            ->select('mm_transaksi_add_obat.*', DB::raw('SUM(jml_permintaan) as total_jml_permintaan'))
             ->groupBy('mm_transaksi_add_obat.id_barang')
             ->get();
+        
+        \DB::commit();
         
         return view('report.index', compact('models', 'medicines'));
     }

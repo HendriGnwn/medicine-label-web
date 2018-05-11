@@ -92,6 +92,7 @@ class TransactionAddMedicineController extends Controller
 	 */
 	public function listIndex(Request $request)
     {
+        \DB::beginTransaction();
         \DB::statement(DB::raw('set @rownum=0'));
         $model = \App\MmTransactionAddMedicine::select([
 					DB::raw('@rownum  := @rownum  + 1 AS rownum'), 'mm_transaksi_add_obat.*'
@@ -143,6 +144,7 @@ class TransactionAddMedicineController extends Controller
             $datatables->where('mm_transaksi_add_obat.id_dokter', 'like', "%{$doctor}%");
         }
 		
+        \DB::commit();
         return $datatables->make(true);
     }
 }
