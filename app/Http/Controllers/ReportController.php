@@ -23,16 +23,57 @@ class ReportController extends Controller
         $startDate = Carbon::parse($datePeriod)->toDateString() . ' 00:00:00';
         $endDate = Carbon::parse($datePeriod)->toDateString() . ' 23:59:59';
         
-        $models = \App\MmPatientRegistration::leftJoin('mm_transaksi_add_obat', 'mm_transaksi_add_obat.id_pendaftaran', '=', 'mm_pasien_pendaftaran.id_pendaftaran')
-            ->whereBetween('mm_transaksi_add_obat.created_date', [$startDate, $endDate])
-            ->groupBy('mm_pasien_pendaftaran.id_pendaftaran')
+        // $models = \App\MmPatientRegistration::leftJoin('mm_transaksi_add_obat', 'mm_transaksi_add_obat.id_pendaftaran', '=', 'mm_pasien_pendaftaran.id_pendaftaran')
+        //     ->whereBetween('mm_transaksi_add_obat.created_date', [$startDate, $endDate])
+        //     ->groupBy('mm_pasien_pendaftaran.id_pendaftaran')
+        //     ->get();
+        $medicines = \App\MmTransactionAddMedicine::whereBetween('created_date', [$startDate, $endDate])
+            ->select(['*', DB::raw('SUM(jml_permintaan) as total_jml_permintaan')])
+            ->groupBy('id_barang')
             ->get();
-        $medicines = \App\MmTransactionAddMedicine::whereBetween('mm_transaksi_add_obat.created_date', [$startDate, $endDate])
-            ->select('mm_transaksi_add_obat.*', DB::raw('SUM(jml_permintaan) as total_jml_permintaan'))
-            ->groupBy('mm_transaksi_add_obat.id_barang')
-            ->get();
-        
         \DB::commit();
+
+        $objPHPExcel = new \Maatwebsite\Excel\Classes\PHPExcel();
+
+        $arrayData['head'][]='No';
+        $arrayData['head'][]='Nama Pasien';
+        $arrayData['head'][]='No Resep';
+        foreach ($medicines as $medicine) {
+            $arrayData['head'][] = $medine->mmItem->nama_barang;
+        }
+
+        $header = $arrayData['head'];
+        $lastIndex  = count($arrayData)-1;
+        $headerCount = count($header);
+        
+        $starRow = 'A';
+		$lastColumn = chr($headerCount + ord('A') - 1);
+        
+
+		// Set properties
+		$objPHPExcel->getProperties()->setCreator("Hendri");
+		$objPHPExcel->getProperties()->setLastModifiedBy("Hendri");
+		$objPHPExcel->getProperties()->setTitle("Transaction Report ");
+		$objPHPExcel->getProperties()->setSubject("Transaksi ");
+        $objPHPExcel->getProperties()->setDescription("Transaction Report ");
+
+        $objPHPExcel->getActiveSheet()->fromArray($arrayData, NULL, 'A1');
+
+        /**autosize*/
+		for ($col = $starRow; $col != $lastColumn; $col++) {
+			$objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+		}
+		$objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+
+
+        header('Content-Type: application/vnd.ms-excel');
+		header('Content-Disposition: attachment;filename="hendri.xlsx"');
+		//header('Cache-Control: max-age=0');
+		//header('Pragma: public');
+		//ob_clean();
+
+		$objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save('php://output');
         
         return view('report.index', compact('models', 'medicines'));
     }

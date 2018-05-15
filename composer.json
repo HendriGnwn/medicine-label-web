@@ -10,7 +10,7 @@
         "laravel/framework": "5.5.*",
         "laravel/tinker": "~1.0",
         "laravelcollective/html": "^5.3",
-        "phpoffice/phpexcel": "^1.8",
+        "phpexcel/phpexcel": "dev-master",
         "yajra/laravel-datatables-oracle": "^6.23"
     },
     "require-dev": {
