@@ -50,6 +50,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/transaction-add-medicine/{id}/print', ['as' => 'transaction-add-medicine.print', 'uses' => 'TransactionAddMedicineController@printPreview']);
     Route::post('/transaction-add-medicine/{id}/post-print', ['as' => 'transaction-add-medicine.post-print', 'uses' => 'TransactionAddMedicineController@postPrint']);
     
-    Route::get('/report/list-index', ['as' => 'report.list-index', 'uses' => 'ReportController@listIndex']);
     Route::get('/report/index', ['as' => 'report.index', 'uses' => 'ReportController@index']);
+    Route::get('/report/list', ['as' => 'report.list', 'uses' => 'ReportController@showList']);
+    Route::get('/report/export-to-excel', ['as' => 'report.export-to-excel', 'uses' => 'ReportController@exportToExcel']);
 });
