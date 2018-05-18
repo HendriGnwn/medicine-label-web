@@ -21,6 +21,7 @@ class TransactionMedicineDetail extends BaseModel
      * @var array
      */
     protected $fillable = [
+        'mm_transaction_add_medicine_id',
         'transaction_medicine_id',
         'unit_id',
         'medicine_id',

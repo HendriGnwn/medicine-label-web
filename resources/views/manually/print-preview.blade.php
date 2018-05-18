@@ -52,7 +52,7 @@
     }
 </style>
 
-@foreach ($model->transactionMedicineDetail as $detail)
+@foreach ($model->transactionMedicineDetails as $detail)
 <div class="row-label">
     <div class="header">
         <div style="width:22%;float:left;">

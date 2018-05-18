@@ -79,6 +79,16 @@ class MmPatientRegistration extends BaseModel
         return $this->hasOne('\App\MmPatient', 'no_rekam_medis', 'no_rekam_medis');
     }
     
+    public function mmDoctor()
+    {
+        return $this->hasOne('\App\MmDoctor', 'id_dokter', 'id_dokter');
+    }
+    
+    public function mmUnit()
+    {
+        return $this->hasOne('\App\MmUnit', 'id_unit', 'id_unit');
+    }
+    
     public function transactionAddMedicineAdditional()
     {
         return $this->hasOne('\App\TransactionAddMedicineAdditional', 'patient_registration_id', 'id_pendaftaran');

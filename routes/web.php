@@ -19,6 +19,7 @@ Auth::routes();
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/home', 'HomeController@index')->name('home');
+    Route::get('/ajax-home-data', 'AjaxController@getHomeData')->name('ajax.home-data');
     
     Route::get('/manually/data', ['as' => 'manually.data', 'uses' => 'ManuallyController@listIndex']);
     Route::get('/manually/print-preview/{id}', ['as' => 'manually.print-preview', 'uses' => 'ManuallyController@printPreview']);
@@ -29,9 +30,13 @@ Route::group(['middleware' => 'auth'], function () {
     
     Route::get('doctor/find', ['as' => 'doctor.find', 'uses' => 'AjaxController@findDoctor']);
     Route::get('doctor/find-and-unit', ['as' => 'doctor.find-and-unit', 'uses' => 'AjaxController@findDoctorAndUnit']);
+    
     Route::get('medicine/find', ['as' => 'medicine.find', 'uses' => 'AjaxController@findMedicine']);
-    Route::get('patient/find', ['as' => 'patient.find', 'uses' => 'AjaxController@findPatient']);
     Route::get('medicine/how-to-use', ['as' => 'medicine.how-to-use', 'uses' => 'AjaxController@findMedicineHowToUse']);
+    
+    Route::get('patient/find', ['as' => 'patient.find', 'uses' => 'AjaxController@findPatient']);
+    Route::get('patient/find-registered', ['as' => 'patient.find-registered', 'uses' => 'AjaxController@findPatientRegistered']);
+    Route::post('patient/get-result-find-registered', ['as' => 'patient.get-result-find-registered', 'uses' => 'AjaxController@getResultPatientRegistered']);
     
     Route::get('/user/edit-profile', ['as' => 'user.edit-profile', 'uses' => 'UserController@editProfile']);
     Route::get('/user/data', ['as' => 'user.data', 'uses' => 'UserController@listIndex']);

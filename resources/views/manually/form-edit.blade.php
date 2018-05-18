@@ -9,6 +9,50 @@
 @endif
 <div class="row">
     <div class="col-md-6">
+        <div class="row">
+            {!! Form::hidden('patient_registration_doctor_id', $model->doctor_id) !!}
+            {!! Form::hidden('medical_record_number', $model->medical_record_number) !!}
+            {!! Form::hidden('unit_id', $model->unit_id) !!}
+            <div class="col-md-12">
+                <div aria-required="true" class="form-group required form-group-default {{ $errors->has('registered_id') ? 'has-error' : ''}}">
+                    {!! Form::label('registered_id', 'No Pendaftaran/No Rekam Medis/Nama Pasien*') !!}
+                    {!! Form::select('registered_id', [], null, ['class' => 'form-control', 'required'=>true]) !!}
+                    {!! $errors->first('registered_id', '<p class="help-block">:message</p>') !!}
+                </div>
+            </div>
+            @if (!\Auth::user()->getIsRoleDoctor())
+            <div class="col-md-12" id="visible-doctor">
+                <div aria-required="true" class="form-group required form-group-default {{ $errors->has('doctor_id') ? 'has-error' : ''}}">
+                    {!! Form::label('doctor_id', 'Dokter*') !!}
+                    {!! Form::select('doctor_id', [], null, ['class' => 'form-control', 'required'=>true]) !!}
+                    {!! $errors->first('doctor_id', '<p class="help-block">:message</p>') !!}
+                </div>
+            </div>
+            @else
+                {!! Form::hidden('doctor_id', \Auth::user()->getMmDoctorPrimaryKey()) !!}
+            @endif
+            <div class="col-md-12">
+                <div aria-required="true" class="form-group required form-group-default {{ $errors->has('care_type') ? 'has-error' : ''}}">
+                    {!! Form::label('care_type', 'Tipe Rawatan*') !!}
+                    {!! Form::select('care_type', [''=>'Pilih'] + \App\TransactionMedicine::careTypeLabels(), null, ['class' => 'form-control select2', 'required'=>true]) !!}
+                    {!! $errors->first('care_type', '<p class="help-block">:message</p>') !!}
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div aria-required="true" class="form-group required form-group-default {{ $errors->has('receipt_number') ? 'has-error' : ''}}">
+                    {!! Form::label('receipt_number', 'Nomor Resep') !!}
+                    {!! Form::number('receipt_number', null, ['class' => 'form-control', 'type'=>'number']) !!}
+                    {!! $errors->first('receipt_number', '<p class="help-block">:message</p>') !!}
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div aria-required="true" class="form-group required form-group-default {{ $errors->has('medicine_date') ? 'has-error' : ''}}">
+                    {!! Form::label('medicine_date', 'Tanggal*') !!}
+                    {!! Form::text('medicine_date', null, ['class' => 'form-control datepicker', 'required'=>true]) !!}
+                    {!! $errors->first('medicine_date', '<p class="help-block">:message</p>') !!}
+                </div>
+            </div>
+        </div>
         <div aria-required="true" class="form-group required form-group-default {{ $errors->has('receipt_number') ? 'has-error' : ''}}">
             {!! Form::label('receipt_number', 'Nomor Resep') !!}
             {!! Form::number('receipt_number', null, ['class' => 'form-control', 'type'=>'number']) !!}
@@ -16,36 +60,36 @@
         </div>
     </div>
     <div class="col-md-6">
-        <div aria-required="true" class="form-group required form-group-default {{ $errors->has('medicine_date') ? 'has-error' : ''}}">
-            {!! Form::label('medicine_date', 'Tanggal*') !!}
-            {!! Form::text('medicine_date', null, ['class' => 'form-control datepicker', 'required'=>true]) !!}
-            {!! $errors->first('medicine_date', '<p class="help-block">:message</p>') !!}
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div aria-required="true" class="form-group required form-group-default {{ $errors->has('medical_record_number') ? 'has-error' : ''}}">
-            {!! Form::label('medical_record_number', 'Nomor Rekam Medis*') !!}
-            {!! Form::select('medical_record_number', [], null, ['class' => 'form-control', 'required'=>true]) !!}
-            {!! $errors->first('medical_record_number', '<p class="help-block">:message</p>') !!}
-        </div>
-    </div>
-    @if (!\Auth::user()->getIsRoleDoctor())
-    <div class="col-md-6">
-        <div aria-required="true" class="form-group required form-group-default {{ $errors->has('doctor_id') ? 'has-error' : ''}}">
-            {!! Form::label('doctor_id', 'Dokter*') !!}
-            {!! Form::select('doctor_id', [], null, ['class' => 'form-control', 'required'=>true]) !!}
-            {!! $errors->first('doctor_id', '<p class="help-block">:message</p>') !!}
-        </div>
-    </div>
-    @else
-        {!! Form::hidden('doctor_id', \Auth::user()->getMmDoctorPrimaryKey()) !!}
-    @endif
-    <div class="col-md-6">
-        <div aria-required="true" class="form-group required form-group-default {{ $errors->has('care_type') ? 'has-error' : ''}}">
-            {!! Form::label('care_type', 'Tipe Rawatan*') !!}
-            {!! Form::select('care_type', [''=>'Pilih'] + \App\TransactionMedicine::careTypeLabels(), null, ['class' => 'form-control select2', 'required'=>true]) !!}
-            {!! $errors->first('care_type', '<p class="help-block">:message</p>') !!}
-        </div>
+        <table class="table table-condensed">
+            <tr>
+                <th colspan="3">Detail</td>
+            </tr>
+            <tr>
+                <td style="width:30%">No Pendaftaran</td>
+                <td style="width:5%">:</td>
+                <td style="width:75%" id="result-registered-number">{{ $model->mmPatientRegistration ? $model->mmPatientRegistration->no_pendaftaran : $model->registrered_id }}</td>
+            </tr>
+            <tr>
+                <td>Pasien</td>
+                <td>:</td>
+                <td id="result-patient">{{ $model->mmPatient->nama }}</td>
+            </tr>
+            <tr>
+                <td>Tgl Daftar</td>
+                <td>:</td>
+                <td id="result-registered-at">{{ $model->mmPatientRegistration ? $model->mmPatientRegistration->tanggal_pendaftaran : null }}</td>
+            </tr>
+            <tr>
+                <td>Dokter</td>
+                <td>:</td>
+                <td id="result-doctor">{{ $model->mmDoctor ? $model->mmDoctor->nama_dokter : null }}</td>
+            </tr>
+            <tr>
+                <td>Unit</td>
+                <td>:</td>
+                <td id="result-unit">{{ $model->mmUnit ? $model->mmUnit->nama_unit : null }}</td>
+            </tr>
+        </table>
     </div>
 </div>
         
@@ -59,7 +103,7 @@
     @php
     $no = 0;
     @endphp
-    @foreach ($model->transactionMedicineDetail as $detail)
+    @foreach ($model->transactionMedicineDetails as $detail)
         <tr id="row-{{ $no }}">
             <td>
                 <input type="hidden" name="count[{{ $no }}]" value="{{ $no }}" />
@@ -235,12 +279,12 @@
         }
     });
     
-    $('#medical_record_number').select2({
-        placeholder: "No Rekam Medis - Nama Pasien",
-        allowClear: true,
+    $('#registered_id').select2({
+        placeholder: "No Pendaftaran - No Rekam Medis - Nama Pasien",
         minimumInputLength: 2,
+        allowClear: true,
         ajax: {
-            url: "{{ route('patient.find') }}",
+            url: "{{ route('patient.find-registered') }}",
             dataType: 'json',
             data: function (params) {
                 return {
@@ -259,6 +303,61 @@
             callback({id: {{$model->medical_record_number}}, text: "{{ $model->medical_record_number . ' - ' . $model->mmPatient->nama }}" });
         }
     });
+    
+    $('#registered_id').change(function() {
+        console.log($(this).val());
+        $.ajax({
+            type: 'POST',
+            url: "{{ route('patient.get-result-find-registered') }}",
+            data: {
+                registered_id: $(this).val(),
+                "_token": "{{ csrf_token() }}",
+            },
+            success: function(result) {
+                console.log(result);
+                if (result.status == 0) {
+                    alert(result.message);
+                    $('#result-registered-number').html("");
+                    $('#result-patient').html("");
+                    $('#result-registered-at').html("");
+                    $('#result-doctor').html("");
+                    $('#result-unit').html("");
+                    $("input[name='medical_record_number']").val("");
+                    $('#care_type').val("").trigger('change');
+                    return false;
+                }
+                var data = result.data;
+                
+                if (data.doctor_id != 0) {
+                   disableEditDoctor();
+                   $('#result-doctor').html(data.doctor + ' <button type="button" onclick="availableEditDoctor()" class="btn btn-xs btn-primary">Edit</button> <button type="button" onclick="disableEditDoctor()" class="btn btn-xs btn-danger">Cancel Edit</button> ');
+                   $("input[name='patient_registration_doctor_id']").val(data.doctor_id);
+                } else {
+                    $('#result-doctor').html(data.doctor);
+                }
+                $('#care_type').val(data.care_type_id).trigger('change');
+                
+                $("input[name='medical_record_number']").val(data.medical_record_number);
+                $("input[name='unit_id']").val(data.unit_id);
+                
+                $('#medicine_date').val(data.registered_at);
+                $('#result-registered-number').html(data.registered_number);
+                $('#result-patient').html(data.patient);
+                $('#result-registered-at').html(data.registered_at);
+                $('#result-unit').html(data.unit);
+            }
+        })
+    });
+    
+    function availableEditDoctor() {
+        $('#visible-doctor').show();
+        $("#doctor_id").attr("required", 'required');
+    }
+    
+    function disableEditDoctor() {
+        $('#visible-doctor').hide();
+        $("#doctor_id").removeAttr("required");
+    }
 
     $('.datepicker').datepicker({
         autoclose: true,

@@ -5,24 +5,25 @@
 <div class="row">
     <div class="col-md-6">
         <div class="panel panel-default">
-            <div class="panel-heading">Grafik 10 Obat teratas</div>
+            <div class="panel-heading">Grafik 10 Obat teratas 1 Bulan Terakhir</div>
 
             <div class="panel-body">
                 <table class="table table-condensed table-hover">
-                    <tr>
-                        <th>Obat</th>
-                        <th>Jumlah</th>
-                    </tr>
-                    @foreach ($topFiveMedicines as $medicine)
-                    <tr>
-                        <td>{{ $medicine->mmItem ? $medicine->mmItem->nama_barang : $medicine->name }}</td>
-                        <td>{{ $medicine->quantity }}</td>
-                    </tr>
-                    @endforeach
+                    <thead>
+                        <tr>
+                            <th>Obat</th>
+                            <th>Jumlah</th>
+                        </tr>
+                    </thead>
+                    <tbody id="top-five-medicines">
+                        <tr>
+                            <td colspan="2">Please wait...</td>
+                        </tr>
+                    </tbody>
                 </table>
                 <div class="text-center">
                     <label class="label label-info">
-                        Semua waktu
+                        {{ (new \Carbon\Carbon('first day of last month'))->format('d M Y')  }} - {{ (new \Carbon\Carbon('last day of last month'))->format('d M Y')  }}
                     </label>
                 </div>
             </div>
@@ -33,7 +34,7 @@
             <div class="panel-heading">Jumlah Pasien Hari ini</div>
 
             <div class="panel-body text-center">
-                <h1>{{ $countPatientNow }}</h1>
+                <h1 id="count-patient-now">Please wait...</h1>
                 <label class="label label-info">
                     {{ \Carbon\Carbon::now()->format('d M Y') }}
                 </label>
@@ -47,7 +48,7 @@
             <div class="panel-heading">Jumlah Pasien 1 Bulan Terakhir</div>
 
             <div class="panel-body text-center">
-                <h1>{{ $countPatientPreviousMonth }}</h1>
+                <h1 id="count-patient-previous-month">Please wait...</h1>
                 <label class="label label-info">
                     {{ (new \Carbon\Carbon('first day of last month'))->format('d M Y')  }} - {{ (new \Carbon\Carbon('last day of last month'))->format('d M Y')  }}
                 </label>
@@ -59,3 +60,40 @@
 </div>
 
 @endsection
+
+@push('script')
+<script>
+    window.onload = function () {
+        $.ajax({
+            url: "{{ route('ajax.home-data') }}",
+            type: 'GET',
+            success: function (result) {
+                console.log(result);
+                if (result.status == 0) {
+                    console.log('Tidak Ada data');
+                    return false;
+                }
+
+                var data = result.data;
+
+                $("#count-patient-now").html(data.countPatientNow);
+                $("#count-patient-previous-month").html(data.countPatientPreviousMonth);
+                
+                var topFiveMedicines = data.topFiveMedicines;
+                $("#top-five-medicines").html("");
+                if (topFiveMedicines.length > 0) {
+                    for(var i=0; i<topFiveMedicines.length; i++) {
+                        var itemName = '';
+                        if (topFiveMedicines[i].mm_item != null) {
+                            itemName = topFiveMedicines[i].mm_item.nama_barang;
+                        }
+                        $("#top-five-medicines").append("<tr><td>"+ itemName +"</td><td>"+ topFiveMedicines[i].jml_permintaan +"</td></tr>");
+                    }
+                } else {
+                    $("#top-five-medicines").append("<tr><td colspan='2'>Tidak ada data</td></tr>");
+                }
+            }
+        });
+    }
+</script>
+@endpush

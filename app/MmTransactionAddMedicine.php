@@ -133,11 +133,16 @@ class MmTransactionAddMedicine extends BaseModel
         return $this->mmItem->id_barang_satuan_kecil;
     }
     
+    public function getArrayAdditionalData()
+    {
+        return json_decode($this->additional_data);
+    }
+    
     public function getHowToUse()
     {
         $model = TransactionAddMedicineAdditionalDetail::where('transaction_medicine_id', $this->id_transaksi_obat)->first();
         if (!$model) {
-            return null;
+            return isset($this->getArrayAdditionalData()->aturan) ? $this->getArrayAdditionalData()->aturan : null;
         }
         
         return $model->how_to_use;

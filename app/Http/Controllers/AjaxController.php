@@ -2,8 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use DB;
-use Illuminate\Http\RedirectResponse;
+use App\MmDoctor;
+use App\MmHowToUse;
+use App\MmItem;
+use App\MmPatient;
+use App\MmPatientRegistration;
+use App\MmTransactionAddMedicine;
+use App\TransactionMedicine;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class AjaxController extends Controller
@@ -19,7 +25,7 @@ class AjaxController extends Controller
             return response()->json([]);
         }
         
-        $doctors = \App\MmDoctor::where('nama_dokter', 'like', "%$term%")
+        $doctors = MmDoctor::where('nama_dokter', 'like', "%$term%")
                 ->orWhere('nip', 'like', "%$term%")
                 ->limit(20)
                 ->groupBy('nip')
@@ -46,7 +52,7 @@ class AjaxController extends Controller
             return response()->json([]);
         }
         
-        $doctors = \App\MmDoctor::where('nama_dokter', 'like', "%$term%")
+        $doctors = MmDoctor::where('nama_dokter', 'like', "%$term%")
                 ->orWhere('id_unit', 'like', "%$term%")
                 ->limit(20)
                 ->groupBy('id_dokter')
@@ -73,7 +79,7 @@ class AjaxController extends Controller
             return response()->json([]);
         }
         
-        $items = \App\MmItem::where('nama_barang', 'like', "%$term%")
+        $items = MmItem::where('nama_barang', 'like', "%$term%")
                 ->orWhere('kode_barang', 'like', "%$term%")
                 ->where('id_barang_group', "1")
                 ->where('id_barang_group', 1) //obat
@@ -110,7 +116,7 @@ class AjaxController extends Controller
             return response()->json([]);
         }
         
-        $patients = \App\MmPatient::where('nama', 'like', "%$term%")
+        $patients = MmPatient::where('nama', 'like', "%$term%")
                 ->orWhere('no_rekam_medis', 'like', "%$term%")
                 ->limit(20)
                 ->get();
@@ -129,6 +135,67 @@ class AjaxController extends Controller
      * @param Request $request
      * @return type
      */
+	public function findPatientRegistered(Request $request)
+    {
+        $term = trim($request->q);
+        if (empty($term)) {
+            return response()->json([]);
+        }
+        
+        $patients = MmPatientRegistration::whereHas('mmPatient', function ($query) use ($term) {
+                    $query->where('nama', 'like', "%$term%");
+                })
+                ->orWhere('no_pendaftaran', 'like', "%$term%")
+                ->orWhere('no_rekam_medis', 'like', "%$term%")
+                ->whereRaw('(id_dokter != "0" OR id_dokter IS NOT NULL)')
+                ->limit(20)
+                ->get();
+        $results = [];
+        foreach ($patients as $patient) {
+            $results[] = [
+                'id' => $patient->id_pendaftaran,
+                'text' => $patient->no_pendaftaran . ' - ' . $patient->no_rekam_medis . ' - ' . $patient->mmPatient->nama,
+            ];
+        }
+        
+        return response()->json($results);
+    }
+    
+    public function getResultPatientRegistered(Request $request)
+    {
+        $patientRegistered = MmPatientRegistration::find($request->registered_id);
+        if (!$patientRegistered) {
+            return response()->json([
+                'status' => 0,
+                'data' => null,
+                'message' => 'Maaf, data tidak ditemukan',
+            ]);
+        }
+        
+        $careTypeId = ($patientRegistered->kelas_perawatan == 0) ? TransactionMedicine::CARE_TYPE_OUTPATIENT : TransactionMedicine::CARE_TYPE_INPATIENT;
+        
+        return response()->json([
+            'status' => 1,
+            'data' => [
+                'registered_number' => $patientRegistered->no_pendaftaran,
+                'registered_at' => $patientRegistered->tanggal_pendaftaran,
+                'patient' => $patientRegistered->no_rekam_medis . ' - ' . $patientRegistered->mmPatient ? $patientRegistered->mmPatient->nama : 'tidak diketahui',
+                'doctor' => $patientRegistered->mmDoctor ? $patientRegistered->mmDoctor->nama_dokter : 'belum di set',
+                'unit' => $patientRegistered->mmUnit ? $patientRegistered->mmUnit->nama_unit : "tidak diset",
+                'medical_record_number' => $patientRegistered->no_rekam_medis,
+                'care_type_id' => $careTypeId,
+                'doctor_id' => $patientRegistered->id_dokter,
+                'unit_id' => $patientRegistered->id_unit,
+            ]
+        ]);
+    }
+    
+    
+    
+    /**
+     * @param Request $request
+     * @return type
+     */
 	public function findMedicineHowToUse(Request $request)
     {
         $term = trim($request->term);
@@ -137,11 +204,11 @@ class AjaxController extends Controller
         }
         
         $medicineId = trim($request->medicine_id, 0);
-        $item = \App\MmItem::where('id_barang', $medicineId)->first();
+        $item = MmItem::where('id_barang', $medicineId)->first();
         if (!$item) {
-            $howToUses = \App\MmHowToUse::where('nama', 'like', "%$term%")->get();
+            $howToUses = MmHowToUse::where('nama', 'like', "%$term%")->get();
         } else {
-            $howToUses = \App\MmHowToUse::where('nama', 'like', "%$term%")
+            $howToUses = MmHowToUse::where('nama', 'like', "%$term%")
                     ->where('id_barang_satuan_kecil', $item->id_barang_satuan_kecil)
                     ->get();
         }
@@ -155,5 +222,34 @@ class AjaxController extends Controller
         }
         
         return response()->json($results);
+    }
+    
+    public function getHomeData()
+    {
+        $start = (new Carbon('first day of last month'))->toDateString();
+        $end = (new Carbon('last day of last month'))->toDateString();
+        
+        $topFiveMedicines = MmTransactionAddMedicine::selectRaw('*, SUM(jml_permintaan) as jml_permintaan')
+                ->whereRaw("DATE_FORMAT(created_date, '%Y-%m-%d') BETWEEN '{$start}' AND '{$end}'")
+                ->with('mmItem')
+                ->groupBy('id_barang')
+                ->orderByRaw('sum(jml_permintaan) desc')
+                ->limit(10)
+                ->get();
+        
+        $countPatientNow = MmPatientRegistration::whereRaw("DATE_FORMAT(tanggal_pendaftaran, '%Y-%m-%d') = '". Carbon::now()->toDateString() ."'")
+                ->count();
+        
+        $countPatientPreviousMonth = MmPatientRegistration::whereRaw("DATE_FORMAT(tanggal_pendaftaran, '%Y-%m-%d') BETWEEN '{$start}' AND '{$end}'")
+                ->count();
+        
+        return response()->json([
+            'status' => 1,
+            'data' => [
+                'topFiveMedicines' => $topFiveMedicines->toArray(),
+                'countPatientNow' => $countPatientNow,
+                'countPatientPreviousMonth' => $countPatientPreviousMonth,
+            ]
+        ]);
     }
 }

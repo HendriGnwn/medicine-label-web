@@ -137,6 +137,12 @@
                     <strong>Fail!</strong> {{ session('error') }}
                 </div>
             @endif
+            @if (session('info'))
+                <div class="alert alert-info alert-dismissible">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a
+                    <strong>Info!</strong> {{ session('info') }}
+                </div>
+            @endif
             @yield('content')
         </div>
         

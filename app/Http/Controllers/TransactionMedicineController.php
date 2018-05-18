@@ -37,6 +37,9 @@ class TransactionMedicineController extends Controller
                 ->where('transaction_medicine.created_by', \Auth::user()->id);
 
          $datatables = app('datatables')->of($model)
+            ->editColumn('registered_id', function ($model) {
+                return $model->mmPatientRegistration ? $model->mmPatientRegistration->no_pendaftaran : $model->registered_id;
+            })
             ->editColumn('medical_record_number', function ($model) {
                 return $model->medical_record_number . ' - ' . $model->mmPatient->nama;
             })
@@ -101,6 +104,9 @@ class TransactionMedicineController extends Controller
                 ->whereIn('transaction_medicine.created_by', array_merge(User::getArrayListDoctors(), [\Auth::user()->id]));
 
          $datatables = app('datatables')->of($model)
+            ->editColumn('registered_id', function ($model) {
+                return $model->mmPatientRegistration ? $model->mmPatientRegistration->no_pendaftaran : $model->registered_id;
+            })
             ->editColumn('medical_record_number', function ($model) {
                 return $model->medical_record_number . ' - ' . $model->mmPatient->nama;
             })

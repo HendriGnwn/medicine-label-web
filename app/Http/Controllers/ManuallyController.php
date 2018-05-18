@@ -15,10 +15,11 @@ use Illuminate\View\View;
 class ManuallyController extends Controller
 {
 	protected $rules = [
-		'doctor_id' => 'required',
-		'medical_record_number' => 'required',
+		'registered_id' => 'required',
         'medicine_date' => 'required',
 		'care_type' => 'required',
+        'medical_record_number' => 'nullable',
+        'doctor_id' => 'nullable',
 		'receipt_number' => 'nullable',
 	];
 
@@ -58,6 +59,7 @@ class ManuallyController extends Controller
      */
     public function store(Request $request)
     {
+        $user = \Auth::user();
         $rules = [];
         if (isset($request->count)) {
             foreach ($request->count as $key => $medicine) {
@@ -65,11 +67,19 @@ class ManuallyController extends Controller
             }
         }
         
-        $user = \Auth::user();
+        $check = TransactionMedicine::where('registered_id', $request->registered_id)->first();
+        if ($check) {
+            \Session::flash('info', 'Data pasien ini sudah terdaftar, silahkan lihat nomor pendaftaran ' . $check->mmPatientRegistration->no_pendaftaran);
+            goto redirect;
+        }
+        
         $this->validate($request, $this->rules + $rules);
         
         $model = new TransactionMedicine();
         $model->fill($request->all());
+        if ($request->doctor_id == null || $request->doctor_id == 0) {
+            $model->doctor_id = $request->patient_registration_doctor_id;
+        }
         $model->created_by = $user->id;
         $model->save();
         if (isset($request->count)) {
@@ -84,8 +94,11 @@ class ManuallyController extends Controller
             }
         }
         
+        $model->storeToBigDatabaseSimrs();
+        
         \Session::flash('success', 'Success');
         
+        redirect:
         if ($user->getIsRolePharmacist()) {
             $redirect = route('transaction-medicine.pharmacist');
         } else if ($user->getIsRoleDoctor()) {
@@ -141,6 +154,9 @@ class ManuallyController extends Controller
         $user = \Auth::user();
 		$model = TransactionMedicine::findOrFail($id);
 		$model->fill($request->all());
+        if ($request->doctor_id == null || $request->doctor_id == 0) {
+            $model->doctor_id = $request->patient_registration_doctor_id;
+        }
         $model->updated_by = $user->id;
         $model->save();
         if (isset($request->count)) {
@@ -158,6 +174,8 @@ class ManuallyController extends Controller
                 $detail->save();
             }
         }
+        
+        $model->updateToBigDatabaseSimrs();
 		
         Session::flash('success', 'Concept updated!');
 
@@ -206,6 +224,9 @@ class ManuallyController extends Controller
 				]);
 
          $datatables = app('datatables')->of($model)
+            ->editColumn('registered_id', function ($model) {
+                return $model->mmPatientRegistration ? $model->mmPatientRegistration->no_pendaftaran : $model->registered_id;
+            })
             ->editColumn('doctor_id', function ($model) {
                 return $model->mmDoctor->nama_dokter;
             })

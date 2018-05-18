@@ -39,7 +39,9 @@ $("#filter-search-form").submit(function() {
     return false;
 });
     
-$('.date').datepicker();
+$('.date').datepicker({
+    todayHighlight: true
+});
 $('.date-range').daterangepicker({
     autoUpdateInput: false
 });
