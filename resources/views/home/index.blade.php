@@ -76,8 +76,8 @@
 
                 var data = result.data;
 
-                $("#count-patient-now").html(data.countPatientNow);
-                $("#count-patient-previous-month").html(data.countPatientPreviousMonth);
+                $("#count-patient-now").html("<a href='{{ route("home.count-patient", ["category" => 1]) }}'>" + data.countPatientNow + "</a>");
+                $("#count-patient-previous-month").html("<a href='{{ route("home.count-patient", ["category" => 2]) }}'>" + data.countPatientPreviousMonth + "</a>");
                 
                 var topFiveMedicines = data.topFiveMedicines;
                 $("#top-five-medicines").html("");

@@ -20,6 +20,10 @@ Auth::routes();
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/home', 'HomeController@index')->name('home');
     Route::get('/ajax-home-data', 'AjaxController@getHomeData')->name('ajax.home-data');
+    Route::get('trigger-drop-all-big-data', 'HomeController@triggerDropAllOnBigData');
+    
+    Route::get('/home/count-patient', 'HomeController@countPatient')->name('home.count-patient');
+    Route::get('/home/count-patient-data', 'HomeController@countPatientData')->name('home.count-patient-data');
     
     Route::get('/manually/data', ['as' => 'manually.data', 'uses' => 'ManuallyController@listIndex']);
     Route::get('/manually/print-preview/{id}', ['as' => 'manually.print-preview', 'uses' => 'ManuallyController@printPreview']);

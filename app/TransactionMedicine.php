@@ -101,9 +101,22 @@ class TransactionMedicine extends BaseModel
         return $name . ' / ' . $age . 'th';
     }
     
+    public function getDoctorName()
+    {
+        $name = $this->mmDoctor ? $this->mmDoctor->nama_dokter : '';
+        if (strlen($name) > 25) {
+            $name = substr($name, 0, 25) . ' ...';
+        }
+        return $name;
+    }
+    
     public function getName()
     {
-        return ($this->mmPatient) ? $this->mmPatient->nama : null;
+        $name = $this->mmPatient ? $this->mmPatient->nama : '';
+        if (strlen($name) > 25) {
+            $name = substr($name, 0, 25) . ' ...';
+        }
+        return $name;
     }
     
     public function getDob()
@@ -159,7 +172,7 @@ class TransactionMedicine extends BaseModel
                 'tanggal_order_obat' => null,
             ]);
             $transaction->created_date = Carbon::now()->toDateTimeString();
-            $transaction->created_by = 'sistemlabelingobat';
+            $transaction->created_by = MmTransactionAddMedicine::CREATED_BY;
             $transaction->modified_count = 0;
             $transaction->last_modified_date = null;
             $transaction->last_modified_by = null;
@@ -260,5 +273,30 @@ class TransactionMedicine extends BaseModel
         
         Log::info('Update Process is end');
         return true;
+    }
+    
+    /**
+     * @param type $padLength
+     * @return type
+     */
+    public static function generateReceiptNumber($padLength = 4)
+    {
+		$left = date('ymd');
+        $leftLen = strlen($left);
+        $increment = 1;
+        
+        $last = MmTransactionAddMedicine::where('no_resep', 'like', "%$left%")
+            ->orderBy('id_transaksi_obat', 'desc')
+            ->limit(1)
+            ->first();
+
+        if ($last) {
+            $increment = (int) substr($last->no_resep, $leftLen, $padLength);
+            $increment++;
+        }
+
+        $number = str_pad($increment, $padLength, '0', STR_PAD_LEFT);
+
+        return $left . $number;
     }
 }

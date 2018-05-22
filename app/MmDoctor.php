@@ -38,4 +38,9 @@ class MmDoctor extends BaseModel
         'deleted_date',
         'deleted_by',
     ];
+    
+    public function getArrayDoctorsId()
+    {
+        return MmDoctor::where('nama_dokter', $this->nama_dokter)->pluck('id_dokter');
+    }
 }

@@ -28,7 +28,7 @@ class AjaxController extends Controller
         $doctors = MmDoctor::where('nama_dokter', 'like', "%$term%")
                 ->orWhere('nip', 'like', "%$term%")
                 ->limit(20)
-                ->groupBy('nip')
+                ->groupBy('nama_dokter')
                 ->get();
         $results = [];
         foreach ($doctors as $doctor) {
@@ -185,7 +185,7 @@ class AjaxController extends Controller
                 'medical_record_number' => $patientRegistered->no_rekam_medis,
                 'care_type_id' => $careTypeId,
                 'doctor_id' => $patientRegistered->id_dokter,
-                'unit_id' => $patientRegistered->id_unit,
+                'unit_id' => $patientRegistered->id_unit,                                                               
             ]
         ]);
     }

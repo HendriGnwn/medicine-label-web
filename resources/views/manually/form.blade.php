@@ -41,7 +41,7 @@
             <div class="col-md-12">
                 <div aria-required="true" class="form-group required form-group-default {{ $errors->has('receipt_number') ? 'has-error' : ''}}">
                     {!! Form::label('receipt_number', 'Nomor Resep') !!}
-                    {!! Form::number('receipt_number', null, ['class' => 'form-control', 'type'=>'number']) !!}
+                    {!! Form::number('receipt_number', \App\TransactionMedicine::generateReceiptNumber(), ['class' => 'form-control', 'type'=>'number', 'readonly'=>true]) !!}
                     {!! $errors->first('receipt_number', '<p class="help-block">:message</p>') !!}
                 </div>
             </div>

@@ -2,8 +2,12 @@
 
 namespace App;
 
+use Carbon\Carbon;
+
 class MmTransactionAddMedicine extends BaseModel
 {
+    const CREATED_BY = 'sistemlabelingobat';
+    
     protected $connection = 'mysqlMm';
     
     /**
@@ -59,6 +63,11 @@ class MmTransactionAddMedicine extends BaseModel
         return $this->hasOne('\App\MmItem', 'id_barang', 'id_barang');
     }
     
+    public function mmUnit()
+    {
+        return $this->hasOne('\App\MmUnit', 'id_unit', 'id_unit');
+    }
+    
     public function mmPatientRegistration()
     {
         return $this->hasOne('\App\MmPatientRegistration', 'id_pendaftaran', 'id_pendaftaran');
@@ -88,27 +97,40 @@ class MmTransactionAddMedicine extends BaseModel
         return $list[$this->tipe_rawatan] ? $list[$this->tipe_rawatan] : $this->tipe_rawatan;
     }
     
+    public function getDoctorName()
+    {
+        $name = $this->mmDoctor ? $this->mmDoctor->nama_dokter : '';
+        if (strlen($name) > 25) {
+            $name = substr($name, 0, 25) . ' ...';
+        }
+        return $name;
+    }
+    
     public function getFormattedMedicineDate()
     {
-        return \Carbon\Carbon::parse($this->created_date)->format('d/m/y');
+        return Carbon::parse($this->created_date)->format('d/m/y');
     }
     
     public function getNameAndAge()
     {
         $name = ($this->mmPatient) ? $this->mmPatient->nama : null;
-        $age = ($this->mmPatient->tanggal_lahir) ? \Carbon\Carbon::parse($this->mmPatient->tanggal_lahir)->age : null;
+        $age = ($this->mmPatient->tanggal_lahir) ? Carbon::parse($this->mmPatient->tanggal_lahir)->age : null;
         
         return $name . ' / ' . $age . 'th';
     }
     
     public function getName()
     {
-        return ($this->mmPatient) ? $this->mmPatient->nama : null;
+        $name = $this->mmPatient ? $this->mmPatient->nama : '';
+        if (strlen($name) > 25) {
+            $name = substr($name, 0, 25) . ' ...';
+        }
+        return $name;
     }
     
     public function getDob()
     {
-        return $age = ($this->mmPatient->tanggal_lahir) ? \Carbon\Carbon::parse($this->mmPatient->tanggal_lahir)->format('d/m/Y') : null;
+        return $age = ($this->mmPatient->tanggal_lahir) ? Carbon::parse($this->mmPatient->tanggal_lahir)->format('d/m/Y') : null;
     }
     
     public function getMedicineNameAndExp()
@@ -156,5 +178,12 @@ class MmTransactionAddMedicine extends BaseModel
         }
         
         return $model->receipt_number;
+    }
+    
+    public static function deleteAllRecordOnBigData()
+    {
+        MmTransactionAddMedicine::where('created_by', MmTransactionAddMedicine::CREATED_BY)->delete();
+        
+        return true;
     }
 }

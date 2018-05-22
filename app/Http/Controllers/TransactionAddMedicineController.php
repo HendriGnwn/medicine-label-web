@@ -112,7 +112,7 @@ class TransactionAddMedicineController extends Controller
                 return $model->getTipeRawatanLabel();
             })
             ->editColumn('id_dokter', function ($model) {
-                return $model->id_unit . ' - ' . ($model->mmDoctor ? $model->mmDoctor->nama_dokter : null);
+                return ($model->mmUnit ? $model->mmUnit->nama_unit : $model->id_unit) . ' - ' . ($model->mmDoctor ? $model->mmDoctor->nama_dokter : null);
             })
             ->addColumn('print_count', function ($model) {
                 $transactionAddMedicineAdditional = \App\TransactionAddMedicineAdditional::where('patient_registration_id', $model->mmPatientRegistration->id_pendaftaran)->first();
@@ -141,7 +141,10 @@ class TransactionAddMedicineController extends Controller
         }
         
         if ($doctor = $datatables->request->get('doctor_id')) {
-            $datatables->where('mm_transaksi_add_obat.id_dokter', 'like', "%{$doctor}%");
+            $doctor = \App\MmDoctor::find($doctor);
+            if ($doctor) {
+                $datatables->whereIn('mm_transaksi_add_obat.id_dokter', $doctor->getArrayDoctorsId());
+            }
         }
 		
         \DB::commit();

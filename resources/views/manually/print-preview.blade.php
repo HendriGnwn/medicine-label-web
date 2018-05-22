@@ -71,7 +71,7 @@
         </div>
     </div>
     <div class="content">
-        <p>Dokter&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{ $model->mmDoctor->nama_dokter }}</p>
+        <p>Dokter&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{ $model->getDoctorName() }}</p>
         <div style="width:50%;float:left;">
             <p>No Resep&nbsp;&nbsp;&nbsp;&nbsp;: {{ $model->receipt_number }}</p>
         </div>

@@ -12,10 +12,11 @@
                     <tr>
                         <th style='width:5%'>*</th>
                         <th style='width:12%'>No Pendaftaran</th>
-                        <th style='width:25%'>No Medis Medis - Pasien</th>
+                        <th style='width:10%'>No Resep</th>
+                        <th style='width:25%'>No Rekam Medis - Pasien</th>
                         <th style='width:25%'>Unit - Dokter</th>
-                        <th style='width:10%'>Tipe Rawatan</th>
                         <th style='width:5%'>Print</th>
+                        <th style='width:10%'>Tipe Rawatan</th>
                         <th style='width:12%'>Dibuat</th>
                         <th style='width:8%'>Dibuat Oleh</th>
                         <th style='width:12%'></th>
@@ -70,7 +71,7 @@ oTable = $('#medicine-table').DataTable({
     processing: true,
     serverSide: true,
     dom: 'lBfrtip',
-    order:  [[ 6, "desc" ]],
+    order:  [[ 7, "desc" ]],
     pagingType: 'full_numbers',
     buttons: [
         {
@@ -131,10 +132,11 @@ oTable = $('#medicine-table').DataTable({
     columns: [
 		{data: 'DT_Row_Index', orderable: false, searchable: false},
 		{ data: "id_pendaftaran", name: "id_pendaftaran" },
+        { data: "no_resep", name: "no_resep" },
 		{ data: "no_rekam_medis", name: "no_rekam_medis" },
         { data: "id_dokter", name: "id_dokter" },
-		{ data: "tipe_rawatan", name: "tipe_rawatan" },
 		{ data: "print_count", name: "print_count", searchable: false, orderable: false },
+        { data: "tipe_rawatan", name: "tipe_rawatan", visible: false },
 		{ data: "created_date", name: "created_date" },
 		{ data: "created_by", name: "created_by", visible: false },
         { data: "action", name: "action", searchable: false, orderable: false },
@@ -171,12 +173,12 @@ $('.date-range').on('cancel.daterangepicker', function(ev, picker) {
     $(this).val('');
 });
 $('#doctor_id').select2({
-    placeholder: "Unit - Nama Dokter",
+    placeholder: "NIP - Nama Dokter",
     allowClear: true,
     width: 'resolve',
     minimumInputLength: 2,
     ajax: {
-        url: "{{ route('doctor.find-and-unit') }}",
+        url: "{{ route('doctor.find') }}",
         dataType: 'json',
         data: function (params) {
             return {
