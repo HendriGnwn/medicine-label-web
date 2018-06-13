@@ -106,7 +106,7 @@
 window.onbeforeprint = function() {
     console.log('This will be called before the user prints.');
     $.ajax({
-        url: '{{route("transaction-add-medicine.post-print", ["id"=>$model->no_pendaftaran])}}' + '?' + $.param({"_token" : '{{ csrf_token() }}' }),
+        url: '{{route("transaction-add-medicine.post-print", ["id"=>$model->no_pendaftaran, "receipt_number" => $model->mmTransactionAddMedicine->no_resep])}}' + '?' + $.param({"_token" : '{{ csrf_token() }}' }),
         type: 'POST',
         complete: function(data) {
         }

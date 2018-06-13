@@ -45,7 +45,7 @@ class ReportController extends Controller
         
         $models = \App\MmPatientRegistration::leftJoin('mm_transaksi_add_obat', 'mm_transaksi_add_obat.id_pendaftaran', '=', 'mm_pasien_pendaftaran.id_pendaftaran')
              ->whereBetween('mm_transaksi_add_obat.created_date', [$startDate, $endDate])
-             ->groupBy('mm_pasien_pendaftaran.id_pendaftaran')
+             ->groupBy('mm_transaksi_add_obat.id_pendaftaran', 'mm_transaksi_add_obat.no_resep')
              ->get();
         $medicines = \App\MmTransactionAddMedicine::whereBetween('created_date', [$startDate, $endDate])
             ->select(['*', DB::raw('SUM(jml_permintaan) as total_jml_permintaan')])
@@ -81,9 +81,9 @@ class ReportController extends Controller
         foreach ($models as $model) {
             $arrayData[$no][] = $no+1;
             $arrayData[$no][] = $model->mmPatient->nama;
-            $arrayData[$no][] = $model->mmTransactionAddMedicine->no_resep;
+            $arrayData[$no][] = $model->no_resep;
             foreach ($medicines as $medicine) {
-                $arrayData[$no][] = $model->getItemQuantity($medicine->id_barang);
+                $arrayData[$no][] = $model->getItemQuantity($medicine->id_barang, $model->no_resept);
             }
             $no++;
         }

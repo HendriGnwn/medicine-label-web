@@ -5,7 +5,7 @@
     <div class="panel-heading">@yield('headerTitle')</div>
 
     <div class="panel-body">
-        {!! Form::open(['url' => route('transaction-add-medicine.update', ['id'=>$model->no_pendaftaran]), 'method'=>'PATCH']) !!}
+        {!! Form::open(['url' => route('transaction-add-medicine.update', ['id'=>$model->no_pendaftaran, 'receipt_number' => $model->mmTransactionAddMedicine->no_resep]), 'method'=>'PATCH']) !!}
         <div class="row">
             <div class="col-md-6">
                 <div aria-required="true" class="form-group required form-group-default {{ $errors->has('registration_number') ? 'has-error' : ''}}">
@@ -35,30 +35,27 @@
                     {!! $errors->first('tipe_rawatan', '<p class="help-block">:message</p>') !!}
                 </div>
             </div>
-            <div class="col-md-6">
-                <div aria-required="true" class="form-group required form-group-default {{ $errors->has('receipt_number') ? 'has-error' : ''}}">
-                    {!! Form::label('receipt_number', 'Nomor Resep') !!}
-                    {!! Form::number('receipt_number', old('receipt_number') ? old('receipt_number') : $model->mmTransactionAddMedicine->no_resep, ['class' => 'form-control', 'type'=>'number']) !!}
-                    {!! $errors->first('receipt_number', '<p class="help-block">:message</p>') !!}
-                </div>
-            </div>
         </div>
         
         <table class="table table-condensed table-hover">
             <thead>
                 <tr>
+                    <th style="width:5%">No</th>
                     <th style="width:35%">Obat</th>
                     <th style="width:10%">Jumlah</th>
-                    <th style="width:15%">Harga</th>
                     <th style="width:20%">Aturan Pakai</th>
                 </tr>
             </thead>
             <tbody>
                 @php
                 $no = 0;
+                $medicineQty = 0;
                 @endphp
                 @foreach ($model->mmTransactionAddMedicines as $medicine)
                     <tr>
+                        <td>
+                            {{ $no + 1 }}
+                        </td>
                         <td>
                             {{ $medicine->mmItem->nama_barang }}
                         </td>
@@ -66,17 +63,31 @@
                             {{ $medicine->jml_permintaan }}
                         </td>
                         <td>
-                            {{ $medicine->harga }}
-                        </td>
-                        <td>
                             {!! Form::hidden('id[]', $medicine->id_transaksi_obat) !!}
                             {!! Form::text('how_to_use[]', old('how_to_use.' . $no) ? old('how_to_use_' . $no) : $medicine->getHowToUse(), ['class' => 'form-control']) !!}
                         </td>
                     </tr>
-                    @php $no++; @endphp
+                    @php 
+                        $no++; 
+                        $medicineQty += $medicine->jml_permintaan; 
+                    @endphp
                 @endforeach
             </tbody>
         </table>
+        <div class="col-md-offset-8 col-md-4">
+            <table class="table table-condensed table-hover">
+                <tr>
+                    <th>Total Keseluruhan Obat</th>
+                    <th>:</th>
+                    <th>{{ $no }}</th>
+                </tr>
+                <tr>
+                    <th>Jumlah Keseluruhan Obat</th>
+                    <th>:</th>
+                    <th>{{ $medicineQty }}</th>
+                </tr>
+            </table>
+        </div>
         {!! Form::submit('Update and Print Preview', ['type' => 'submit', 'class' => 'btn btn-success']) !!}
         {!! Form::close() !!}
     </div>

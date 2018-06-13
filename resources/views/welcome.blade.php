@@ -77,7 +77,9 @@
             @endif
 
             <div class="content">
-                <div class="title m-b-md">
+                <div class="title m-b-md text-center">
+                    <img src="{{ asset('files/rsmm-logo.png') }}" class="img-responsive" style="width:200px" />
+                    <br/>
                     {{ config('app.name') }}
                 </div>
             </div>

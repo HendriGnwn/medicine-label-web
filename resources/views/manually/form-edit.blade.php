@@ -53,11 +53,6 @@
                 </div>
             </div>
         </div>
-        <div aria-required="true" class="form-group required form-group-default {{ $errors->has('receipt_number') ? 'has-error' : ''}}">
-            {!! Form::label('receipt_number', 'Nomor Resep') !!}
-            {!! Form::number('receipt_number', null, ['class' => 'form-control', 'type'=>'number']) !!}
-            {!! $errors->first('receipt_number', '<p class="help-block">:message</p>') !!}
-        </div>
     </div>
     <div class="col-md-6">
         <table class="table table-condensed">
@@ -95,21 +90,26 @@
         
 <table class="table table-condensed table-hover" id="medicine-detail">
     <tr>
+        <th style="width:5%; vertical-align: middle;">No</th>
         <th style="width:40%; vertical-align: middle;">Obat*</th>
         <th style="width:20%; vertical-align: middle;">Jumlah*</th>
-        <th style="width:20%; vertical-align: middle;">Aturan Pakai (sehari)*</th>
-        <th style="width:20%; vertical-align: middle;"><button type="button" name="add" id="add" class="btn btn-primary btn-sm"><i class="fa fa-plus-square"></i></button></th>
+        <th style="width:25%; vertical-align: middle;">Aturan Pakai (sehari)*</th>
+        <th style="width:10%; vertical-align: right;"><button type="button" name="add" id="add" class="btn btn-primary btn-sm"><i class="fa fa-plus-square"></i></button></th>
     </tr>
     @php
     $no = 0;
+    $medicineQty = 0;
     @endphp
     @foreach ($model->transactionMedicineDetails as $detail)
         <tr id="row-{{ $no }}">
             <td>
+                {{ $no + 1 }}
+            </td>
+            <td>
                 <input type="hidden" name="count[{{ $no }}]" value="{{ $no }}" />
                 <input type="hidden" name="detail_id[{{ $no }}]" id="detail_id_{{ $no }}" value="{{ $detail->id }}" />
-                <input type="hidden" name="medicine_label[{{ $no }}]" id="medicine_label_{{ $no }}" value="{{ $detail->name }}" />
-                <select class="form-control" name="medicine_id[{{ $no }}]" id="medicine_id_{{ $no }}" required></select>
+                <input type="hidden" name="medicine_label[]" id="medicine_label_{{ $no }}" value="{{ $detail->name }}" />
+                <select class="form-control" name="medicine_id[]" id="medicine_id_{{ $no }}" required></select>
             </td>
             <td>
                 <input type="number" class="form-control" name="quantity[{{ $no }}]" required value="{{ $detail->quantity }}"/>
@@ -171,9 +171,25 @@
         @endpush
         @php
         $no++;
+        $medicineQty += $detail->quantity;
         @endphp
     @endforeach
 </table>
+
+<div class="col-md-offset-8 col-md-4">
+    <table class="table table-condensed table-hover">
+        <tr>
+            <th>Total Keseluruhan Obat</th>
+            <th>:</th>
+            <th>{{ $no }}</th>
+        </tr>
+        <tr>
+            <th>Jumlah Keseluruhan Obat</th>
+            <th>:</th>
+            <th>{{ $medicineQty }}</th>
+        </tr>
+    </table>
+</div>
 
 <br/>
 <br/>
@@ -188,10 +204,13 @@
         $('#medicine-detail').append('' +
             '<tr id="row-'+i+'" >' +
                 '<td>' +
+                    (i + 1) +
+                '</td>' +
+                '<td>' +
                     '<input type="hidden" name="count[]" value="'+ i +'" />' +
                     '<input type="hidden" name="detail_id['+ i +']" id="detail_id_'+ i +'" />' +
-                    '<input type="hidden" name="medicine_label['+i+']" id="medicine_label_'+i+'" value="" />' +
-                    '<select class="form-control" name="medicine_id['+i+']" id="medicine_id_'+i+'" required></select>' +
+                    '<input type="hidden" name="medicine_label[]" id="medicine_label_'+i+'" value="" />' +
+                    '<select class="form-control" name="medicine_id[]" id="medicine_id_'+i+'" required></select>' +
                 '</td>' +
                 '<td>' +
                     '<input type="number" class="form-control" name="quantity[]" required />' +
@@ -211,7 +230,8 @@
                 dataType: 'json',
                 data: function (params) {
                     return {
-                        q: $.trim(params.term)
+                        q: $.trim(params.term),
+                        except: $("select[name='medicine_id[]']").serializeArray(),
                     };
                 },
                 processResults: function (data) {

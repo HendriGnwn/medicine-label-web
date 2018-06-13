@@ -38,7 +38,8 @@
 
                     <!-- Branding Image -->
                     <a class="navbar-brand" href="{{ url('/') }}">
-                        {{ config('app.name', 'Laravel') }}
+                        <img src="{{ asset('files/rsmm-logo.png') }}" class="img-responsive" style="float:left;width:30px" />
+                        <h4 style="float:right;margin-left:10px;margin-top:6px;">{{ config('app.name', 'Laravel') }}</h4>
                     </a>
                 </div>
 

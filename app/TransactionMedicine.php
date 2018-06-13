@@ -169,7 +169,7 @@ class TransactionMedicine extends BaseModel
                 'total_retur' => null,
                 'id_obat_order' => null,
                 'id_sediaan' => null,
-                'tanggal_order_obat' => null,
+                'tanggal_order_obat' => $this->medicine_date,
             ]);
             $transaction->created_date = Carbon::now()->toDateTimeString();
             $transaction->created_by = MmTransactionAddMedicine::CREATED_BY;

@@ -94,9 +94,9 @@ class MmPatientRegistration extends BaseModel
         return $this->hasOne('\App\TransactionAddMedicineAdditional', 'patient_registration_id', 'id_pendaftaran');
     }
     
-    public function getItemQuantity($itemId)
+    public function getItemQuantity($itemId, $receiptNumber)
     {
-        $medicine = $this->mmTransactionAddMedicines()->where('id_barang', $itemId)->first();
+        $medicine = $this->mmTransactionAddMedicines()->where('id_barang', $itemId)->where('no_resep', $receiptNumber)->first();
         if (!$medicine) {
             return null;
         }

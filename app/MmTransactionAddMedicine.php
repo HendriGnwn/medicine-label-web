@@ -108,7 +108,9 @@ class MmTransactionAddMedicine extends BaseModel
     
     public function getFormattedMedicineDate()
     {
-        return Carbon::parse($this->created_date)->format('d/m/y');
+        $additionalData = json_decode($this->additional_data, true);
+        $date = $additionalData['tanggal_order_obat'] ? $additionalData['tanggal_order_obat'] : $this->created_date;
+        return Carbon::parse($date)->format('d/m/y');
     }
     
     public function getNameAndAge()

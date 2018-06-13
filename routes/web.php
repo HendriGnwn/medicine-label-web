@@ -54,10 +54,10 @@ Route::group(['middleware' => 'auth'], function () {
     
     Route::get('/transaction-add-medicine/list-index', ['as' => 'transaction-add-medicine.list-index', 'uses' => 'TransactionAddMedicineController@listIndex']);
     Route::get('/transaction-add-medicine/index', ['as' => 'transaction-add-medicine.index', 'uses' => 'TransactionAddMedicineController@index']);
-    Route::get('/transaction-add-medicine/{id}/edit', ['as' => 'transaction-add-medicine.edit', 'uses' => 'TransactionAddMedicineController@edit']);
-    Route::patch('/transaction-add-medicine/{id}', ['as' => 'transaction-add-medicine.update', 'uses' => 'TransactionAddMedicineController@update']);
-    Route::get('/transaction-add-medicine/{id}/print', ['as' => 'transaction-add-medicine.print', 'uses' => 'TransactionAddMedicineController@printPreview']);
-    Route::post('/transaction-add-medicine/{id}/post-print', ['as' => 'transaction-add-medicine.post-print', 'uses' => 'TransactionAddMedicineController@postPrint']);
+    Route::get('/transaction-add-medicine/{id}/{receiptNumber}/edit', ['as' => 'transaction-add-medicine.edit', 'uses' => 'TransactionAddMedicineController@edit']);
+    Route::patch('/transaction-add-medicine/{id}/{receiptNumber}', ['as' => 'transaction-add-medicine.update', 'uses' => 'TransactionAddMedicineController@update']);
+    Route::get('/transaction-add-medicine/{id}/{receiptNumber}/print', ['as' => 'transaction-add-medicine.print', 'uses' => 'TransactionAddMedicineController@printPreview']);
+    Route::post('/transaction-add-medicine/{id}/{receiptNumber}/post-print', ['as' => 'transaction-add-medicine.post-print', 'uses' => 'TransactionAddMedicineController@postPrint']);
     
     Route::get('/report/index', ['as' => 'report.index', 'uses' => 'ReportController@index']);
     Route::get('/report/list', ['as' => 'report.list', 'uses' => 'ReportController@showList']);

@@ -91,10 +91,11 @@
         
 <table class="table table-condensed table-hover" id="medicine-detail">
     <tr>
+        <th style="width:5%; vertical-align: middle;">No</th>
         <th style="width:40%; vertical-align: middle;">Obat*</th>
         <th style="width:20%; vertical-align: middle;">Jumlah*</th>
-        <th style="width:20%; vertical-align: middle;">Aturan Pakai (sehari)*</th>
-        <th style="width:20%; vertical-align: middle;"><button type="button" name="add" id="add" class="btn btn-primary btn-sm" title="Add"><i class="fa fa-plus-square"></i></button></th>
+        <th style="width:25%; vertical-align: middle;">Aturan Pakai (sehari)*</th>
+        <th style="width:10%; vertical-align: middle;"><button type="button" name="add" id="add" class="btn btn-primary btn-sm" title="Add"><i class="fa fa-plus-square"></i></button></th>
     </tr>
 </table>
 
@@ -111,9 +112,12 @@
         $('#medicine-detail').append('' +
             '<tr id="row-'+i+'" >' +
                 '<td>' +
+                    (i + 1) +
+                '</td>' +
+                '<td>' +
                     '<input type="hidden" name="count[]" value="'+ i +'" />' +
-                    '<input type="hidden" name="medicine_label['+i+']" id="medicine_label_'+i+'" value="" />' +
-                    '<select class="form-control" name="medicine_id['+i+']" id="medicine_id_'+i+'" required></select>' +
+                    '<input type="hidden" name="medicine_label[]" id="medicine_label_'+i+'" value="" />' +
+                    '<select class="form-control" name="medicine_id[]" id="medicine_id_'+i+'" required></select>' +
                 '</td>' +
                 '<td>' +
                     '<input type="number" class="form-control" name="quantity[]" required />' +
@@ -133,7 +137,8 @@
                 dataType: 'json',
                 data: function (params) {
                     return {
-                        q: $.trim(params.term)
+                        q: $.trim(params.term),
+                        except: $("select[name='medicine_id[]']").serializeArray(),
                     };
                 },
                 processResults: function (data) {

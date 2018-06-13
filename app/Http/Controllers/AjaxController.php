@@ -75,19 +75,33 @@ class AjaxController extends Controller
 	public function findMedicine(Request $request)
     {
         $term = trim($request->q);
+        
         if (empty($term)) {
             return response()->json([]);
         }
         
+        $excepts = [];
+        if (isset($request->except) && count($request->except) > 0) {
+            foreach ($request->except as $except) {
+                $excepts[] = (int)$except['value'];
+            }
+        }
         $items = MmItem::where('nama_barang', 'like', "%$term%")
-                ->orWhere('kode_barang', 'like', "%$term%")
-                ->where('id_barang_group', "1")
-                ->where('id_barang_group', 1) //obat
-                ->limit(20)
-                ->get();
+            ->orWhere('kode_barang', 'like', "%$term%")
+            ->where('id_barang_group', "1")
+            ->where('id_barang_group', 1) //obat
+            ->limit(20)
+            ->get();
+        
         $results = [];
         foreach ($items as $item) {
-            if ($item->stok <= 0) {
+            if (in_array($item->id_barang, $excepts)) {
+                $results[] = [
+                    'id' => $item->id_barang,
+                    'text' => $item->kode_barang . ' - ' . $item->nama_barang . ' (sudah diset)',
+                    'disabled' => true,
+                ];
+            } else if ($item->stok <= 0) {
                 $results[] = [
                     'id' => $item->id_barang,
                     'text' => $item->kode_barang . ' - ' . $item->nama_barang . ' (habis)',

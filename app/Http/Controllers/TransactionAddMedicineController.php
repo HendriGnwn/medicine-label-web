@@ -21,13 +21,27 @@ class TransactionAddMedicineController extends Controller
         return view('mm-transaction-add-medicine.index');
     }
     
-    public function edit($id)
+    public function edit($id, $receiptNumber)
     {
         $model = \App\MmPatientRegistration::where('no_pendaftaran', $id)->first();
-        return view('mm-transaction-add-medicine.edit', compact('model'));
+        $detail = \App\MmTransactionAddMedicine::with('mmPatientRegistration')
+                ->where('no_resep', $receiptNumber)
+                ->whereHas('mmPatientRegistration', function($query) use ($id) {
+                    $query->where('no_pendaftaran', $id);
+                })
+                ->first();
+        $details = \App\MmTransactionAddMedicine::with('mmPatientRegistration')
+                ->where('no_resep', $receiptNumber)
+                ->whereHas('mmPatientRegistration', function($query) use ($id) {
+                    $query->where('no_pendaftaran', $id);
+                })
+                ->get();
+        $model->mmTransactionAddMedicine = $detail;
+        $model->mmTransactionAddMedicines = $details;
+        return view('mm-transaction-add-medicine.edit', compact('model', 'details'));
     }
     
-    public function update($id, Request $request)
+    public function update($id, $receiptNumber, Request $request)
     {
         $patientRegistration = \App\MmPatientRegistration::where('no_pendaftaran', $id)->first();
         if (!$patientRegistration) {
@@ -59,16 +73,30 @@ class TransactionAddMedicineController extends Controller
             $no++;
         }
         
-        return redirect(route('transaction-add-medicine.print', ['id' => $id]));
+        return redirect(route('transaction-add-medicine.print', ['id' => $id, 'receipt_number' => $receiptNumber]));
     }
     
-    public function printPreview($id)
+    public function printPreview($id, $receiptNumber)
     {
         $model = \App\MmPatientRegistration::where('no_pendaftaran', $id)->first();
+        $detail = \App\MmTransactionAddMedicine::with('mmPatientRegistration')
+                ->where('no_resep', $receiptNumber)
+                ->whereHas('mmPatientRegistration', function($query) use ($id) {
+                    $query->where('no_pendaftaran', $id);
+                })
+                ->first();
+        $details = \App\MmTransactionAddMedicine::with('mmPatientRegistration')
+                ->where('no_resep', $receiptNumber)
+                ->whereHas('mmPatientRegistration', function($query) use ($id) {
+                    $query->where('no_pendaftaran', $id);
+                })
+                ->get();
+        $model->mmTransactionAddMedicine = $detail;
+        $model->mmTransactionAddMedicines = $details;
         return view('mm-transaction-add-medicine.print-preview', compact('model'));
     }
     
-    public function postPrint($id)
+    public function postPrint($id, $receiptNumber)
     {
         $patientRegistration = \App\MmPatientRegistration::where('no_pendaftaran', $id)->first();
         if (!$patientRegistration) {
@@ -98,7 +126,7 @@ class TransactionAddMedicineController extends Controller
 					DB::raw('@rownum  := @rownum  + 1 AS rownum'), 'mm_transaksi_add_obat.*'
 				])
                 ->join('mm_pasien_pendaftaran', 'mm_pasien_pendaftaran.id_pendaftaran', '=', 'mm_transaksi_add_obat.id_pendaftaran')
-                ->groupBy('id_pembayaran', 'id_pendaftaran');
+                ->groupBy('id_pembayaran', 'id_pendaftaran', 'no_resep');
 
          $datatables = app('datatables')->of($model)
             ->addIndexColumn()
@@ -122,8 +150,8 @@ class TransactionAddMedicineController extends Controller
                 return $transactionAddMedicineAdditional->print_count;
             })
             ->addColumn('action', function ($model) {
-                $editUrl = route('transaction-add-medicine.edit', ['id' => $model->mmPatientRegistration->no_pendaftaran]);
-                $printUrl = route('transaction-add-medicine.print', ['id' => $model->mmPatientRegistration->no_pendaftaran]);
+                $editUrl = route('transaction-add-medicine.edit', ['id' => $model->mmPatientRegistration->no_pendaftaran, 'receipt_number' => $model->no_resep]);
+                $printUrl = route('transaction-add-medicine.print', ['id' => $model->mmPatientRegistration->no_pendaftaran, 'receipt_number' => $model->no_resep]);
                 return "<a href='{$editUrl}' class='btn btn-xs btn-primary btn-rounded' title='Update' target='_blank'><i class='fa fa-edit'></i></a>"
                        . " <a href='{$printUrl}' class='btn btn-xs btn-success btn-rounded' title='Print' target='_blank'><i class='fa fa-print'></i></a> ";
             });

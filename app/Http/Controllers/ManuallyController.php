@@ -67,11 +67,11 @@ class ManuallyController extends Controller
             }
         }
         
-        $check = TransactionMedicine::where('registered_id', $request->registered_id)->first();
-        if ($check) {
-            \Session::flash('info', 'Data pasien ini sudah terdaftar, silahkan lihat nomor pendaftaran ' . $check->mmPatientRegistration->no_pendaftaran);
-            goto redirect;
-        }
+//        $check = TransactionMedicine::where('registered_id', $request->registered_id)->first();
+//        if ($check) {
+//            \Session::flash('info', 'Data pasien ini sudah terdaftar, silahkan lihat nomor pendaftaran ' . $check->mmPatientRegistration->no_pendaftaran);
+//            goto redirect;
+//        }
         
         $this->validate($request, $this->rules + $rules);
         
@@ -98,7 +98,7 @@ class ManuallyController extends Controller
         
         \Session::flash('success', 'Success');
         
-        redirect:
+        //redirect:
         if ($user->getIsRolePharmacist()) {
             $redirect = route('transaction-medicine.pharmacist');
         } else if ($user->getIsRoleDoctor()) {

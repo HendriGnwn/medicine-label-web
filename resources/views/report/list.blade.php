@@ -28,9 +28,9 @@
                     <tr>
                         <td>{{ $no++ }}</td>
                         <td>{{ $model->mmPatient->nama }}</td>
-                        <td>{{ $model->mmTransactionAddMedicine->no_resep }}</td>
+                        <td>{{ $model->no_resep }}</td>
                         @foreach ($medicines as $medicine)
-                        <td style="text-align:center;">{{ $model->getItemQuantity($medicine->id_barang) }}</td>
+                        <td style="text-align:center;">{{ $model->getItemQuantity($medicine->id_barang, $model->no_resep) }}</td>
                         @endforeach
                     </tr>
                     @endforeach
