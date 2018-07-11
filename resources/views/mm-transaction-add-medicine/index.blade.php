@@ -160,7 +160,7 @@ $('#filter-search-form').on('submit', function(e) {
     e.preventDefault();
 });
 
-oTable.page.len(100).draw();
+oTable.page.len(10).draw();
 
 $('.date-range').daterangepicker({
     autoUpdateInput: false
