@@ -52,6 +52,13 @@
                     {!! $errors->first('medicine_date', '<p class="help-block">:message</p>') !!}
                 </div>
             </div>
+            <div class="col-md-12">
+                <div aria-required="true" class="form-group required form-group-default {{ $errors->has('pharmacist_id') ? 'has-error' : ''}}">
+                    {!! Form::label('pharmacist_id', 'Apoteker') !!}
+                    {!! Form::select('pharmacist_id', \App\Pharmacist::actived()->pluck('name', 'id'), Auth::user()->pharmacist_id ? Auth::user()->pharmacist_id : null, ['class' => 'form-control select2']) !!}
+                    {!! $errors->first('pharmacist_id', '<p class="help-block">:message</p>') !!}
+                </div>
+            </div>
         </div>
     </div>
     <div class="col-md-6">

@@ -22,6 +22,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'dcl_user_id', 
+        'pharmacist_id', 
         'nip', 
         'name', 
         'username', 

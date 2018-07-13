@@ -94,6 +94,7 @@
 
                                 <ul class="dropdown-menu">
                                     <li><a href="{{ route('user.index') }}">User</a></li>
+                                    <li><a href="{{ route('pharmacist.index') }}">Apoteker</a></li>
                                 </ul>
                             </li>
                             @endif

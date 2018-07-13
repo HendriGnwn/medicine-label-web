@@ -156,12 +156,15 @@ class AjaxController extends Controller
             return response()->json([]);
         }
         
-        $patients = MmPatientRegistration::whereHas('mmPatient', function ($query) use ($term) {
+        $patients = MmPatientRegistration::whereRaw('DATE_FORMAT(tanggal_pendaftaran, "%Y") >= "' . Carbon::now()->format('Y') . '"')
+                ->whereHas('mmPatient', function ($query) use ($term) {
                     $query->where('nama', 'like', "%$term%");
                 })
-                ->orWhere('no_pendaftaran', 'like', "%$term%")
                 ->orWhere('no_rekam_medis', 'like', "%$term%")
+                ->orWhere('no_pendaftaran', 'like', "%$term%")
+                
                 ->whereRaw('(id_dokter != "0" OR id_dokter IS NOT NULL)')
+                ->orderBy('tanggal_pendaftaran', 'desc')
                 ->limit(20)
                 ->get();
         $results = [];

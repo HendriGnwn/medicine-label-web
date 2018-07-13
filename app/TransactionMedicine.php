@@ -35,6 +35,7 @@ class TransactionMedicine extends BaseModel
         'medical_record_number',
         'care_type',
         'medicine_date',
+        'pharmarcist_id',
         'receipt_number',
         'is_post_to_db',
         'deleted_at',
@@ -76,6 +77,11 @@ class TransactionMedicine extends BaseModel
     public function transactionMedicineDetails()
     {
         return $this->hasMany('App\TransactionMedicineDetail', 'transaction_medicine_id', 'id');
+    }
+    
+    public function pharmacist()
+    {
+        return $this->hasOne('App\Pharmacist', 'id', 'pharmacist_id');
     }
     
     public function mmPatientRegistration()
