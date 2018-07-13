@@ -1,112 +1,80 @@
--- phpMyAdmin SQL Dump
--- version 4.5.4.1deb2ubuntu2
--- http://www.phpmyadmin.net
---
--- Host: localhost
--- Generation Time: 18 Mei 2018 pada 18.30
--- Versi Server: 5.7.22-0ubuntu0.16.04.1
--- PHP Version: 7.1.17-1+ubuntu16.04.1+deb.sury.org+1
+-- Adminer 4.6.2 MySQL dump
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
+SET NAMES utf8;
+SET time_zone = '+00:00';
+SET foreign_key_checks = 0;
+SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 
+SET NAMES utf8mb4;
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `medicine_label`
---
-
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `migrations`
---
-
+DROP TABLE IF EXISTS `migrations`;
 CREATE TABLE `migrations` (
-  `id` int(10) UNSIGNED NOT NULL,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `batch` int(11) NOT NULL
+  `batch` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data untuk tabel `migrations`
---
-
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
-(1, '2014_10_12_000000_create_users_table', 1),
-(2, '2014_10_12_100000_create_password_resets_table', 1);
+(1,	'2014_10_12_000000_create_users_table',	1),
+(2,	'2014_10_12_100000_create_password_resets_table',	1);
 
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `password_resets`
---
-
+DROP TABLE IF EXISTS `password_resets`;
 CREATE TABLE `password_resets` (
   `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL
+  `created_at` timestamp NULL DEFAULT NULL,
+  KEY `password_resets_email_index` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
 
---
--- Struktur dari tabel `setting`
---
+DROP TABLE IF EXISTS `pharmacist`;
+CREATE TABLE `pharmacist` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `sik` varchar(100) NOT NULL,
+  `status` smallint(1) NOT NULL DEFAULT '1',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+INSERT INTO `pharmacist` (`id`, `name`, `sik`, `status`, `created_at`, `updated_at`) VALUES
+(1,	'Dra. Lea P. Sjamsudin',	'165/SIK/JB/1993',	1,	'2018-07-11 13:50:57',	NULL),
+(2,	'Kimia Parma Apotek',	'12309/123891',	1,	'2018-07-11 13:59:24',	'2018-07-11 13:59:24');
+
+DROP TABLE IF EXISTS `setting`;
 CREATE TABLE `setting` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `address` varchar(600) NOT NULL,
   `apoteker` varchar(255) NOT NULL,
   `sik` varchar(255) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Dumping data untuk tabel `setting`
---
-
 INSERT INTO `setting` (`id`, `address`, `apoteker`, `sik`, `created_at`, `updated_at`) VALUES
-(1, 'Jl Dr. Semeru No. 144 - Bogor', 'Dra. Lea P. Sjamsudin', '165/SIK/JB/1993', NULL, '2018-04-11 00:49:31');
+(1,	'Jl Dr. Semeru No. 144 - Bogor',	'Dra. Lea P. Sjamsudin',	'165/SIK/JB/1993',	NULL,	'2018-04-11 00:49:31');
 
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `transaction_add_medicine_additional`
---
-
+DROP TABLE IF EXISTS `transaction_add_medicine_additional`;
 CREATE TABLE `transaction_add_medicine_additional` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `patient_registration_id` int(11) NOT NULL,
-  `print_count` int(11) NOT NULL,
+  `print_count` int(11) NOT NULL DEFAULT '0',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `created_by` bigint(20) DEFAULT NULL,
-  `updated_by` bigint(20) DEFAULT NULL
+  `updated_by` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Dumping data untuk tabel `transaction_add_medicine_additional`
---
-
 INSERT INTO `transaction_add_medicine_additional` (`id`, `patient_registration_id`, `print_count`, `created_at`, `updated_at`, `created_by`, `updated_by`) VALUES
-(1, 3646481, 4, '2018-05-08 12:03:19', '2018-05-08 12:13:58', NULL, NULL),
-(2, 3647182, 1, '2018-05-08 12:27:52', '2018-05-08 12:27:52', NULL, NULL),
-(3, 19, 1, '2018-05-17 08:51:56', '2018-05-17 08:51:56', NULL, NULL);
+(1,	5,	1,	'2018-06-05 07:22:38',	'2018-06-05 07:25:04',	NULL,	NULL);
 
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `transaction_add_medicine_additional_detail`
---
-
+DROP TABLE IF EXISTS `transaction_add_medicine_additional_detail`;
 CREATE TABLE `transaction_add_medicine_additional_detail` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `transaction_add_medicine_additional_id` int(11) NOT NULL,
   `transaction_medicine_id` int(11) NOT NULL COMMENT 'berelasi dengan mm_transaksi_add_obat',
   `how_to_use` varchar(100) DEFAULT NULL,
@@ -114,38 +82,25 @@ CREATE TABLE `transaction_add_medicine_additional_detail` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `created_by` bigint(20) DEFAULT NULL,
-  `updated_by` bigint(20) DEFAULT NULL
+  `updated_by` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `transaction_add_medicine_additional_id` (`transaction_add_medicine_additional_id`),
+  CONSTRAINT `transaction_add_medicine_additional_detail_ibfk_2` FOREIGN KEY (`transaction_add_medicine_additional_id`) REFERENCES `transaction_add_medicine_additional` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Dumping data untuk tabel `transaction_add_medicine_additional_detail`
---
-
 INSERT INTO `transaction_add_medicine_additional_detail` (`id`, `transaction_add_medicine_additional_id`, `transaction_medicine_id`, `how_to_use`, `receipt_number`, `created_at`, `updated_at`, `created_by`, `updated_by`) VALUES
-(1, 1, 464944, '3 x 1', 1803211869, '2018-05-08 12:12:41', '2018-05-08 12:12:41', 4, 4),
-(2, 1, 464945, '3 x 1', 1803211869, '2018-05-08 12:12:41', '2018-05-08 12:12:41', 4, 4),
-(3, 1, 464946, '3 x 1', 1803211869, '2018-05-08 12:12:41', '2018-05-08 12:12:41', 4, 4),
-(4, 1, 464947, '3 x 1', 1803211869, '2018-05-08 12:12:41', '2018-05-08 12:12:41', 4, 4),
-(5, 1, 464948, '3 x 1', 1803211869, '2018-05-08 12:12:41', '2018-05-08 12:12:41', 4, 4),
-(6, 1, 464949, '3 x 1', 1803211869, '2018-05-08 12:12:41', '2018-05-08 12:12:41', 4, 4),
-(7, 1, 464950, '3 x 1', 1803211869, '2018-05-08 12:12:41', '2018-05-08 12:12:41', 4, 4),
-(8, 1, 464951, '3 x 1', 1803211869, '2018-05-08 12:12:41', '2018-05-08 12:12:41', 4, 4),
-(9, 1, 464952, '3 x 2', 1803211869, '2018-05-08 12:12:41', '2018-05-08 12:12:41', 4, 4);
+(1,	1,	464977,	'3 x 1',	1806050538,	'2018-06-05 07:22:38',	'2018-06-05 07:25:42',	1,	1);
 
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `transaction_medicine`
---
-
+DROP TABLE IF EXISTS `transaction_medicine`;
 CREATE TABLE `transaction_medicine` (
-  `id` bigint(20) NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `doctor_id` int(11) DEFAULT NULL,
   `unit_id` int(11) DEFAULT NULL,
   `registered_id` int(11) DEFAULT NULL,
   `medical_record_number` char(14) DEFAULT NULL,
   `care_type` smallint(6) DEFAULT NULL COMMENT '0 = Rawat Jalan, 1 = Rawat Inap',
   `medicine_date` date DEFAULT NULL,
+  `pharmacist_id` int(11) DEFAULT NULL,
   `receipt_number` varchar(50) DEFAULT NULL,
   `is_post_to_db` smallint(6) NOT NULL DEFAULT '0' COMMENT '0 = belum; 1 = sudah',
   `post_to_db_at` timestamp NULL DEFAULT NULL,
@@ -153,27 +108,19 @@ CREATE TABLE `transaction_medicine` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
-  `updated_by` int(11) DEFAULT NULL
+  `updated_by` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `pharmacist_id` (`pharmacist_id`),
+  CONSTRAINT `transaction_medicine_ibfk_2` FOREIGN KEY (`pharmacist_id`) REFERENCES `pharmacist` (`id`) ON DELETE CASCADE ON UPDATE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Dumping data untuk tabel `transaction_medicine`
---
+INSERT INTO `transaction_medicine` (`id`, `doctor_id`, `unit_id`, `registered_id`, `medical_record_number`, `care_type`, `medicine_date`, `pharmacist_id`, `receipt_number`, `is_post_to_db`, `post_to_db_at`, `deleted_at`, `created_at`, `updated_at`, `created_by`, `updated_by`) VALUES
+(1,	50,	56,	5,	'0055246',	0,	'2002-01-01',	NULL,	'1806050537',	1,	'2018-06-05 07:03:56',	NULL,	'2018-06-05 07:03:56',	'2018-06-05 07:03:56',	1,	NULL),
+(2,	50,	56,	5,	'0055246',	0,	'2018-06-05',	NULL,	'1806050538',	1,	'2018-06-05 07:04:25',	NULL,	'2018-06-05 07:04:25',	'2018-06-05 07:04:25',	1,	NULL);
 
-INSERT INTO `transaction_medicine` (`id`, `doctor_id`, `unit_id`, `registered_id`, `medical_record_number`, `care_type`, `medicine_date`, `receipt_number`, `is_post_to_db`, `post_to_db_at`, `deleted_at`, `created_at`, `updated_at`, `created_by`, `updated_by`) VALUES
-(3, 154, 82, 139172, '0139172', 0, '2009-01-01', '2445', 1, '2018-05-17 09:12:11', NULL, '2018-05-17 07:12:44', '2018-05-17 09:12:11', 1, 1),
-(4, 253, 25, 139166, '0139166', 0, '2009-01-01', '180513992', 1, '2018-05-17 09:11:08', NULL, '2018-05-17 08:42:49', '2018-05-17 09:11:08', 1, 1),
-(5, 108, 82, 23, '0111127', 0, '2009-01-01', '1809019292', 1, '2018-05-17 09:45:10', NULL, '2018-05-17 09:45:10', '2018-05-17 09:45:10', 4, NULL),
-(6, 106, 41, 9, '0040289', 0, '2004-01-01', NULL, 1, '2018-05-17 11:39:50', NULL, '2018-05-17 11:39:50', '2018-05-17 11:39:50', 1, NULL);
-
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `transaction_medicine_detail`
---
-
+DROP TABLE IF EXISTS `transaction_medicine_detail`;
 CREATE TABLE `transaction_medicine_detail` (
-  `id` bigint(20) NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `mm_transaction_add_medicine_id` bigint(20) DEFAULT NULL,
   `transaction_medicine_id` bigint(20) NOT NULL,
   `unit_id` int(11) DEFAULT NULL,
@@ -187,34 +134,21 @@ CREATE TABLE `transaction_medicine_detail` (
   `drink` smallint(6) DEFAULT NULL,
   `data` text,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `transaction_medicine_id` (`transaction_medicine_id`),
+  CONSTRAINT `transaction_medicine_detail_ibfk_2` FOREIGN KEY (`transaction_medicine_id`) REFERENCES `transaction_medicine` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Dumping data untuk tabel `transaction_medicine_detail`
---
-
 INSERT INTO `transaction_medicine_detail` (`id`, `mm_transaction_add_medicine_id`, `transaction_medicine_id`, `unit_id`, `medicine_id`, `name`, `quantity`, `how_to_use`, `price`, `receipt_number`, `trx_number`, `drink`, `data`, `created_at`, `updated_at`) VALUES
-(5, 464961, 3, NULL, 5, '00000006 - Diazepam   5  mg', 5, '1 x 1', NULL, NULL, NULL, NULL, NULL, '2018-05-17 07:12:44', '2018-05-17 08:34:03'),
-(6, 464962, 4, NULL, 62, '00000068 - Pyrantel  125  mg', 3, '1 x 1', NULL, NULL, NULL, NULL, NULL, '2018-05-17 08:42:49', '2018-05-17 08:42:49'),
-(7, 464963, 4, NULL, 800, '00000928 - Amitriptyline 25 mg', 3, '1 x 1', NULL, NULL, NULL, NULL, NULL, '2018-05-17 08:42:49', '2018-05-17 08:42:49'),
-(8, 464964, 4, NULL, 5, '00000006 - Diazepam   5  mg', 6, '2 x 1', NULL, NULL, NULL, NULL, NULL, '2018-05-17 08:42:49', '2018-05-17 08:42:49'),
-(9, 464965, 4, NULL, 51, '00000056 - Myconazol  Cream  10  gr', 4, '2 x 1', NULL, NULL, NULL, NULL, NULL, '2018-05-17 09:10:01', '2018-05-17 09:11:08'),
-(10, 464966, 4, NULL, 51, '00000056 - Myconazol  Cream  10  gr', 4, '2 x 1', NULL, NULL, NULL, NULL, NULL, '2018-05-17 09:10:49', '2018-05-17 09:11:08'),
-(11, 464967, 4, NULL, 51, '00000056 - Myconazol  Cream  10  gr', 4, '2 x 1', NULL, NULL, NULL, NULL, NULL, '2018-05-17 09:11:08', '2018-05-17 09:11:08'),
-(12, 464968, 3, NULL, 40, '00000043 - Gliceril Guaiacolas 100 mg', 5, '2 x 1', NULL, NULL, NULL, NULL, NULL, '2018-05-17 09:12:11', '2018-05-17 09:12:11'),
-(13, 464969, 5, NULL, 864, '00001003 - Bioplacenton Jelly', 3, '1 x 1', NULL, NULL, NULL, NULL, NULL, '2018-05-17 09:45:10', '2018-05-17 09:45:10'),
-(14, 464970, 6, NULL, 646, NULL, 2, '3 x 1', NULL, NULL, NULL, NULL, NULL, '2018-05-17 11:39:50', '2018-05-17 11:39:50');
+(1,	464976,	1,	NULL,	35,	'00000038 - Diphenhydramin  Inj',	10,	'3 x 1',	NULL,	NULL,	NULL,	NULL,	NULL,	'2018-06-05 07:03:56',	'2018-06-05 07:03:56'),
+(2,	464977,	2,	NULL,	26,	'00000029 - Clindamycin  150 mg',	3,	'3 x 1',	NULL,	NULL,	NULL,	NULL,	NULL,	'2018-06-05 07:04:25',	'2018-06-05 07:04:25');
 
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `user`
---
-
+DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `dcl_user_id` int(10) UNSIGNED DEFAULT NULL,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `dcl_user_id` int(10) unsigned DEFAULT NULL,
+  `pharmacist_id` int(11) DEFAULT NULL,
   `nip` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `username` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -225,128 +159,16 @@ CREATE TABLE `user` (
   `apoteker_sik` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `pharmacist_id` (`pharmacist_id`),
+  CONSTRAINT `user_ibfk_2` FOREIGN KEY (`pharmacist_id`) REFERENCES `pharmacist` (`id`) ON DELETE CASCADE ON UPDATE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data untuk tabel `user`
---
+INSERT INTO `user` (`id`, `dcl_user_id`, `pharmacist_id`, `nip`, `name`, `username`, `password`, `remember_token`, `role`, `apoteker_name`, `apoteker_sik`, `deleted_at`, `created_at`, `updated_at`) VALUES
+(1,	NULL,	NULL,	NULL,	'Administrator',	'superadmin',	'$2y$10$Crl/mrqZRG7lR3bCtLZ4bODRfwHgwsAAiywfu1QkNACR.mQu31Xna',	'dQhcSNioqeMWRbOw2VW9ABaaojO2cwn6zw5Vk4Q5ElMdQfSwFlrYtDtp2dQ7',	1,	NULL,	NULL,	NULL,	'2018-04-04 02:16:48',	'2018-04-04 02:16:48'),
+(2,	82,	NULL,	'HR-587',	'SEKAR AYU TANJUNG SARI, DR',	'sekar',	'$2y$10$Fxkr2YXItk2CHkPlMMobk.epDfTlHgzhr7qC8LO8MrRQ4c9rIJv8K',	'ljFHX0K3y6GbcwoMmf81Z8Hah1YK3xy0yXXB7Xr7fDaOmyGYiLQnPWMHbvYc',	10,	NULL,	NULL,	NULL,	'2018-04-17 08:10:16',	'2018-04-17 12:03:47'),
+(4,	NULL,	1,	NULL,	'Dra. Lea P. Sjamsudin',	'apoteker',	'$2y$10$gNHqioCGekTOAzHJCWbUAuvBd.jmJpKeP8BwZb9seyoN0gRLHhw12',	'gqSfnQGjqFKNtE5JAy4jsnenBVDWx6ViIzSiJGAjaVtMEJpYmQsSd7xkEOj0',	5,	'Dra. Lea P. Sjamsudin',	'165/SIK/JB/1993',	NULL,	'2018-04-19 07:38:37',	'2018-04-19 07:38:37'),
+(5,	NULL,	2,	NULL,	'Kimia Parma Apotek',	'apoteker2',	'$2y$10$gkXxONPHD/7hXux7Qr9LM.j13SDPy08Wku8Ht3IueOo5xHIcZSF5O',	'PnEfGSAR1QeOuqIREiIu4sqouE3Lu0NcgzwKP1nK7mudO9cr6RnS473c4ypJ',	5,	'Kimia Parma Apotek',	'12309/123891',	NULL,	'2018-04-19 07:55:08',	'2018-04-19 07:55:08');
 
-INSERT INTO `user` (`id`, `dcl_user_id`, `nip`, `name`, `username`, `password`, `remember_token`, `role`, `apoteker_name`, `apoteker_sik`, `deleted_at`, `created_at`, `updated_at`) VALUES
-(1, NULL, NULL, 'Administrator', 'superadmin', '$2y$10$Crl/mrqZRG7lR3bCtLZ4bODRfwHgwsAAiywfu1QkNACR.mQu31Xna', 'te3C3voKkCb7brfOMc5l4pRQsMAdZeV7zlrUeqooAvwCQwDDV7WSOKFEAmyx', 1, NULL, NULL, NULL, '2018-04-04 02:16:48', '2018-04-04 02:16:48'),
-(2, 82, 'HR-587', 'SEKAR AYU TANJUNG SARI, DR', 'sekar', '$2y$10$Fxkr2YXItk2CHkPlMMobk.epDfTlHgzhr7qC8LO8MrRQ4c9rIJv8K', 'O7O2edq3eXpkFGL223OyRmwIv6WrposB95tGp3T0nwRA3IZVkZhTFG5DX7Qs', 10, NULL, NULL, NULL, '2018-04-17 08:10:16', '2018-04-17 12:03:47'),
-(4, NULL, NULL, 'Dra. Lea P. Sjamsudin', 'apoteker', '$2y$10$gNHqioCGekTOAzHJCWbUAuvBd.jmJpKeP8BwZb9seyoN0gRLHhw12', 'gqSfnQGjqFKNtE5JAy4jsnenBVDWx6ViIzSiJGAjaVtMEJpYmQsSd7xkEOj0', 5, 'Dra. Lea P. Sjamsudin', '165/SIK/JB/1993', NULL, '2018-04-19 07:38:37', '2018-04-19 07:38:37'),
-(5, NULL, NULL, 'Kimia Parma Apotek', 'apoteker2', '$2y$10$gkXxONPHD/7hXux7Qr9LM.j13SDPy08Wku8Ht3IueOo5xHIcZSF5O', 'PnEfGSAR1QeOuqIREiIu4sqouE3Lu0NcgzwKP1nK7mudO9cr6RnS473c4ypJ', 5, 'Kimia Parma Apotek', '12309/123891', NULL, '2018-04-19 07:55:08', '2018-04-19 07:55:08');
-
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `migrations`
---
-ALTER TABLE `migrations`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `password_resets`
---
-ALTER TABLE `password_resets`
-  ADD KEY `password_resets_email_index` (`email`);
-
---
--- Indexes for table `setting`
---
-ALTER TABLE `setting`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `transaction_add_medicine_additional`
---
-ALTER TABLE `transaction_add_medicine_additional`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `transaction_add_medicine_additional_detail`
---
-ALTER TABLE `transaction_add_medicine_additional_detail`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `transaction_add_medicine_additional_id` (`transaction_add_medicine_additional_id`);
-
---
--- Indexes for table `transaction_medicine`
---
-ALTER TABLE `transaction_medicine`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `transaction_medicine_detail`
---
-ALTER TABLE `transaction_medicine_detail`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `transaction_medicine_id` (`transaction_medicine_id`);
-
---
--- Indexes for table `user`
---
-ALTER TABLE `user`
-  ADD PRIMARY KEY (`id`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `migrations`
---
-ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
---
--- AUTO_INCREMENT for table `setting`
---
-ALTER TABLE `setting`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
---
--- AUTO_INCREMENT for table `transaction_add_medicine_additional`
---
-ALTER TABLE `transaction_add_medicine_additional`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
---
--- AUTO_INCREMENT for table `transaction_add_medicine_additional_detail`
---
-ALTER TABLE `transaction_add_medicine_additional_detail`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
---
--- AUTO_INCREMENT for table `transaction_medicine`
---
-ALTER TABLE `transaction_medicine`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
---
--- AUTO_INCREMENT for table `transaction_medicine_detail`
---
-ALTER TABLE `transaction_medicine_detail`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
---
--- AUTO_INCREMENT for table `user`
---
-ALTER TABLE `user`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
---
--- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
---
-
---
--- Ketidakleluasaan untuk tabel `transaction_add_medicine_additional_detail`
---
-ALTER TABLE `transaction_add_medicine_additional_detail`
-  ADD CONSTRAINT `transaction_add_medicine_additional_detail_ibfk_2` FOREIGN KEY (`transaction_add_medicine_additional_id`) REFERENCES `transaction_add_medicine_additional` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Ketidakleluasaan untuk tabel `transaction_medicine_detail`
---
-ALTER TABLE `transaction_medicine_detail`
-  ADD CONSTRAINT `transaction_medicine_detail_ibfk_2` FOREIGN KEY (`transaction_medicine_id`) REFERENCES `transaction_medicine` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+-- 2018-07-13 07:07:03
