@@ -35,7 +35,6 @@ class TransactionMedicine extends BaseModel
         'medical_record_number',
         'care_type',
         'medicine_date',
-        'pharmarcist_id',
         'receipt_number',
         'is_post_to_db',
         'deleted_at',

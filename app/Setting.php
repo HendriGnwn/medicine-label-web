@@ -25,4 +25,34 @@ class Setting extends BaseModel
         'created_at',
         'updated_at',
     ];
+    
+    public static function getSikLabel()
+    {
+        $model = self::find(self::SETTING_FIRST);
+        if (!$model) {
+            return null;
+        }
+        
+        return $model->sik;
+    }
+    
+    public static function getApotekerLabel()
+    {
+        $model = self::find(self::SETTING_FIRST);
+        if (!$model) {
+            return null;
+        }
+        
+        return $model->apoteker;
+    }
+    
+    public static function getAddressLabel()
+    {
+        $model = self::find(self::SETTING_FIRST);
+        if (!$model) {
+            return null;
+        }
+        
+        return $model->address;
+    }
 }

@@ -75,12 +75,13 @@
         width: 'resolve'
     });
     $("#role").change(function() {
-        if ($(this).val() == '{{\App\User::ROLE_PHARMACIST}}') {
-            $('#pharmacist').show();
-        } else {
-            $('#pharmacist').hide();
-        }
+//        if ($(this).val() == '{{\App\User::ROLE_PHARMACIST}}') {
+//            $('#pharmacist').show();
+//        } else {
+//            $('#pharmacist').hide();
+//        }
     });
+    $('#pharmacist').hide();
     $("#role").change();
 </script>
 @endpush

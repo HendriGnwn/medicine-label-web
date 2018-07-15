@@ -31,7 +31,7 @@
     </div>
 </div>
 
-@if ($model->getIsRolePharmacist())
+@if (false)
 <div class="panel panel-default">
     <div class="panel-heading">
         Detail Apoteker (Untuk keperluan Header Print Label)
