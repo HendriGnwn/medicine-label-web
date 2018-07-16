@@ -64,7 +64,7 @@
                         </td>
                         <td>
                             {!! Form::hidden('id[]', $medicine->id_transaksi_obat) !!}
-                            {!! Form::text('how_to_use[]', old('how_to_use.' . $no) ? old('how_to_use_' . $no) : $medicine->getHowToUse(), ['class' => 'form-control']) !!}
+                            {{ Form::select("how_to_use[]", array_merge(["" => "Pilih"], \App\MmHowToUse::pluck("nama", "nama")->toArray()), old('how_to_use.' . $no) ? old('how_to_use_' . $no) : $medicine->getHowToUse(), ["class"=>"form-control"]) }}
                         </td>
                     </tr>
                     @php 

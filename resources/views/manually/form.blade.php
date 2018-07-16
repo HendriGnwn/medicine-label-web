@@ -91,9 +91,12 @@
         
 <table class="table table-condensed table-hover" id="medicine-detail">
     <tr>
-        <th style="width:5%; vertical-align: middle;">No</th>
+        <th colspan="3"></th>
+        <th style="width:40%; vertical-align: middle;" id="medicine-record-total">Total 0 kolom</th>
+    </tr>
+    <tr>
         <th style="width:40%; vertical-align: middle;">Obat*</th>
-        <th style="width:20%; vertical-align: middle;">Jumlah*</th>
+        <th style="width:10%; vertical-align: middle;">Jumlah*</th>
         <th style="width:25%; vertical-align: middle;">Aturan Pakai (sehari)*</th>
         <th style="width:10%; vertical-align: middle;"><button type="button" name="add" id="add" class="btn btn-primary btn-sm" title="Add"><i class="fa fa-plus-square"></i></button></th>
     </tr>
@@ -107,13 +110,10 @@
 
 @push('script')
 <script>
-    var i = 0;
+    var i = medicineRecordTotal = 0;
     $('#add').click(function() {
         $('#medicine-detail').append('' +
             '<tr id="row-'+i+'" >' +
-                '<td>' +
-                    (i + 1) +
-                '</td>' +
                 '<td>' +
                     '<input type="hidden" name="count[]" value="'+ i +'" />' +
                     '<input type="hidden" name="medicine_label[]" id="medicine_label_'+i+'" value="" />' +
@@ -123,7 +123,7 @@
                     '<input type="number" class="form-control" name="quantity[]" required />' +
                 '</td>' +
                 '<td>' +
-                    '<input type="text" class="form-control" name="how_to_use[]" id="how_to_use_'+i+'" required />' +
+                    '{{ Form::select("how_to_use[]", array_merge(["" => "Pilih"], \App\MmHowToUse::pluck("nama", "nama")->toArray()), null, ["class"=>"form-control"]) }}' +
                 '</td>' +
                 '<td><button type="button" id="'+ i +'" class="btn btn-danger btn-sm" onclick="clickRemove('+i+')" title="Delete"><i class="fa fa-trash"></i></button></td>' +
             '</tr>');
@@ -170,10 +170,15 @@
             }  
         });
         i++;
+        medicineRecordTotal++;
+        $('#medicine-record-total').html('Total: ' + medicineRecordTotal + ' kolom');
     });
+    
     
     function clickRemove(i) {
         $('#row-'+i+'').remove();  
+        medicineRecordTotal--;
+        $('#medicine-record-total').html('Total: ' + medicineRecordTotal + ' kolom');
     }
     
     $('.select2').select2({

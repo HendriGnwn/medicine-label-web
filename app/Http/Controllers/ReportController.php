@@ -43,11 +43,11 @@ class ReportController extends Controller
         $startDate = Carbon::parse($datePeriod)->toDateString() . ' 00:00:00';
         $endDate = Carbon::parse($datePeriod)->toDateString() . ' 23:59:59';
         
-        $models = \App\MmPatientRegistration::leftJoin('mm_transaksi_add_obat', 'mm_transaksi_add_obat.id_pendaftaran', '=', 'mm_pasien_pendaftaran.id_pendaftaran')
+        $models = \App\MmPatientRegistration::withCacheCooldownSeconds(600)->leftJoin('mm_transaksi_add_obat', 'mm_transaksi_add_obat.id_pendaftaran', '=', 'mm_pasien_pendaftaran.id_pendaftaran')
              ->whereBetween('mm_transaksi_add_obat.created_date', [$startDate, $endDate])
              ->groupBy('mm_transaksi_add_obat.id_pendaftaran', 'mm_transaksi_add_obat.no_resep')
              ->get();
-        $medicines = \App\MmTransactionAddMedicine::whereBetween('created_date', [$startDate, $endDate])
+        $medicines = \App\MmTransactionAddMedicine::withCacheCooldownSeconds(600)->whereBetween('created_date', [$startDate, $endDate])
             ->select(['*', DB::raw('SUM(jml_permintaan) as total_jml_permintaan')])
             ->groupBy('id_barang')
             ->get();
