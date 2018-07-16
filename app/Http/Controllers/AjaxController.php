@@ -246,7 +246,7 @@ class AjaxController extends Controller
         $start = (new Carbon('first day of last month'))->toDateString();
         $end = (new Carbon('last day of last month'))->toDateString();
         
-        $topFiveMedicines = MmTransactionAddMedicine::selectRaw('*, SUM(jml_permintaan) as jml_permintaan')
+        $topFiveMedicines = MmTransactionAddMedicine::withCacheCooldownSeconds(300)->selectRaw('*, SUM(jml_permintaan) as jml_permintaan')
                 ->whereRaw("DATE_FORMAT(created_date, '%Y-%m-%d') BETWEEN '{$start}' AND '{$end}'")
                 ->with('mmItem')
                 ->groupBy('id_barang')
