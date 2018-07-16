@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 abstract class BaseModel extends Model {
     
-    use \GeneaLabs\LaravelModelCaching\Traits\Cachable;
-    
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 0;
     

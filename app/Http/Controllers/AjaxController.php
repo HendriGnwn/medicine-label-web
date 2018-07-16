@@ -156,7 +156,7 @@ class AjaxController extends Controller
             return response()->json([]);
         }
         
-        $patients = MmPatientRegistration::withCacheCooldownSeconds(600)->whereRaw('DATE_FORMAT(tanggal_pendaftaran, "%Y") >= "' . Carbon::now()->format('Y') . '"')
+        $patients = MmPatientRegistration::whereRaw('DATE_FORMAT(tanggal_pendaftaran, "%Y") >= "' . Carbon::now()->format('Y') . '"')
                 ->whereHas('mmPatient', function ($query) use ($term) {
                     $query->where('nama', 'like', "%$term%");
                 })
@@ -246,7 +246,7 @@ class AjaxController extends Controller
         $start = (new Carbon('first day of last month'))->toDateString();
         $end = (new Carbon('last day of last month'))->toDateString();
         
-        $topFiveMedicines = MmTransactionAddMedicine::withCacheCooldownSeconds(300)->selectRaw('*, SUM(jml_permintaan) as jml_permintaan')
+        $topFiveMedicines = MmTransactionAddMedicine::selectRaw('*, SUM(jml_permintaan) as jml_permintaan')
                 ->whereRaw("DATE_FORMAT(created_date, '%Y-%m-%d') BETWEEN '{$start}' AND '{$end}'")
                 ->with('mmItem')
                 ->groupBy('id_barang')

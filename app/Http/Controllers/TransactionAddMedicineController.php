@@ -122,7 +122,7 @@ class TransactionAddMedicineController extends Controller
     {
         \DB::beginTransaction();
         \DB::statement(DB::raw('set @rownum=0'));
-        $model = \App\MmTransactionAddMedicine::withCacheCooldownSeconds(600)->select([
+        $model = \App\MmTransactionAddMedicine::select([
 					DB::raw('@rownum  := @rownum  + 1 AS rownum'), 'mm_transaksi_add_obat.*'
 				])
                 ->join('mm_pasien_pendaftaran', 'mm_pasien_pendaftaran.id_pendaftaran', '=', 'mm_transaksi_add_obat.id_pendaftaran')
