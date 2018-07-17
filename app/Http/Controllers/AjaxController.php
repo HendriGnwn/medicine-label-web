@@ -254,10 +254,10 @@ class AjaxController extends Controller
                 ->limit(10)
                 ->get();
         
-        $countPatientNow = MmPatientRegistration::whereRaw("DATE_FORMAT(tanggal_pendaftaran, '%Y-%m-%d') = '". Carbon::now()->toDateString() ."'")
+        $countPatientNow = MmPatientRegistration::withCacheCooldownSeconds(300)->whereRaw("DATE_FORMAT(tanggal_pendaftaran, '%Y-%m-%d') = '". Carbon::now()->toDateString() ."'")
                 ->count();
         
-        $countPatientPreviousMonth = MmPatientRegistration::whereRaw("DATE_FORMAT(tanggal_pendaftaran, '%Y-%m-%d') BETWEEN '{$start}' AND '{$end}'")
+        $countPatientPreviousMonth = MmPatientRegistration::withCacheCooldownSeconds(300)->whereRaw("DATE_FORMAT(tanggal_pendaftaran, '%Y-%m-%d') BETWEEN '{$start}' AND '{$end}'")
                 ->count();
         
         return response()->json([

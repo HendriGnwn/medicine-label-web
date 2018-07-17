@@ -43,7 +43,7 @@ class ReportController extends Controller
         $startDate = Carbon::parse($datePeriod)->toDateString() . ' 00:00:00';
         $endDate = Carbon::parse($datePeriod)->toDateString() . ' 23:59:59';
         
-        $models = \App\MmPatientRegistration::withCacheCooldownSeconds(600)->leftJoin('mm_transaksi_add_obat', 'mm_transaksi_add_obat.id_pendaftaran', '=', 'mm_pasien_pendaftaran.id_pendaftaran')
+        $models = Cache\App\MmPatientRegistration::withCacheCooldownSeconds(600)->leftJoin('mm_transaksi_add_obat', 'mm_transaksi_add_obat.id_pendaftaran', '=', 'mm_pasien_pendaftaran.id_pendaftaran')
              ->whereBetween('mm_transaksi_add_obat.created_date', [$startDate, $endDate])
              ->groupBy('mm_transaksi_add_obat.id_pendaftaran', 'mm_transaksi_add_obat.no_resep')
              ->get();
@@ -72,7 +72,10 @@ class ReportController extends Controller
         $objPHPExcel = new \Maatwebsite\Excel\Classes\PHPExcel();
 
         $arrayData['head'][]='No';
+        $arrayData['head'][]='No Pendaftaran';
+        $arrayData['head'][]='No RM';
         $arrayData['head'][]='Nama Pasien';
+        $arrayData['head'][]='Tanggal Pendaftaran';
         $arrayData['head'][]='No Resep';
         foreach ($medicines as $medicine) {
             $arrayData['head'][] = $medicine->mmItem->nama_barang;
@@ -80,7 +83,10 @@ class ReportController extends Controller
         $no = 0;
         foreach ($models as $model) {
             $arrayData[$no][] = $no+1;
+            $arrayData[$no][] = $model->no_pendaftaran;
+            $arrayData[$no][] = $model->no_rekam_medis;
             $arrayData[$no][] = $model->mmPatient->nama;
+            $arrayData[$no][] = \Carbon\Carbon::parse($model->tanggal_pendaftaran)->format('d-M-Y H:i:s');
             $arrayData[$no][] = $model->no_resep;
             foreach ($medicines as $medicine) {
                 $arrayData[$no][] = $model->getItemQuantity($medicine->id_barang, $model->no_resept);
@@ -139,5 +145,10 @@ class ReportController extends Controller
         header("Content-Disposition: attachment;filename=laporan-harian-".Carbon::parse($datePeriod)->format('d-m-Y').".xlsx");
         header('Cache-Control: max-age=0');
         $objWriter->save('php://output');
+    }
+    
+    public function monthlyPrintLabelByCategory(Request $request)
+    {
+        
     }
 }

@@ -13,7 +13,10 @@
                 <thead>
                     <tr>
                         <th>*</th>
+                        <th>No Pendaftaran</th>
+                        <th>No RM</th>
                         <th>Pasien</th>
+                        <th>Tanggal Pendaftaran</th>
                         <th>No Resep</th>
                         @foreach ($medicines as $medicine)
                         <th style="width:5%;">{{ $medicine->mmItem->nama_barang }}</th>
@@ -27,7 +30,10 @@
                     @foreach ($models as $model)
                     <tr>
                         <td>{{ $no++ }}</td>
+                        <td>{{ $model->no_pendaftaran }}</td>
+                        <td>{{ $model->no_rekam_medis }}</td>
                         <td>{{ $model->mmPatient->nama }}</td>
+                        <td>{{ \Carbon\Carbon::parse($model->tanggal_pendaftaran)->format('d-M-Y H:i:s') }}</td>
                         <td>{{ $model->no_resep }}</td>
                         @foreach ($medicines as $medicine)
                         <td style="text-align:center;">{{ $model->getItemQuantity($medicine->id_barang, $model->no_resep) }}</td>
