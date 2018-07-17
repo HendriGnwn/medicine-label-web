@@ -284,9 +284,36 @@ class TransactionMedicine extends BaseModel
      * @param type $padLength
      * @return type
      */
-    public static function generateReceiptNumber($padLength = 4)
+    public static function generateReceiptNumber($patientCounterparty, $isIGD = false, $isRanap = false, $padLength = 4)
     {
-		$left = date('ymd');
+        $left = date('ymd');
+        if ($isRanap) {
+            $left = 'RNP-';
+        } else if ($isIGD) {
+            $left = 'IGD-';
+        } else {
+            switch ($patientCounterparty) {
+                case 0: // perorangan
+                    $left = 'REG-';
+                    break;
+                case 1: // jaminan
+                case 5: // Jamkesmas
+                case 6: // Jamkesda
+                    $left = 'JMN-';
+                    break;
+                case 4: // RSMM
+                    $left = 'PGW-';
+                    break;
+                case 8: // Jaminan Kesehatan Nasional PBI
+                case 9: // Jaminan Kesehatan Nasional NON PBI
+                    $left = 'JKN-';
+                    break;
+                case 7: // Lain-lain
+                case 2: // aksesoss
+                case 3: // askeskin
+            }
+        }
+		
         $leftLen = strlen($left);
         $increment = 1;
         

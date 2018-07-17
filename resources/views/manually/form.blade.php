@@ -41,7 +41,7 @@
             <div class="col-md-12">
                 <div aria-required="true" class="form-group required form-group-default {{ $errors->has('receipt_number') ? 'has-error' : ''}}">
                     {!! Form::label('receipt_number', 'Nomor Resep') !!}
-                    {!! Form::number('receipt_number', \App\TransactionMedicine::generateReceiptNumber(), ['class' => 'form-control', 'type'=>'number', 'readonly'=>true]) !!}
+                    {!! Form::number('receipt_number', null, ['class' => 'form-control', 'type'=>'number', 'readonly'=>true, 'id' => 'receipt-number']) !!}
                     {!! $errors->first('receipt_number', '<p class="help-block">:message</p>') !!}
                 </div>
             </div>
@@ -246,6 +246,7 @@
                     $('#result-doctor').html("");
                     $('#result-unit').html("");
                     $("input[name='medical_record_number']").val("");
+                    $('#receipt-number').val("");
                     $('#care_type').val("").trigger('change');
                     return false;
                 }
@@ -268,6 +269,7 @@
                 $('#result-patient').html(data.patient);
                 $('#result-registered-at').html(data.registered_at);
                 $('#result-unit').html(data.unit);
+                $('#receipt-number').val("asd");
             }
         })
     });

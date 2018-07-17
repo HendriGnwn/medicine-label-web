@@ -58,7 +58,9 @@
         </div>
     </div>
 </div>
-
+<div id="pop_div"></div>
+// With Lava class alias
+<?= $lava->render('BarChart', 'Votes', 'pop_div') ?>
 @endsection
 
 @push('script')

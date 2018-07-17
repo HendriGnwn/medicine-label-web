@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Khill\Lavacharts\Lavacharts;
 
 class HomeController extends Controller
 {
@@ -28,7 +29,21 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home.index');
+        $lava = new Lavacharts; // See note below for Laravel
+
+        $votes  = $lava->DataTable();
+
+        $votes->addStringColumn('Food Poll')
+              ->addNumberColumn('Votes')
+              ->addRow(['Tacos',  rand(1000,5000)])
+              ->addRow(['Salad',  rand(1000,5000)])
+              ->addRow(['Pizza',  rand(1000,5000)])
+              ->addRow(['Apples', rand(1000,5000)])
+              ->addRow(['Fish',   rand(1000,5000)]);
+
+        $lava->BarChart('Votes', $votes);
+
+        return view('home.index', compact('lava'));
     }
     
     public function triggerDropAllOnBigData()

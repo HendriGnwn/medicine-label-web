@@ -191,6 +191,10 @@ class AjaxController extends Controller
         
         $careTypeId = ($patientRegistered->kelas_perawatan == 0) ? TransactionMedicine::CARE_TYPE_OUTPATIENT : TransactionMedicine::CARE_TYPE_INPATIENT;
         
+        $isRegisterIgd = ($patientRegistered->jenis_pendaftaran == MmPatientRegistration::REGISTER_TYPE_IGD) ? true : false;
+        $isRanap = ($patientRegistered->kelas_perawatan != 0) ? true : false;
+        $receiptNumber = TransactionMedicine::generateReceiptNumber($patientRegistered->id_jenis_pembayaran, $isRegisterIgd, $isRanap);
+        
         return response()->json([
             'status' => 1,
             'data' => [
@@ -202,7 +206,8 @@ class AjaxController extends Controller
                 'medical_record_number' => $patientRegistered->no_rekam_medis,
                 'care_type_id' => $careTypeId,
                 'doctor_id' => $patientRegistered->id_dokter,
-                'unit_id' => $patientRegistered->id_unit,                                                               
+                'unit_id' => $patientRegistered->id_unit,
+                'receipt_number' => $receiptNumber,
             ]
         ]);
     }

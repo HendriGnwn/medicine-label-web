@@ -2,12 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\MmPatientRegistration;
 use App\MmTransactionAddMedicine;
-use App\TransactionAddMedicineAdditional;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Classes\PHPExcel;
+use PHPExcel_IOFactory;
+use PHPExcel_Settings;
+use PHPExcel_Style_Alignment;
+use PHPExcel_Style_Border;
+use function Symfony\Component\Debug\header;
+use function view;
 
 class ReportController extends Controller
 {
@@ -43,14 +51,18 @@ class ReportController extends Controller
         $startDate = Carbon::parse($datePeriod)->toDateString() . ' 00:00:00';
         $endDate = Carbon::parse($datePeriod)->toDateString() . ' 23:59:59';
         
-        $models = Cache\App\MmPatientRegistration::withCacheCooldownSeconds(600)->leftJoin('mm_transaksi_add_obat', 'mm_transaksi_add_obat.id_pendaftaran', '=', 'mm_pasien_pendaftaran.id_pendaftaran')
+        $models = Cache::remember('reportMmPatientRegistration', 2*60, function() use ($startDate, $endDate) {
+            return MmPatientRegistration::withCacheCooldownSeconds(600)->leftJoin('mm_transaksi_add_obat', 'mm_transaksi_add_obat.id_pendaftaran', '=', 'mm_pasien_pendaftaran.id_pendaftaran')
              ->whereBetween('mm_transaksi_add_obat.created_date', [$startDate, $endDate])
              ->groupBy('mm_transaksi_add_obat.id_pendaftaran', 'mm_transaksi_add_obat.no_resep')
              ->get();
-        $medicines = \App\MmTransactionAddMedicine::withCacheCooldownSeconds(600)->whereBetween('created_date', [$startDate, $endDate])
-            ->select(['*', DB::raw('SUM(jml_permintaan) as total_jml_permintaan')])
-            ->groupBy('id_barang')
-            ->get();
+        });
+        $medicines = Cache::remember('reportMmPatientRegistration', 2*60, function() use ($startDate, $endDate) {
+            return MmTransactionAddMedicine::withCacheCooldownSeconds(600)->whereBetween('created_date', [$startDate, $endDate])
+                ->select(['*', DB::raw('SUM(jml_permintaan) as total_jml_permintaan')])
+                ->groupBy('id_barang')
+                ->get();
+        });
         \DB::commit();
         
         return [
@@ -69,7 +81,7 @@ class ReportController extends Controller
         $models = $query['models'];
         $medicines = $query['medicines'];
 
-        $objPHPExcel = new \Maatwebsite\Excel\Classes\PHPExcel();
+        $objPHPExcel = new PHPExcel();
 
         $arrayData['head'][]='No';
         $arrayData['head'][]='No Pendaftaran';
@@ -118,14 +130,14 @@ class ReportController extends Controller
         $starRow = 'A';
 		$lastColumn = $objPHPExcel->setActiveSheetIndex(0)->getHighestColumn();
         $objPHPExcel->getActiveSheet()->getStyle('D2:'.$lastColumn.'2')->getAlignment()->setTextRotation(90);
-        $objPHPExcel->getActiveSheet()->getStyle('A2:'.$lastColumn.'2')->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_BOTTOM);
-        $objPHPExcel->getActiveSheet()->getStyle('A2:'.$lastColumn.'2')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-        $objPHPExcel->getActiveSheet()->getStyle('A2:'.$lastColumn.'2')->getBorders()->getAllBorders()->setBorderStyle(\PHPExcel_Style_Border::BORDER_THIN);
-        $objPHPExcel->getActiveSheet()->getStyle('A2:A'.($lastDataIndex+1))->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-        $objPHPExcel->getActiveSheet()->getStyle('A3:'.$lastColumn.($lastDataIndex+1))->getBorders()->getAllBorders()->setBorderStyle(\PHPExcel_Style_Border::BORDER_THIN);
-        $objPHPExcel->getActiveSheet()->getStyle('D3:'.$lastColumn.($lastDataIndex+1))->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-        $objPHPExcel->getActiveSheet()->getStyle('A'.($lastDataIndex+2).':'.$lastColumn.($lastDataIndex+2))->getBorders()->getAllBorders()->setBorderStyle(\PHPExcel_Style_Border::BORDER_THIN);
-        $objPHPExcel->getActiveSheet()->getStyle('D'.($lastDataIndex+2).':'.$lastColumn.($lastDataIndex+2))->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+        $objPHPExcel->getActiveSheet()->getStyle('A2:'.$lastColumn.'2')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_BOTTOM);
+        $objPHPExcel->getActiveSheet()->getStyle('A2:'.$lastColumn.'2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+        $objPHPExcel->getActiveSheet()->getStyle('A2:'.$lastColumn.'2')->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+        $objPHPExcel->getActiveSheet()->getStyle('A2:A'.($lastDataIndex+1))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:'.$lastColumn.($lastDataIndex+1))->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+        $objPHPExcel->getActiveSheet()->getStyle('D3:'.$lastColumn.($lastDataIndex+1))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+        $objPHPExcel->getActiveSheet()->getStyle('A'.($lastDataIndex+2).':'.$lastColumn.($lastDataIndex+2))->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+        $objPHPExcel->getActiveSheet()->getStyle('D'.($lastDataIndex+2).':'.$lastColumn.($lastDataIndex+2))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
         $objPHPExcel->getActiveSheet()->getStyle('A'.($lastDataIndex+2).':'.$lastColumn.($lastDataIndex+2))->getFont()->setBold(true);
         
         /**autosize*/
@@ -138,9 +150,9 @@ class ReportController extends Controller
 		}
 		$objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
 
-        \PHPExcel_Settings::setZipClass(\PHPExcel_Settings::PCLZIP);
-        \PHPExcel_Settings::setZipClass(\PHPExcel_Settings::ZIPARCHIVE);
-		$objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        PHPExcel_Settings::setZipClass(PHPExcel_Settings::PCLZIP);
+        PHPExcel_Settings::setZipClass(PHPExcel_Settings::ZIPARCHIVE);
+		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header("Content-Disposition: attachment;filename=laporan-harian-".Carbon::parse($datePeriod)->format('d-m-Y').".xlsx");
         header('Cache-Control: max-age=0');

@@ -4,6 +4,8 @@ namespace App;
 
 class MmPatientRegistration extends BaseModel
 {
+    const REGISTER_TYPE_IGD = 4;
+    
     protected $connection = 'mysqlMm';
     
     /**
