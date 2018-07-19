@@ -5,29 +5,36 @@
 <div class="row">
     <div class="col-md-6">
         <div class="panel panel-default">
-            <div class="panel-heading">Grafik 10 Obat teratas 1 Bulan Terakhir</div>
+            <div class="panel-heading">Jumlah Pasien Per Poli Hari ini</div>
 
             <div class="panel-body">
-                <table class="table table-condensed table-hover">
+                
+                <table class="table table-condensed table-hover" style='margin-bottom: 0px'>
                     <thead>
                         <tr>
-                            <th>Obat</th>
-                            <th>Jumlah</th>
+                            <th style="width:80%">Poli</th>
+                            <th style="width:20%">Jumlah</th>
                         </tr>
                     </thead>
-                    <tbody id="top-five-medicines">
-                        <tr>
-                            <td colspan="2">Please wait...</td>
-                        </tr>
-                    </tbody>
                 </table>
+                <div style='max-height: 800px; overflow-y: auto'>
+                    <table class="table table-condensed table-hover">
+                        <tbody id="patient-poly">
+                            <tr>
+                                <td colspan="2">Please wait...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
                 <div class="text-center">
                     <label class="label label-info">
-                        {{ (new \Carbon\Carbon('first day of last month'))->format('d M Y')  }} - {{ (new \Carbon\Carbon('last day of last month'))->format('d M Y')  }}
+                        {{ \Carbon\Carbon::now()->format('d M Y') }}
                     </label>
                 </div>
             </div>
         </div>
+        <div id="pop_div"></div>
+        <?= $lava->render('ColumnChart', 'ReportPrintLabel', 'pop_div') ?>
     </div>
     <div class="col-md-3">
         <div class="panel panel-default">
@@ -57,10 +64,60 @@
             </div>
         </div>
     </div>
+<!--</div>
+<div class="row">-->
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">Daftar 10 User Terakhir Login</div>
+
+            <div class="panel-body">
+                <table class="table table-condensed table-hover">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Terakhir Login</th>
+                        </tr>
+                    </thead>
+                    <tbody id="top-users">
+                        <tr>
+                            <td colspan="2">Please wait...</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="text-center">
+                    <label class="label label-info">
+                        {{ (new \Carbon\Carbon('first day of last month'))->format('d M Y')  }} - {{ (new \Carbon\Carbon('last day of last month'))->format('d M Y')  }}
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="panel panel-default">
+            <div class="panel-heading">Grafik 10 Obat teratas 1 Bulan Terakhir</div>
+
+            <div class="panel-body">
+                <table class="table table-condensed table-hover">
+                    <thead>
+                        <tr>
+                            <th>Obat</th>
+                            <th>Jumlah</th>
+                        </tr>
+                    </thead>
+                    <tbody id="top-five-medicines">
+                        <tr>
+                            <td colspan="2">Please wait...</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="text-center">
+                    <label class="label label-info">
+                        {{ (new \Carbon\Carbon('first day of last month'))->format('d M Y')  }} - {{ (new \Carbon\Carbon('last day of last month'))->format('d M Y')  }}
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div id="pop_div"></div>
-// With Lava class alias
-<?= $lava->render('BarChart', 'Votes', 'pop_div') ?>
 @endsection
 
 @push('script')
@@ -93,6 +150,28 @@
                     }
                 } else {
                     $("#top-five-medicines").append("<tr><td colspan='2'>Tidak ada data</td></tr>");
+                }
+                
+                var topUsers = data.topUsers;
+                $("#top-users").html("");
+                if (topUsers.length > 0) {
+                    for(var i=0; i<topUsers.length; i++) {
+                        var itemName = topUsers[i].name;
+                        $("#top-users").append("<tr><td>"+ itemName +"</td><td>"+ topUsers[i].last_login_at +"</td></tr>");
+                    }
+                } else {
+                    $("#top-users").append("<tr><td colspan='2'>Tidak ada data</td></tr>");
+                }
+                
+                var patientPoly = data.patientPoly;
+                $("#patient-poly").html("");
+                if (patientPoly.length > 0) {
+                    for(var i=0; i<patientPoly.length; i++) {
+                        var itemName = patientPoly[i].nama_unit;
+                        $("#patient-poly").append("<tr><td>"+ itemName +"</td><td>"+ patientPoly[i].qty +"</td></tr>");
+                    }
+                } else {
+                    $("#patient-poly").append("<tr><td colspan='2'>Tidak ada data</td></tr>");
                 }
             }
         });

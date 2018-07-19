@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('headerTitle', 'Tambah Apoteker')
+@section('headerTitle', 'Tambah Aturan Pakai')
 @section('content')
 <div class="panel panel-default">
     <div class="panel-heading">@yield('headerTitle')</div>
@@ -7,11 +7,11 @@
     <div class="panel-body">
         {!! Form::model($model, [
             'method' => 'POST',
-            'url' => route('pharmacist.store'),
+            'url' => route('how-to-use.store'),
             'files' => true,
             'id' => 'formValidate',
         ]) !!}
-        @include('pharmacist.form', compact('model'))
+        @include('how-to-use.form', compact('model'))
         {!! Form::close() !!}
     </div>
 </div>

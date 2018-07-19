@@ -12,11 +12,11 @@ use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
 
-class PharmacistController extends Controller
+class HowToUseController extends Controller
 {
 	protected $rules = [
-		'name' => 'required',
-        'sik' => 'required',
+		'id_barang_satuan_kecil' => 'required',
+        'nama' => 'required',
 	];
 
 	/**
@@ -30,7 +30,7 @@ class PharmacistController extends Controller
             abort('403', 'Unauthorized this action.');
         }
         
-        return view('pharmacist.index');
+        return view('how-to-use.index');
     }
 
     /**
@@ -40,9 +40,9 @@ class PharmacistController extends Controller
      */
     public function create()
     {
-        $model = new \App\Pharmacist();
+        $model = new \App\MmHowToUse();
         
-        return view('pharmacist.create', compact('model'));
+        return view('how-to-use.create', compact('model'));
     }
 
     /**
@@ -56,14 +56,15 @@ class PharmacistController extends Controller
     {
         $this->validate($request, $this->rules);
         
-        $model = new \App\Pharmacist();
+        $model = new \App\MmHowToUse();
         $model->fill($request->all());
-        $model->created_at = Carbon::now()->toDateTimeString();
+        $model->created_date = Carbon::now()->toDateTimeString();
+        $model->created_by = \App\User::CREATED_BY;
         $model->save();
         
         \Session::flash('success', 'Success');
         
-        return redirect(route('pharmacist.index'));
+        return redirect(route('how-to-use.index'));
     }
 
     /**
@@ -75,9 +76,9 @@ class PharmacistController extends Controller
      */
     public function show($id)
     {
-        $model = TransactionMedicine::findOrFail($id);
+        $model = MmHowToUse::findOrFail($id);
 
-        return view('pharmacist.show', compact('model'));
+        return view('how-to-use.show', compact('model'));
     }
 
     /**
@@ -89,9 +90,9 @@ class PharmacistController extends Controller
      */
     public function edit($id)
     {
-        $model = \App\Pharmacist::findOrFail($id);
+        $model = \App\MmHowToUse::findOrFail($id);
 
-        return view('pharmacist.edit', compact('model'));
+        return view('how-to-use.edit', compact('model'));
     }
 
     /**
@@ -106,14 +107,15 @@ class PharmacistController extends Controller
     {
 		$this->validate($request, $this->rules);
         
-        $model = \App\Pharmacist::findOrFail($id);
+        $model = \App\MmHowToUse::findOrFail($id);
         $model->fill($request->all());
-        $model->created_at = Carbon::now()->toDateTimeString();
+        $model->last_modified_date = Carbon::now()->toDateTimeString();
+        $model->last_modified_by = \App\User::CREATED_BY;
         $model->save();
         
         \Session::flash('success', 'Success');
         
-        return redirect(route('pharmacist.index'));
+        return redirect(route('how-to-use.index'));
     }
 
     /**
@@ -125,18 +127,11 @@ class PharmacistController extends Controller
      */
     public function destroy($id)
     {
-        \App\Pharmacist::destroy($id);
+        \App\MmHowToUse::destroy($id);
         
         Session::flash('success', 'Delete deleted!');
 
-        return redirect(route('pharmacist.index'));
-    }
-    
-    public function printPreview($id)
-    {
-        $model = TransactionMedicine::findOrFail($id);
-        
-        return view('manually.print-preview', compact('model'));
+        return redirect(route('how-to-use.index'));
     }
 	
 	/**
@@ -145,15 +140,19 @@ class PharmacistController extends Controller
 	public function listIndex(Request $request)
     {
         DB::statement(DB::raw('set @rownum=0'));
-        $model = \App\Pharmacist::select([
-					DB::raw('@rownum  := @rownum  + 1 AS rownum'), 'pharmacist.*'
+        $model = \App\MmHowToUse::with(['mmItemSmall'])
+                ->select([
+					DB::raw('@rownum  := @rownum  + 1 AS rownum'), 'mm_aturan_pakai.*'
 				]);
 
          $datatables = app('datatables')->of($model)
+            ->editColumn('id_barang_satuan_kecil', function ($model) {
+                return $model->mmItemSmall ? $model->mmItemSmall->nama_satuan_kecil : $model->id_barang_satuan_kecil;
+            })
             ->addColumn('action', function ($model) {
-                $editUrl = route('pharmacist.edit', ['id' => $model->id]);
+                $editUrl = route('how-to-use.edit', ['id' => $model->id_aturan_pakai]);
                 return "<a href='{$editUrl}' class='btn btn-xs btn-primary btn-rounded' data-toggle='tooltip' title='Edit'><i class='fa fa-edit'></i></a> "
-                    . "<a href='#' onclick='deleteRecord({$model->id})' class='btn btn-xs btn-danger btn-rounded' data-toggle='tooltip' title='Hapus'><i class='fa fa-trash'></i></a>";
+                    . "<a href='#' onclick='deleteRecord({$model->id_aturan_pakai})' class='btn btn-xs btn-danger btn-rounded' data-toggle='tooltip' title='Hapus'><i class='fa fa-trash'></i></a>";
             });
 
         if ($keyword = $request->get('search')['value']) {
@@ -164,14 +163,14 @@ class PharmacistController extends Controller
             $rang = explode("-", $range);
             $startDate = Carbon::parse($rang[0])->toDateString();
             $endDate = Carbon::parse($rang[1])->toDateString();
-            $datatables->whereBetween('pharmacist.created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+            $datatables->whereBetween('mm_aturan_pakai.created_date', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
         }
         
         if ($range = $datatables->request->get('updated_range')) {
             $rang = explode("-", $range);
             $startDate = Carbon::parse($rang[0])->toDateString();
             $endDate = Carbon::parse($rang[1])->toDateString();
-            $datatables->whereBetween('pharmacist.updated_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+            $datatables->whereBetween('mm_aturan_pakai.last_modified_date', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
         }
 		
         return $datatables->make(true);

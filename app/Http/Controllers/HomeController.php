@@ -31,17 +31,38 @@ class HomeController extends Controller
     {
         $lava = new Lavacharts; // See note below for Laravel
 
-        $votes  = $lava->DataTable();
+        $finances = $lava->DataTable();
+        $finances->addDateColumn('Year')
+                 ->addNumberColumn('RANAP')
+                 ->addNumberColumn('RAJAL JKN')
+                 ->addNumberColumn('RAJAL REGULER')
+                 ->addNumberColumn('RAJAL PERUSAHAAN')
+                 ->addNumberColumn('RAJAL PEGAWAI')
+                 ->addNumberColumn('IGD')
+                 ->setDateTimeFormat('m')
+                 ->addRow(['01', 1000, 400, 1000, 400, 1000, 400])
+                 ->addRow(['02', 1170, 460, 1170, 460, 1170, 460])
+                 ->addRow(['03', 660, 1120, 660, 1120, 660, 1120])
+                 ->addRow(['04', 1030, 54, 1030, 54, 1030, 54]);
 
-        $votes->addStringColumn('Food Poll')
-              ->addNumberColumn('Votes')
-              ->addRow(['Tacos',  rand(1000,5000)])
-              ->addRow(['Salad',  rand(1000,5000)])
-              ->addRow(['Pizza',  rand(1000,5000)])
-              ->addRow(['Apples', rand(1000,5000)])
-              ->addRow(['Fish',   rand(1000,5000)]);
+        $lava->ColumnChart('ReportPrintLabel', $finances, [
+            'title' => 'Laporan Print Label',
+            'titleTextStyle' => [
+                'color'    => '#0163a7',
+                'fontSize' => 16
+            ],
+            'vAxis'=> ['title'=>'Lembar']
+        ]);
+//        $votes->addStringColumn('Laporan Print Label')
+//              ->addNumberColumn('Lembar')
+//              ->addRow(['RANAP',  rand(1000,5000)])
+//              ->addRow(['RAJAL JKN',  rand(1000,5000)])
+//              ->addRow(['RAJAL REGULER',  rand(1000,5000)])
+//              ->addRow(['RAJAL PERUSAHAAN', rand(1000,5000)])
+//              ->addRow(['RAJAL PEGAWAI',   rand(1000,5000)])
+//              ->addRow(['IGD', rand(1000,5000)]);
 
-        $lava->BarChart('Votes', $votes);
+        //$lava->BarChart('ReportPrintLabel', $votes);
 
         return view('home.index', compact('lava'));
     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\DclUser;
 use App\Http\Controllers\Controller;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 
@@ -48,6 +49,10 @@ class LoginController extends Controller
             $this->credentials($request), $request->filled('remember')
         );
         if ($login) {
+            User::where('username', $request->{$this->username()})
+                ->update([
+                    'last_login_at' => Carbon::now()->toDateTimeString(),
+                ]);
             return true;
         }
         
@@ -71,6 +76,7 @@ class LoginController extends Controller
         $user->username = $loginDclUser->name;
         $user->password = bcrypt($loginDclUser->name);
         $user->role = User::ROLE_DOCTOR;
+        $user->last_login_at = Carbon::now()->toDateTimeString();
         $user->save();
         
         return true;

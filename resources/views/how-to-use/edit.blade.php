@@ -8,12 +8,12 @@
 
     {!! Form::model($model, [
             'method' => 'PATCH',
-            'url' => route('pharmacist.update', ['id'=>$model->id]),
+            'url' => route('how-to-use.update', ['id'=>$model->id_aturan_pakai]),
             'files' => true,
             'id' => 'formValidate',
         ]) !!}
 
-        @include ('pharmacist.form', ['submitButtonText' => 'Update'])
+        @include ('how-to-use.form', ['submitButtonText' => 'Update'])
 
 	{!! Form::close() !!}
     </div>

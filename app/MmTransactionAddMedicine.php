@@ -6,7 +6,7 @@ use Carbon\Carbon;
 
 class MmTransactionAddMedicine extends BaseModel
 {
-    const CREATED_BY = 'sistemlabelingobat';
+    const CREATED_BY = User::CREATED_BY;
     
     protected $connection = 'mysqlMm';
     

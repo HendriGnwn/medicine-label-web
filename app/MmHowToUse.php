@@ -35,4 +35,9 @@ class MmHowToUse extends BaseModel
         'deleted_date',
         'deleted_by',
     ];
+    
+    public function mmItemSmall()
+    {
+        return $this->hasOne('\App\MmItemSmall', 'id_barang_satuan_kecil', 'id_barang_satuan_kecil');
+    }
 }

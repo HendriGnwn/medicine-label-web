@@ -11,6 +11,7 @@
     <title>@yield('headerTitle', 'Main') - {{ config('app.name', 'Laravel') }}</title>
 
     <!-- Styles -->
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}"/>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/jquery-ui.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('vendor/fontawesome/css/fontawesome-all.min.css') }}">
@@ -94,6 +95,7 @@
 
                                 <ul class="dropdown-menu">
                                     <li><a href="{{ route('user.index') }}">User</a></li>
+                                    <li><a href="{{ route('how-to-use.index') }}">Aturan Pakai</a></li>
                                     <li><a href="{{ route('setting.index') }}">Kop Label</a></li>
                                 </ul>
                             </li>
