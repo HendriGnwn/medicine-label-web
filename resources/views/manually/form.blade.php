@@ -15,7 +15,7 @@
             {!! Form::hidden('unit_id', null) !!}
             <div class="col-md-12">
                 <div aria-required="true" class="form-group required form-group-default {{ $errors->has('registered_id') ? 'has-error' : ''}}">
-                    {!! Form::label('registered_id', 'No Pendaftaran/No Rekam Medis/Nama Pasien*') !!}
+                    {!! Form::label('registered_id', 'No Rekam Medis/Nama Pasien*') !!}
                     {!! Form::select('registered_id', [], null, ['class' => 'form-control', 'required'=>true]) !!}
                     {!! $errors->first('registered_id', '<p class="help-block">:message</p>') !!}
                 </div>
@@ -41,7 +41,7 @@
             <div class="col-md-12">
                 <div aria-required="true" class="form-group required form-group-default {{ $errors->has('receipt_number') ? 'has-error' : ''}}">
                     {!! Form::label('receipt_number', 'Nomor Resep') !!}
-                    {!! Form::number('receipt_number', null, ['class' => 'form-control', 'type'=>'number', 'readonly'=>true, 'id' => 'receipt-number']) !!}
+                    {!! Form::text('receipt_number', null, ['class' => 'form-control', 'type'=>'number', 'readonly'=>true, 'id' => 'receipt-number']) !!}
                     {!! $errors->first('receipt_number', '<p class="help-block">:message</p>') !!}
                 </div>
             </div>
@@ -207,7 +207,7 @@
     });
     
     $('#registered_id').select2({
-        placeholder: "No Pendaftaran - No Rekam Medis - Nama Pasien",
+        placeholder: "No Rekam Medis - Nama Pasien",
         minimumInputLength: 2,
         allowClear: true,
         ajax: {
@@ -269,7 +269,7 @@
                 $('#result-patient').html(data.patient);
                 $('#result-registered-at').html(data.registered_at);
                 $('#result-unit').html(data.unit);
-                $('#receipt-number').val("asd");
+                $('#receipt-number').val(data.receipt_number);
             }
         })
     });

@@ -75,6 +75,7 @@ class ManuallyController extends Controller
         
         $this->validate($request, $this->rules + $rules);
         
+        \DB::beginTransaction();
         $model = new TransactionMedicine();
         $model->fill($request->all());
         if ($request->doctor_id == null || $request->doctor_id == 0) {
@@ -95,6 +96,7 @@ class ManuallyController extends Controller
         }
         
         $model->storeToBigDatabaseSimrs();
+        \DB::commit();
         
         \Session::flash('success', 'Success');
         

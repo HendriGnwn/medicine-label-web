@@ -317,7 +317,7 @@ class TransactionMedicine extends BaseModel
         $leftLen = strlen($left);
         $increment = 1;
         
-        $last = MmTransactionAddMedicine::where('no_resep', 'like', "%$left%")
+        $last = MmTransactionAddMedicine::withCacheCooldownSeconds(300)->select(['no_resep'])->where('no_resep', 'like', "%$left%")
             ->orderBy('id_transaksi_obat', 'desc')
             ->limit(1)
             ->first();

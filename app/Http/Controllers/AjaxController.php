@@ -161,7 +161,7 @@ class AjaxController extends Controller
                     $query->where('nama', 'like', "%$term%");
                 })
                 ->orWhere('no_rekam_medis', 'like', "%$term%")
-                ->orWhere('no_pendaftaran', 'like', "%$term%")
+                //->orWhere('no_pendaftaran', 'like', "%$term%")
                 
                 ->whereRaw('(id_dokter != "0" OR id_dokter IS NOT NULL)')
                 ->orderBy('tanggal_pendaftaran', 'desc')
@@ -171,7 +171,7 @@ class AjaxController extends Controller
         foreach ($patients as $patient) {
             $results[] = [
                 'id' => $patient->id_pendaftaran,
-                'text' => $patient->no_pendaftaran . ' - ' . $patient->no_rekam_medis . ' - ' . $patient->mmPatient->nama,
+                'text' => $patient->no_rekam_medis . ' - ' . $patient->mmPatient->nama,
             ];
         }
         

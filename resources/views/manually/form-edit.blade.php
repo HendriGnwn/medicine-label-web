@@ -15,7 +15,7 @@
             {!! Form::hidden('unit_id', $model->unit_id) !!}
             <div class="col-md-12">
                 <div aria-required="true" class="form-group required form-group-default {{ $errors->has('registered_id') ? 'has-error' : ''}}">
-                    {!! Form::label('registered_id', 'No Pendaftaran/No Rekam Medis/Nama Pasien*') !!}
+                    {!! Form::label('registered_id', 'No Rekam Medis/Nama Pasien*') !!}
                     {!! Form::select('registered_id', [], null, ['class' => 'form-control', 'required'=>true]) !!}
                     {!! $errors->first('registered_id', '<p class="help-block">:message</p>') !!}
                 </div>
@@ -297,7 +297,7 @@
     });
     
     $('#registered_id').select2({
-        placeholder: "No Pendaftaran - No Rekam Medis - Nama Pasien",
+        placeholder: "No Rekam Medis - Nama Pasien",
         minimumInputLength: 2,
         allowClear: true,
         ajax: {
