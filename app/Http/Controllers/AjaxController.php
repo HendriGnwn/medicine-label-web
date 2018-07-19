@@ -259,11 +259,25 @@ class AjaxController extends Controller
                 ->limit(10)
                 ->get();
         
-        $countPatientNow = MmPatientRegistration::withCacheCooldownSeconds(300)->whereRaw("DATE_FORMAT(tanggal_pendaftaran, '%Y-%m-%d') = '". Carbon::now()->toDateString() ."'")
+        $countPatientNow = MmPatientRegistration::withCacheCooldownSeconds(300)->whereRaw("DATE_FORMAT(created_date, '%Y-%m-%d') = '". Carbon::now()->toDateString() ."'")
                 ->count();
         
-        $countPatientPreviousMonth = MmPatientRegistration::withCacheCooldownSeconds(300)->whereRaw("DATE_FORMAT(tanggal_pendaftaran, '%Y-%m-%d') BETWEEN '{$start}' AND '{$end}'")
+        $countPatientPreviousMonth = MmPatientRegistration::withCacheCooldownSeconds(300)->whereRaw("DATE_FORMAT(created_date, '%Y-%m-%d') BETWEEN '{$start}' AND '{$end}'")
                 ->count();
+        
+        $topUsers = \App\User::orderBy('last_login_at', 'desc')
+                ->limit(10)
+                ->get();
+        
+        $patientPoly = \App\MmUnit::withCacheCooldownSeconds(100)
+                ->select(['mm_unit.*', \DB::raw('COUNT(mm_pasien_pendaftaran.id_pendaftaran) as qty')])
+                ->leftJoin('mm_pasien_pendaftaran', 'mm_unit.id_unit', '=', 'mm_pasien_pendaftaran.id_unit')
+                ->where('mm_unit.is_poly', 1)
+                ->where('mm_unit.is_deleted', 0)
+                ->whereRaw('DATE_FORMAT(mm_pasien_pendaftaran.created_date, "%Y-%m-%d") = "' . Carbon::now()->toDateString() . '"')
+                ->orderBy('mm_unit.nama_unit', 'asc')
+                ->groupBy('mm_unit.id_unit')
+                ->get();
         
         return response()->json([
             'status' => 1,
@@ -271,6 +285,8 @@ class AjaxController extends Controller
                 'topFiveMedicines' => $topFiveMedicines->toArray(),
                 'countPatientNow' => $countPatientNow,
                 'countPatientPreviousMonth' => $countPatientPreviousMonth,
+                'topUsers' => $topUsers->toArray(),
+                'patientPoly' => $patientPoly->toArray()
             ]
         ]);
     }

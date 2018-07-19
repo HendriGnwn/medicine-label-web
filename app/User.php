@@ -9,6 +9,7 @@ class User extends Authenticatable
 {
     use Notifiable, \Illuminate\Database\Eloquent\SoftDeletes;
     
+    const CREATED_BY = 'sistemlabelingobat';
     const ROLE_SUPERADMIN = 1;
     const ROLE_PHARMACIST = 5;
     const ROLE_DOCTOR = 10;
@@ -30,6 +31,7 @@ class User extends Authenticatable
         'role',
         'apoteker_name',
         'apoteker_sik',
+        'last_login_at',
     ];
 
     /**

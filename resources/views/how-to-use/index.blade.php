@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('headerTitle', 'Daftar Apoteker')
+@section('headerTitle', 'Daftar Aturan Pakai')
 
 @section('content')
 <div class="panel panel-default">
@@ -8,12 +8,12 @@
     <div class="panel-body">
         <input type="hidden" id="delete_value" name="delete_value"/>
         <div class="table-overflow">
-            <table id="pharmacist-table" class="table table-lg table-hover" width="100%">
+            <table id="how-to-use-table" class="table table-lg table-hover" width="100%">
                 <thead>
                     <tr>
                         <th style='width:5%'>*</th>
-                        <th style='width:10%'>Nama Apoteker</th>
-                        <th style='width:10%'>SIK</th>
+                        <th style='width:10%'>Barang Satuan Kecil</th>
+                        <th style='width:10%'>Nama</th>
                         <th style='width:10%'>Dibuat</th>
                         <th style='width:10%'>Diedit</th>
                         <th style='width:10%'></th>
@@ -58,7 +58,7 @@
 @push('script')
 <script>
 var oTable;
-oTable = $('#pharmacist-table').DataTable({
+oTable = $('#how-to-use-table').DataTable({
     processing: true,
     serverSide: true,
     dom: 'lBfrtip',
@@ -93,7 +93,7 @@ oTable = $('#pharmacist-table').DataTable({
         {
             text: '<i class="fa fa-plus"></i>&nbsp;&nbsp;Create',
             action: function ( e, dt, node, config ) {
-                window.location = '{{ route("pharmacist.create") }}';
+                window.location = '{{ route("how-to-use.create") }}';
             }
         },
         {
@@ -118,7 +118,7 @@ oTable = $('#pharmacist-table').DataTable({
     },
     lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
     ajax: {
-    url: '{!! route('pharmacist.data') !!}',
+    url: '{!! route('how-to-use.data') !!}',
         data: function (d) {
             d.range = $('input[name=drange]').val();
             d.created_range = $('input[name=created_range]').val();
@@ -127,10 +127,10 @@ oTable = $('#pharmacist-table').DataTable({
     },
     columns: [
 		{ data: "rownum", name: "rownum", searchable: false },
-		{ data: "name", name: "name" },
-		{ data: "sik", name: "sik" },
-		{ data: "created_at", name: "created_at" },
-		{ data: "updated_at", name: "updated_at", visible: false },
+		{ data: "id_barang_satuan_kecil", name: "id_barang_satuan_kecil" },
+		{ data: "nama", name: "nama" },
+		{ data: "created_date", name: "created_date" },
+		{ data: "last_modified_date", name: "last_modified_date", visible: false },
         { data: "action", name: "action", searchable: false, orderable: false },
     ],
 });
@@ -151,7 +151,7 @@ function deleteRecord(id){
         return false;
     }
     $.ajax({
-        url: '{{route("pharmacist.index")}}' + "/" + id + '?' + $.param({"_token" : '{{ csrf_token() }}' }),
+        url: '{{route("how-to-use.index")}}' + "/" + id + '?' + $.param({"_token" : '{{ csrf_token() }}' }),
         type: 'DELETE',
         complete: function(data) {
             oTable.draw();

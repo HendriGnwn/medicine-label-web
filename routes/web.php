@@ -63,6 +63,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/report/list', ['as' => 'report.list', 'uses' => 'ReportController@showList']);
     Route::get('/report/export-to-excel', ['as' => 'report.export-to-excel', 'uses' => 'ReportController@exportToExcel']);
     
-    Route::get('/pharmacist/data', ['as' => 'pharmacist.data', 'uses' => 'PharmacistController@listIndex']);
-	Route::resource('/pharmacist', 'PharmacistController');
+    Route::get('/how-to-use/data', ['as' => 'how-to-use.data', 'uses' => 'HowToUseController@listIndex']);
+	Route::resource('/how-to-use', 'HowToUseController');
 });
