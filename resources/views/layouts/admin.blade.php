@@ -156,6 +156,7 @@
     <!-- jQuery -->
     <script src="{{ asset('js/jquery.js') }}"></script>
     <script src="{{ asset('js/jquery-ui.js') }}"></script>
+    <script src="{{ asset('js/lava.js') }}"></script>
     <script src="{{ asset('vendor/moment/min/moment.min.js')}}"></script>
     <!-- DataTables -->
     <script src="{{ asset('vendor/datatables/js/jquery.dataTables.min.js') }}"></script>

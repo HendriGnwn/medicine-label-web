@@ -317,11 +317,13 @@ class TransactionMedicine extends BaseModel
         $leftLen = strlen($left);
         $increment = 1;
         
-        $last = MmTransactionAddMedicine::withCacheCooldownSeconds(300)->select(['no_resep'])->where('no_resep', 'like', "%$left%")
-            ->orderBy('id_transaksi_obat', 'desc')
-            ->limit(1)
-            ->first();
-
+        $last = MmTransactionAddMedicine::disableCache()
+                ->select(['no_resep'])
+                ->whereRaw("no_resep like '%$left%'")
+                ->orderBy('id_transaksi_obat', 'desc')
+                ->limit(1)
+                ->first();
+        
         if ($last) {
             $increment = (int) substr($last->no_resep, $leftLen, $padLength);
             $increment++;

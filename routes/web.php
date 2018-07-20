@@ -20,6 +20,7 @@ Auth::routes();
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/home', 'HomeController@index')->name('home');
     Route::get('/ajax-home-data', 'AjaxController@getHomeData')->name('ajax.home-data');
+    Route::get('/ajax-home-report-label', 'AjaxController@getHomeReportLabel')->name('ajax.home-report-label');
     Route::get('trigger-drop-all-big-data', 'HomeController@triggerDropAllOnBigData');
     
     Route::get('/home/count-patient', 'HomeController@countPatient')->name('home.count-patient');
@@ -65,4 +66,66 @@ Route::group(['middleware' => 'auth'], function () {
     
     Route::get('/how-to-use/data', ['as' => 'how-to-use.data', 'uses' => 'HowToUseController@listIndex']);
 	Route::resource('/how-to-use', 'HowToUseController');
+});
+
+Route::get('coba2', function() {
+   return ('{
+			"labels": ["January", "February", "March", "April", "May", "June", "July"],
+			"datasets": [{
+				"label": "Dataset 1",
+				"backgroundColor": "rgb(255, 99, 132)",
+				"yAxisID": "y-axis-1",
+				"data": [
+					10,
+					10,
+					10,
+					10,
+					10,
+					10,
+					10
+				]
+			}, {
+				"label": "Dataset 2",
+				"backgroundColor": "rgb(255, 159, 64)",
+				"yAxisID": "y-axis-2",
+				"data": [
+					10,
+					10,
+					10,
+					10,
+					10,
+					10,
+					10
+				]
+			}]
+		}');
+});
+
+Route::get('coba1', function() {
+    return json_decode('[
+  {
+    "date": 1493922600000,
+    "units": 320
+  },
+  {
+    "date": 1494009000000,
+    "units": 552
+  },
+  {
+    "date": 1494095400000,
+    "units": 342
+  },
+  {
+    "date": 1494181800000,
+    "units": 431
+  },
+  {
+    "date": 1494268200000,
+    "units": 251
+  },
+  {
+    "date": 1494354600000,
+    "units": 445
+  }
+]');
 });

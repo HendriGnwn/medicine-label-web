@@ -205,6 +205,9 @@
             cache: true
         }
     });
+    $('#doctor_id').change(function() {
+        $("input[name='patient_registration_doctor_id']").val($(this).val());
+    });
     
     $('#registered_id').select2({
         placeholder: "No Rekam Medis - Nama Pasien",
@@ -253,9 +256,10 @@
                 var data = result.data;
                 
                 if (data.doctor_id != 0) {
-                   disableEditDoctor();
-                   $('#result-doctor').html(data.doctor + ' <button type="button" onclick="availableEditDoctor()" class="btn btn-xs btn-primary">Edit</button> <button type="button" onclick="disableEditDoctor()" class="btn btn-xs btn-danger">Cancel Edit</button> ');
+                   //disableEditDoctor();
+                   $('#result-doctor').html(data.doctor);// + ' <button type="button" onclick="availableEditDoctor()" class="btn btn-xs btn-primary">Edit</button> <button type="button" onclick="disableEditDoctor()" class="btn btn-xs btn-danger">Cancel Edit</button> ');
                    $("input[name='patient_registration_doctor_id']").val(data.doctor_id);
+                   $('#doctor_id').html("<option value='"+ data.doctor_id +"' selected='selected'>"+ data.doctor_select2 +"</option>");
                 } else {
                     $('#result-doctor').html(data.doctor);
                 }

@@ -11,6 +11,7 @@ use App\MmTransactionAddMedicine;
 use App\TransactionMedicine;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Khill\Lavacharts\Lavacharts;
 
 class AjaxController extends Controller
 {
@@ -202,6 +203,7 @@ class AjaxController extends Controller
                 'registered_at' => $patientRegistered->tanggal_pendaftaran,
                 'patient' => $patientRegistered->no_rekam_medis . ' - ' . $patientRegistered->mmPatient ? $patientRegistered->mmPatient->nama : 'tidak diketahui',
                 'doctor' => $patientRegistered->mmDoctor ? $patientRegistered->mmDoctor->nama_dokter : 'belum di set',
+                'doctor_select2' => $patientRegistered->mmDoctor ? $patientRegistered->mmDoctor->nip . ' - ' . $patientRegistered->mmDoctor->nama_dokter : 'belum di set',
                 'unit' => $patientRegistered->mmUnit ? $patientRegistered->mmUnit->nama_unit : "tidak diset",
                 'medical_record_number' => $patientRegistered->no_rekam_medis,
                 'care_type_id' => $careTypeId,
@@ -287,6 +289,151 @@ class AjaxController extends Controller
                 'countPatientPreviousMonth' => $countPatientPreviousMonth,
                 'topUsers' => $topUsers->toArray(),
                 'patientPoly' => $patientPoly->toArray()
+            ]
+        ]);
+    }
+    
+    public function getHomeReportLabel()
+    {
+        $startDate = Carbon::now()->subMonth(6)->format('Y-m');
+        $endDate = Carbon::now()->format('Y-m');
+        $dateRanges = \App\Helpers\DateTimeHelper::getArrayDateRange($startDate, $endDate);
+        $dateRangeLabels = \App\Helpers\DateTimeHelper::getArrayDateRange($startDate, $endDate, 'M Y');
+        
+        $ranaps = MmTransactionAddMedicine::select([
+                \DB::raw('COUNT(mm_transaksi_add_obat.id_transaksi_obat) as count'), \DB::raw('DATE_FORMAT(mm_transaksi_add_obat.created_date, "%Y-%m") as date')
+            ])
+            ->join('mm_pasien_pendaftaran', 'mm_transaksi_add_obat.id_pendaftaran', '=', 'mm_pasien_pendaftaran.id_pendaftaran')
+            ->whereRaw('(mm_pasien_pendaftaran.kelas_perawatan != 0 OR mm_pasien_pendaftaran.kelas_perawatan is not null)')
+            ->whereBetween(\DB::raw('DATE_FORMAT(mm_transaksi_add_obat.created_date, "%Y-%m")'), [Carbon::now()->subMonth(7)->format('Y-m'), Carbon::now()->format('Y-m')])
+            ->groupBy(\DB::raw('DATE_FORMAT(mm_transaksi_add_obat.created_date, "%Y-%m")'))
+            ->pluck('count', 'date');
+        
+        $rajalJkns = MmTransactionAddMedicine::select([
+                \DB::raw('COUNT(mm_transaksi_add_obat.id_transaksi_obat) as count'), \DB::raw('DATE_FORMAT(mm_transaksi_add_obat.created_date, "%Y-%m") as date')
+            ])
+            ->join('mm_pasien_pendaftaran', 'mm_transaksi_add_obat.id_pendaftaran', '=', 'mm_pasien_pendaftaran.id_pendaftaran')
+            ->whereRaw('((mm_pasien_pendaftaran.id_jenis_pembayaran IN (8,9)) AND (mm_pasien_pendaftaran.kelas_perawatan = 0 OR mm_pasien_pendaftaran.kelas_perawatan is null))')
+            ->whereBetween(\DB::raw('DATE_FORMAT(mm_transaksi_add_obat.created_date, "%Y-%m")'), [Carbon::now()->subMonth(7)->format('Y-m'), Carbon::now()->format('Y-m')])
+            ->groupBy(\DB::raw('DATE_FORMAT(mm_transaksi_add_obat.created_date, "%Y-%m")'))
+            ->pluck('count', 'date');
+        
+        $rajalRegulars = MmTransactionAddMedicine::select([
+                \DB::raw('COUNT(mm_transaksi_add_obat.id_transaksi_obat) as count'), \DB::raw('DATE_FORMAT(mm_transaksi_add_obat.created_date, "%Y-%m") as date')
+            ])
+            ->join('mm_pasien_pendaftaran', 'mm_transaksi_add_obat.id_pendaftaran', '=', 'mm_pasien_pendaftaran.id_pendaftaran')
+            ->whereRaw('((mm_pasien_pendaftaran.id_jenis_pembayaran = 0) AND (mm_pasien_pendaftaran.kelas_perawatan = 0 OR mm_pasien_pendaftaran.kelas_perawatan is null))')
+            ->whereBetween(\DB::raw('DATE_FORMAT(mm_transaksi_add_obat.created_date, "%Y-%m")'), [Carbon::now()->subMonth(7)->format('Y-m'), Carbon::now()->format('Y-m')])
+            ->groupBy(\DB::raw('DATE_FORMAT(mm_transaksi_add_obat.created_date, "%Y-%m")'))
+            ->pluck('count', 'date');
+        
+        $rajalCompanies = MmTransactionAddMedicine::select([
+                \DB::raw('COUNT(mm_transaksi_add_obat.id_transaksi_obat) as count'), \DB::raw('DATE_FORMAT(mm_transaksi_add_obat.created_date, "%Y-%m") as date')
+            ])
+            ->join('mm_pasien_pendaftaran', 'mm_transaksi_add_obat.id_pendaftaran', '=', 'mm_pasien_pendaftaran.id_pendaftaran')
+            ->whereRaw('((mm_pasien_pendaftaran.id_jenis_pembayaran = 4) AND (mm_pasien_pendaftaran.kelas_perawatan = 0 OR mm_pasien_pendaftaran.kelas_perawatan is null))')
+            ->whereBetween(\DB::raw('DATE_FORMAT(mm_transaksi_add_obat.created_date, "%Y-%m")'), [Carbon::now()->subMonth(7)->format('Y-m'), Carbon::now()->format('Y-m')])
+            ->groupBy(\DB::raw('DATE_FORMAT(mm_transaksi_add_obat.created_date, "%Y-%m")'))
+            ->pluck('count', 'date');
+        
+        $rajalIgds = MmTransactionAddMedicine::select([
+                \DB::raw('COUNT(mm_transaksi_add_obat.id_transaksi_obat) as count'), \DB::raw('DATE_FORMAT(mm_transaksi_add_obat.created_date, "%Y-%m") as date')
+            ])
+            ->join('mm_pasien_pendaftaran', 'mm_transaksi_add_obat.id_pendaftaran', '=', 'mm_pasien_pendaftaran.id_pendaftaran')
+            ->where('mm_pasien_pendaftaran.id_pendaftaran', 4)
+            ->whereBetween(\DB::raw('DATE_FORMAT(mm_transaksi_add_obat.created_date, "%Y-%m")'), [Carbon::now()->subMonth(7)->format('Y-m'), Carbon::now()->format('Y-m')])
+            ->groupBy(\DB::raw('DATE_FORMAT(mm_transaksi_add_obat.created_date, "%Y-%m")'))
+            ->pluck('count', 'date');
+        
+        $resultRanaps = [];
+        $resultRajalJkns = [];
+        $resultRajalRegulars = [];
+        $resultRajalCompanies = [];
+        $resultRajalIgds = [];
+        
+        foreach ($dateRanges as $dateRange) {
+            $resultRanaps[] = array_key_exists($dateRange, $ranaps->toArray()) ? $ranaps[$dateRange] : 0;
+            $resultRajalJkns[] = array_key_exists($dateRange, $rajalJkns->toArray()) ? $rajalJkns[$dateRange] : 0;
+            $resultRajalRegulars[] = array_key_exists($dateRange, $rajalRegulars->toArray()) ? $rajalRegulars[$dateRange] : 0;
+            $resultRajalCompanies[] = array_key_exists($dateRange, $rajalCompanies->toArray()) ? $rajalCompanies[$dateRange] : 0;
+            $resultRajalIgds[] = array_key_exists($dateRange, $rajalIgds->toArray()) ? $rajalIgds[$dateRange] : 0;
+        }
+        
+//        {
+//			"labels": ["January", "February", "March", "April", "May", "June", "July"],
+//			"datasets": [{
+//				"label": "Dataset 1",
+//				"backgroundColor": "rgb(255, 99, 132)",
+//				"yAxisID": "y-axis-1",
+//				"data": [
+//					10,
+//					10,
+//					10,
+//					10,
+//					10,
+//					10,
+//					10
+//				]
+//			}, {
+//				"label": "Dataset 2",
+//				"backgroundColor": "rgb(255, 159, 64)",
+//				"yAxisID": "y-axis-2",
+//				"data": [
+//					10,
+//					10,
+//					10,
+//					10,
+//					10,
+//					10,
+//					10
+//				]
+//			}]
+//		}
+        //                 ->addNumberColumn('RANAP')
+//                 ->addNumberColumn('RAJAL JKN')
+//                 ->addNumberColumn('RAJAL REGULER')
+//                 ->addNumberColumn('RAJAL PERUSAHAAN')
+//                 ->addNumberColumn('IGD')
+//        	red: 'rgb(255, 99, 132)',
+//	orange: 'rgb(255, 159, 64)',
+//	yellow: 'rgb(255, 205, 86)',
+//	green: 'rgb(75, 192, 192)',
+//	blue: 'rgb(54, 162, 235)',
+//	purple: 'rgb(153, 102, 255)',
+//	grey: 'rgb(201, 203, 207)'
+        return response()->json([
+            "labels" => $dateRangeLabels,
+            "datasets" => [
+                [
+                    "label" => "RANAP",
+                    "backgroundColor" => "rgb(255, 99, 132)",
+    				"yAxisID" => "y-axis-1",
+                    "data" => $resultRanaps
+                ],
+                [
+                    "label" => "RAJAL JKN",
+                    "backgroundColor" => "rgb(255, 159, 64)",
+    				"yAxisID" => "y-axis-2",
+                    "data" => $resultRajalJkns
+                ],
+                [
+                    "label" => "RAJAL REGULER",
+                    "backgroundColor" => "rgb(255, 205, 86)",
+    				"yAxisID" => "y-axis-3",
+                    "data" => $resultRajalRegulars
+                ],
+                [
+                    "label" => "RAJAL PERUSAHAAN",
+                    "backgroundColor" => "rgb(75, 192, 192)",
+    				"yAxisID" => "y-axis-4",
+                    "data" => $resultRajalCompanies
+                ],
+                [
+                    "label" => "IGD",
+                    "backgroundColor" => "rgb(54, 162, 235)",
+    				"yAxisID" => "y-axis-5",
+                    "data" => $resultRajalIgds
+                ],
             ]
         ]);
     }

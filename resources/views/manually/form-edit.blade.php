@@ -41,7 +41,7 @@
             <div class="col-md-12">
                 <div aria-required="true" class="form-group required form-group-default {{ $errors->has('receipt_number') ? 'has-error' : ''}}">
                     {!! Form::label('receipt_number', 'Nomor Resep') !!}
-                    {!! Form::number('receipt_number', null, ['class' => 'form-control', 'type'=>'number']) !!}
+                    {!! Form::text('receipt_number', null, ['class' => 'form-control', 'readonly'=>true]) !!}
                     {!! $errors->first('receipt_number', '<p class="help-block">:message</p>') !!}
                 </div>
             </div>
@@ -91,7 +91,7 @@
 <table class="table table-condensed table-hover" id="medicine-detail">
     <tr>
         <th colspan="3"></th>
-        <th style="width:40%; vertical-align: middle;" id="medicine-record-total">Total 0 kolom</th>
+        <th style="width:40%; vertical-align: middle;" id="medicine-record-total">Total {{count($model->transactionMedicineDetails)}} kolom</th>
     </tr>
     <tr>
         <th style="width:40%; vertical-align: middle;">Obat*</th>
@@ -199,7 +199,7 @@
 
 @prepend('script')
 <script>
-    var i = {{ $no }};
+    var i = medicineRecordTotal = {{ $no }};
     $('#add').click(function() {
         $('#medicine-detail').append('' +
             '<tr id="row-'+i+'" >' +
@@ -260,10 +260,14 @@
             }  
         });
         i++;
+        medicineRecordTotal++;
+        $('#medicine-record-total').html('Total: ' + medicineRecordTotal + ' kolom');
     });
     
     function clickRemove(i) {
         $('#row-'+i+'').remove();  
+        medicineRecordTotal--;
+        $('#medicine-record-total').html('Total: ' + medicineRecordTotal + ' kolom');
     }
     
     $('.select2').select2({
