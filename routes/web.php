@@ -60,9 +60,25 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/transaction-add-medicine/{id}/{receiptNumber}/print', ['as' => 'transaction-add-medicine.print', 'uses' => 'TransactionAddMedicineController@printPreview']);
     Route::post('/transaction-add-medicine/{id}/{receiptNumber}/post-print', ['as' => 'transaction-add-medicine.post-print', 'uses' => 'TransactionAddMedicineController@postPrint']);
     
-    Route::get('/report/index', ['as' => 'report.index', 'uses' => 'ReportController@index']);
-    Route::get('/report/list', ['as' => 'report.list', 'uses' => 'ReportController@showList']);
-    Route::get('/report/export-to-excel', ['as' => 'report.export-to-excel', 'uses' => 'ReportController@exportToExcel']);
+    Route::group(['prefix' => 'report'], function() {
+        
+        Route::group(['prefix' => 'period'], function() {
+            Route::get('/', ['as' => 'report.period', 'uses' => 'ReportController@period']);
+            Route::get('/list', ['as' => 'report.period.list', 'uses' => 'ReportController@periodList']);
+            Route::get('/list-detail', ['as' => 'report.period.list-detail', 'uses' => 'ReportController@periodListDetail']);
+            Route::get('/export-to-excel', ['as' => 'report.period.export-to-excel', 'uses' => 'ReportController@periodExportToExcel']);
+        });
+        
+        Route::group(['prefix' => 'transaction-type'], function() {
+            Route::get('/', ['as' => 'report.transaction-type', 'uses' => 'ReportController@transactionType']);
+            Route::get('/list', ['as' => 'report.transaction-type.list', 'uses' => 'ReportController@transactionTypeList']);
+            Route::get('/export-to-excel', ['as' => 'report.transaction-type.export-to-excel', 'uses' => 'ReportController@transactionTypeExportToExcel']);
+        });
+        
+        Route::get('/daily', ['as' => 'report.daily', 'uses' => 'ReportController@daily']);
+        Route::get('/list', ['as' => 'report.list', 'uses' => 'ReportController@showList']);
+        Route::get('/export-to-excel', ['as' => 'report.export-to-excel', 'uses' => 'ReportController@exportToExcel']);
+    });
     
     Route::get('/how-to-use/data', ['as' => 'how-to-use.data', 'uses' => 'HowToUseController@listIndex']);
 	Route::resource('/how-to-use', 'HowToUseController');

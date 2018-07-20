@@ -188,4 +188,33 @@ class MmTransactionAddMedicine extends BaseModel
         
         return true;
     }
+    
+    /**
+     */
+    public static function reportTransactionTypeLabels()
+    {
+        return [
+            1 => 'IGD JKN',
+            2 => 'IGD Non Psikiatri',
+            3 => 'IGD Psikiatri',
+            4 => 'IGD Tunai',
+            5 => 'Rajal JKN',
+            6 => 'Rajal Non Psikiatri',
+            7 => 'Rajal Psikiatri',
+            8 => 'Ranap Non Psikiatri',
+            9 => 'Ranap Psikiatri',
+        ];
+    }
+    
+    public function getCalculatePriceTotal()
+    {
+        $models = self::where('no_resep', $this->no_resep)
+                ->where('id_pendaftaran', $this->id_pendaftaran)
+                ->get();
+        $total = 0;
+        foreach ($models as $model) {
+            $total += Helpers\NumberFormatter::ceiling($model->jml_permintaan * $model->harga);
+        }
+        return $total;
+    }
 }

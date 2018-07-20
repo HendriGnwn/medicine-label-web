@@ -41,8 +41,10 @@
             <thead>
                 <tr>
                     <th style="width:5%">No</th>
-                    <th style="width:35%">Obat</th>
+                    <th style="width:30%">Obat</th>
                     <th style="width:10%">Jumlah</th>
+                    <th style="width:10%">Harga</th>
+                    <th style="width:10%">Total</th>
                     <th style="width:20%">Aturan Pakai</th>
                 </tr>
             </thead>
@@ -50,6 +52,7 @@
                 @php
                 $no = 0;
                 $medicineQty = 0;
+                $medicineTotal = 0;
                 @endphp
                 @foreach ($model->mmTransactionAddMedicines as $medicine)
                     <tr>
@@ -63,6 +66,12 @@
                             {{ $medicine->jml_permintaan }}
                         </td>
                         <td>
+                            Rp. {{ \App\Helpers\NumberFormatter::currencyIDR($medicine->harga) }}
+                        </td>
+                        <td>
+                            Rp. {{ \App\Helpers\NumberFormatter::currencyIDR(\App\Helpers\NumberFormatter::ceiling($medicine->harga * $medicine->jml_permintaan)) }}
+                        </td>
+                        <td>
                             {!! Form::hidden('id[]', $medicine->id_transaksi_obat) !!}
                             {{ Form::select("how_to_use[]", array_merge(["" => "Pilih"], \App\MmHowToUse::pluck("nama", "nama")->toArray()), old('how_to_use.' . $no) ? old('how_to_use_' . $no) : $medicine->getHowToUse(), ["class"=>"form-control"]) }}
                         </td>
@@ -70,6 +79,7 @@
                     @php 
                         $no++; 
                         $medicineQty += $medicine->jml_permintaan; 
+                        $medicineTotal += \App\Helpers\NumberFormatter::ceiling($medicine->harga * $medicine->jml_permintaan); 
                     @endphp
                 @endforeach
             </tbody>
@@ -85,6 +95,11 @@
                     <th>Jumlah Keseluruhan Obat</th>
                     <th>:</th>
                     <th>{{ $medicineQty }}</th>
+                </tr>
+                <tr>
+                    <th>Total Harga Keseluruhan Obat</th>
+                    <th>:</th>
+                    <th>Rp. {{ \App\Helpers\NumberFormatter::currencyIDR($medicineTotal) }}</th>
                 </tr>
             </table>
         </div>

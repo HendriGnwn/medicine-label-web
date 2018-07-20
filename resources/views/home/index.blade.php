@@ -36,6 +36,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">Laporan Print Obat</div>
             <div class="panel-body">
+                <h1 id="report-print-label" style="text-align:center;">Please wait...</h1>
                 <canvas id="canvas"></canvas>
             </div>
         </div>
@@ -179,99 +180,66 @@
                 }
             }
         });
-    }
-</script>
-<script>
-		var barChartData = {
-			labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-			datasets: [{
-				label: 'Dataset 1',
-				backgroundColor: 'rgb(255, 99, 132)',
-				yAxisID: 'y-axis-1',
-				data: [
-					10,
-					10,
-					10,
-					10,
-					10,
-					10,
-					10
-				]
-			}, {
-				label: 'Dataset 2',
-				backgroundColor: 'rgb(255, 159, 64)',
-				yAxisID: 'y-axis-2',
-				data: [
-					
-					10,
-					10,
-					10,
-					10,
-					10,
-					10,
-					10
-				]
-			}]
-		};
-        window.onload = function() {
-            $.getJSON("{{route('ajax.home-report-label')}}", function(result) {
-                var ctx = document.getElementById('canvas').getContext('2d');
-                window.myBar = new Chart(ctx, {
-                    type: 'bar',
-                    data: result,
-                    options: {
-                        responsive: true,
-                        title: {
+        
+        $.getJSON("{{route('ajax.home-report-label')}}", function(result) {
+            $('#report-print-label').hide();
+            var ctx = document.getElementById('canvas').getContext('2d');
+            window.myBar = new Chart(ctx, {
+                type: 'bar',
+                data: result,
+                options: {
+                    responsive: true,
+                    title: {
+                        display: true,
+                        text: 'Laproan Print Label'
+                    },
+                    tooltips: {
+                        mode: 'index',
+                        intersect: true
+                    },
+                    scales: {
+                        yAxes: [{
+                            type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
                             display: true,
-                            text: 'Laproan Print Label'
-                        },
-                        tooltips: {
-                            mode: 'index',
-                            intersect: true
-                        },
-                        scales: {
-                            yAxes: [{
-                                type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+                            position: 'left',
+                            id: 'y-axis-1',
+                            scaleLabel:{
                                 display: true,
-                                position: 'left',
-                                id: 'y-axis-1',
-                                scaleLabel:{
-                                    display: true,
-                                    labelString: 'Lembar'
-                                }
-                            }, {
-                                type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+                                labelString: 'Lembar'
+                            }
+                        }, {
+                            type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+                            display: true,
+                            position: 'right',
+                            id: 'y-axis-2',
+                            gridLines: {
+                                drawOnChartArea: false
+                            },
+                            scaleLabel:{
                                 display: true,
-                                position: 'right',
-                                id: 'y-axis-2',
-                                gridLines: {
-                                    drawOnChartArea: false
-                                },
-                                scaleLabel:{
-                                    display: true,
-                                    labelString: 'Lembar'
-                                }
-                            }, {
-                                type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
-                                display: false,
-                                position: 'left',
-                                id: 'y-axis-3',
-                            }, {
-                                type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
-                                display: false,
-                                position: 'left',
-                                id: 'y-axis-4',
-                            }, {
-                                type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
-                                display: false,
-                                position: 'left',
-                                id: 'y-axis-5',
-                            }],
-                        }
+                                labelString: 'Lembar'
+                            }
+                        }, {
+                            type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+                            display: false,
+                            position: 'left',
+                            id: 'y-axis-3',
+                        }, {
+                            type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+                            display: false,
+                            position: 'left',
+                            id: 'y-axis-4',
+                        }, {
+                            type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+                            display: false,
+                            position: 'left',
+                            id: 'y-axis-5',
+                        }],
                     }
-                });
+                }
             });
-		};
+        });
+    }
 </script>
 <!--<script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>-->
 <script src="{{ asset('vendor/canvasjs-2.2/jquery.canvasjs.min.js') }}"></script>

@@ -74,8 +74,15 @@
                             <li class="{{ \Request::is('transaction-add-medicine/index') ? 'active' : '' }}">
                                 <a href="{{ route('transaction-add-medicine.index') }}">Daftar dari SIMRS</a>
                             </li>
-                            <li class="{{ \Request::is('report/index') ? 'active' : '' }}">
-                                <a href="{{ route('report.index') }}">Laporan</a>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" v-pre>
+                                    Laporan <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="{{ route('report.daily') }}">Harian Obat</a></li>
+                                    <li><a href="{{ route('report.period') }}">Obat per Periode</a></li>
+                                    <li><a href="{{ route('report.transaction-type') }}">Jenis Transaksi</a></li>
+                                </ul>
                             </li>
                             @endif
                             @if (\Auth::user()->getIsRoleSuperadmin())
@@ -85,8 +92,15 @@
                             <li class="{{ \Request::is('transaction-add-medicine/index') ? 'active' : '' }}">
                                 <a href="{{ route('transaction-add-medicine.index') }}">Daftar dari SIMRS</a>
                             </li>
-                            <li class="{{ \Request::is('report/index') ? 'active' : '' }}">
-                                <a href="{{ route('report.index') }}">Laporan</a>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" v-pre>
+                                    Laporan <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="{{ route('report.daily') }}">Harian Obat</a></li>
+                                    <li><a href="{{ route('report.period') }}">Obat per Periode</a></li>
+                                    <li><a href="{{ route('report.transaction-type') }}">Jenis Transaksi</a></li>
+                                </ul>
                             </li>
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" v-pre>
