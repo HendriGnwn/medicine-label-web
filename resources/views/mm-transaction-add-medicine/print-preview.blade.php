@@ -63,7 +63,7 @@
                 <h3>INSTALASI FARMASI</h3>
                 <p>{{ \App\Setting::getAddressLabel() }}</p>
                 <p>Apoteker : {{ \App\Setting::getApotekerLabel() }}</p>
-                <p>SIK : {{ \App\Setting::getSikLabel() }}</p>
+                <p>SIPA : {{ \App\Setting::getSikLabel() }}</p>
             </div>
             <div style="width:22%;float:right;">
                 <img src="{{ asset('files/rsmm-logo.png') }}" class="rsmm-logo" />
