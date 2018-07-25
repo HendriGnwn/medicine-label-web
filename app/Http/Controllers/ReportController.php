@@ -303,7 +303,7 @@ class ReportController extends Controller
     }
     
 	/**
-     * for jenis transaksi
+     * for per periode
      *
      * @return View
      */
@@ -314,12 +314,121 @@ class ReportController extends Controller
     
     public function transactionTypeList(Request $request)
     {
+        $datePeriod = $request->get('date_period', Carbon::now()->subDay()->format('m/d/Y') . ' - ' . Carbon::now()->format('m/d/Y'));
+        $transactionType = $request->get('transaction_type');
+        $query = $this->getTransactionTypeQuery($datePeriod, $transactionType);
+        $models = $query['models'];
         
+        return view('report.transaction-type.list', compact('models'));
+    }
+    
+    public function transactionTypeListDetail(Request $request)
+    {
+        $receiptNumber = $request->get('no_resep');
+        $registeredId = $request->get('id_pendaftaran');
+        
+        $model = MmPatientRegistration::findOrFail($registeredId);
+        $medicines = MmTransactionAddMedicine::where('id_pendaftaran', $registeredId)
+                ->where('no_resep', $receiptNumber)
+                ->get();
+        
+        return view('report.transaction-type.list-detail', compact('model', 'medicines'));
     }
     
     public function transactionTypeExportToExcel(Request $request)
     {
+        $datePeriod = $request->get('date_period', Carbon::now()->subDay()->format('m/d/Y') . ' - ' . Carbon::now()->format('m/d/Y'));
+        $datePeriodLabel = str_replace('/', '-', $datePeriod);
+        $transactionType = $request->get('transaction_type');
+        $query = $this->getTransactionTypeQuery($datePeriod, $transactionType);
+        $models = $query['models'];
+
+        $objPHPExcel = new PHPExcel();
+
+        $arrayData['head'][]='No';
+        $arrayData['head'][]='Nama Obat';
+        $arrayData['head'][]='Jumlah';
+
+        $no = 0;
+        $subTotal = 0;
+        foreach ($models as $model) {
+            $arrayData[$no][] = $no+1;
+            $arrayData[$no][] = $model->mmItem->nama_barang;
+            $arrayData[$no][] = $model->medicine_qty;
+            $no++;
+            $subTotal += $model->medicine_qty;
+        }
+        $arrayData[$no][] = "";
+        $arrayData[$no][] = "Jml Keseluruhan";
+        $arrayData[$no][] = $subTotal;
+        $lastDataIndex = count($arrayData) - 1;
+
+		// Set properties
+		$objPHPExcel->getProperties()->setCreator("Sistem Labeling Obat RSMM");
+		$objPHPExcel->getProperties()->setLastModifiedBy("Sistem Labeling Obat RSMM");
+		$objPHPExcel->getProperties()->setTitle("Laporan Obat Jenis Transaksi " . $datePeriodLabel);
+		$objPHPExcel->getProperties()->setSubject("Laporan Obat Jenis Transaksi " . $datePeriodLabel);
+        $objPHPExcel->getProperties()->setDescription("Laporan Obat Jenis Transaksi " . $datePeriodLabel);
         
+        $objPHPExcel->getActiveSheet()->setCellValue("A1", "Laporan Obat Jenis Transaksi " . $datePeriodLabel);
+        $objPHPExcel->getActiveSheet()->getRowDimension("A1")->setRowHeight(25);
+        $objPHPExcel->getActiveSheet()->mergeCells("A1:E1");
+
+        $objPHPExcel->getActiveSheet()->fromArray($arrayData, NULL, 'A2');
+        
+        $starRow = 'A';
+		$lastColumn = $objPHPExcel->setActiveSheetIndex(0)->getHighestColumn();
+        $objPHPExcel->getActiveSheet()->getStyle('A2:'.$lastColumn.'2')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_BOTTOM);
+        $objPHPExcel->getActiveSheet()->getStyle('A2:'.$lastColumn.'2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+        $objPHPExcel->getActiveSheet()->getStyle('A2:'.$lastColumn.'2')->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+        $objPHPExcel->getActiveSheet()->getStyle('A2:A'.($lastDataIndex+1))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+        $objPHPExcel->getActiveSheet()->getStyle('A3:'.$lastColumn.($lastDataIndex+1))->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+        $objPHPExcel->getActiveSheet()->getStyle('D3:'.$lastColumn.($lastDataIndex+1))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+        $objPHPExcel->getActiveSheet()->getStyle('A'.($lastDataIndex+2).':'.$lastColumn.($lastDataIndex+2))->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+        $objPHPExcel->getActiveSheet()->getStyle('D'.($lastDataIndex+2).':'.$lastColumn.($lastDataIndex+2))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+        $objPHPExcel->getActiveSheet()->getStyle('A'.($lastDataIndex+2).':'.$lastColumn.($lastDataIndex+2))->getFont()->setBold(true);
+        
+        /**autosize*/
+		for ($col = $starRow; $col != $lastColumn; $col++) {
+            $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+		}
+		$objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+
+        PHPExcel_Settings::setZipClass(PHPExcel_Settings::PCLZIP);
+        PHPExcel_Settings::setZipClass(PHPExcel_Settings::ZIPARCHIVE);
+		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header("Content-Disposition: attachment;filename=laporan-jenis-transaksi-".$datePeriodLabel.".xlsx");
+        header('Cache-Control: max-age=0');
+        $objWriter->save('php://output');
+    }
+    
+    /**
+     * get query for laporan harian obat
+     * 
+     * @param type $datePeriod
+     * @return array
+     */
+    private function getTransactionTypeQuery($datePeriod, $transactionType) 
+    {
+        \DB::beginTransaction();
+        $start = explode(' - ', $datePeriod)[0];
+        $end = explode(' - ', $datePeriod)[1];
+        $startDate = Carbon::parse($start)->toDateString() . ' 00:00:00';
+        $endDate = Carbon::parse($end)->toDateString() . ' 23:59:59';
+        
+        $models = MmTransactionAddMedicine::select(['*', \DB::raw('SUM(mm_transaksi_add_obat.id_barang) as medicine_qty')])
+//             ->withCacheCooldownSeconds(100)
+             //->leftJoin('mm_pasien_pendaftaran', 'mm_transaksi_add_obat.id_pendaftaran', '=', 'mm_pasien_pendaftaran.id_pendaftaran')
+             ->transactionType($transactionType)
+             ->whereBetween('mm_transaksi_add_obat.created_date', [$startDate, $endDate])
+             ->groupBy('mm_transaksi_add_obat.id_barang')
+             ->get();
+        \DB::commit();
+        
+        return [
+            'models' => $models,
+        ];
     }
     
     

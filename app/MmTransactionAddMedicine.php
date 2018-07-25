@@ -8,6 +8,16 @@ class MmTransactionAddMedicine extends BaseModel
 {
     const CREATED_BY = User::CREATED_BY;
     
+    const TYPE_IGD_JKN = 1;
+    const TYPE_IGD_NON_PSIKIATRI = 2;
+    const TYPE_IGD_PSIKIATRI = 3;
+    const TYPE_IGD_TUNAI = 4;
+    const TYPE_RAJAL_JKN = 5;
+    const TYPE_RAJAL_NON_PSIKIATRI = 6;
+    const TYPE_RAJAL_PSIKIATRI = 7;
+    const TYPE_RANAP_NON_PSIKIATRI = 8;
+    const TYPE_RANAP_PSIKIATRI = 9;
+    
     protected $connection = 'mysqlMm';
     
     /**
@@ -194,15 +204,15 @@ class MmTransactionAddMedicine extends BaseModel
     public static function reportTransactionTypeLabels()
     {
         return [
-            1 => 'IGD JKN',
-            2 => 'IGD Non Psikiatri',
-            3 => 'IGD Psikiatri',
-            4 => 'IGD Tunai',
-            5 => 'Rajal JKN',
-            6 => 'Rajal Non Psikiatri',
-            7 => 'Rajal Psikiatri',
-            8 => 'Ranap Non Psikiatri',
-            9 => 'Ranap Psikiatri',
+            self::TYPE_IGD_JKN => 'IGD JKN',
+            self::TYPE_IGD_NON_PSIKIATRI => 'IGD Non Psikiatri',
+            self::TYPE_IGD_PSIKIATRI => 'IGD Psikiatri',
+            self::TYPE_IGD_TUNAI => 'IGD Tunai',
+            self::TYPE_RAJAL_JKN => 'Rajal JKN',
+            self::TYPE_RAJAL_NON_PSIKIATRI => 'Rajal Non Psikiatri',
+            self::TYPE_RAJAL_PSIKIATRI => 'Rajal Psikiatri',
+            self::TYPE_RANAP_NON_PSIKIATRI => 'Ranap Non Psikiatri',
+            self::TYPE_RANAP_PSIKIATRI => 'Ranap Psikiatri',
         ];
     }
     
@@ -216,5 +226,38 @@ class MmTransactionAddMedicine extends BaseModel
             $total += Helpers\NumberFormatter::ceiling($model->jml_permintaan * $model->harga);
         }
         return $total;
+    }
+    
+    public function scopeTransactionType($query, $value)
+    {
+        
+        switch($value) {
+            case self::TYPE_IGD_JKN:
+                return $query->leftJoin('mm_pasien_pendaftaran', 'mm_transaksi_add_obat.id_pendaftaran', '=', 'mm_pasien_pendaftaran.id_pendaftaran')
+                    ->where('mm_pasien_pendaftaran.jenis_pendaftaran', 4)
+                    ->whereIn('mm_pasien_pendaftaran.id_jenis_pembayaran', [8,9]);
+            case self::TYPE_IGD_NON_PSIKIATRI:
+                return $query->leftJoin('mm_pasien_pendaftaran', 'mm_transaksi_add_obat.id_pendaftaran', '=', 'mm_pasien_pendaftaran.id_pendaftaran')
+                    ->where('mm_pasien_pendaftaran.jenis_pendaftaran', 4)
+                    ->whereIn('mm_pasien_pendaftaran.id_jenis_pembayaran', [8,9]);
+            case self::TYPE_IGD_PSIKIATRI:
+                return $query->leftJoin('mm_pasien_pendaftaran', 'mm_transaksi_add_obat.id_pendaftaran', '=', 'mm_pasien_pendaftaran.id_pendaftaran')
+                    ->where('mm_pasien_pendaftaran.jenis_pendaftaran', 4)
+                    ->where('mm_pasien_pendaftaran.id_unit', 25);
+            case self::TYPE_IGD_TUNAI:
+                return $query->leftJoin('mm_pasien_pendaftaran', 'mm_transaksi_add_obat.id_pendaftaran', '=', 'mm_pasien_pendaftaran.id_pendaftaran')
+                    ->where('mm_pasien_pendaftaran.jenis_pendaftaran', 4)
+                    ->where('mm_pasien_pendaftaran.id_jenis_pembayaran', 0);
+            case self::TYPE_RAJAL_JKN:
+                return $query->leftJoin('mm_pasien_pendaftaran', 'mm_transaksi_add_obat.id_pendaftaran', '=', 'mm_pasien_pendaftaran.id_pendaftaran')
+                    ->where('mm_pasien_pendaftaran.jenis_pendaftaran', 1)
+                    ->whereIn('mm_pasien_pendaftaran.id_jenis_pembayaran', [8,9]);
+            case self::TYPE_RAJAL_NON_PSIKIATRI:
+            case self::TYPE_RAJAL_PSIKIATRI:
+            case self::TYPE_RANAP_NON_PSIKIATRI:
+            case self::TYPE_RANAP_PSIKIATRI:
+            default:
+                return $query;
+        }
     }
 }
