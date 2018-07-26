@@ -118,6 +118,9 @@ class ReportController extends Controller
         $arrayData[$no][] = "";
         $arrayData[$no][] = "Jml Keseluruhan";
         $arrayData[$no][] = "";
+        $arrayData[$no][] = "";
+        $arrayData[$no][] = "";
+        $arrayData[$no][] = "";
         foreach ($medicines as $medicine) {
             $arrayData[$no][] = $medicine->total_jml_permintaan;
         }
