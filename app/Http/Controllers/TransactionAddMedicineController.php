@@ -165,7 +165,7 @@ class TransactionAddMedicineController extends Controller
         }
         
         if ($medicalRecordNumber = $datatables->request->get('medical_record_number')) {
-            $datatables->where('mm_transaksi_add_obat.no_rekam_medis', 'like', "%{$medicalRecordNumber}%");
+            $datatables->where('mm_transaksi_add_obat.no_rekam_medis', $medicalRecordNumber);
         }
         
         if ($doctor = $datatables->request->get('doctor_id')) {

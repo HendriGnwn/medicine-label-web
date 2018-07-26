@@ -12,7 +12,7 @@
             <table class="table table-lg table-bordered table-hover" width="100%">
                 <thead>
                     <tr>
-                        <th>*</th>
+                        <th>No</th>
                         <th>Pasien</th>
                         <th>No RM</th>
                         <th>No Resep</th>

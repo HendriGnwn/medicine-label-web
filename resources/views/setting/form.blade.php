@@ -24,7 +24,7 @@
     </div>
     <div class="col-md-6">
         <div aria-required="true" class="form-group required form-group-default {{ $errors->has('sik') ? 'has-error' : ''}}">
-            {!! Form::label('sik', 'SIK') !!}
+            {!! Form::label('sik', 'SIPA') !!}
             {!! Form::text('sik', null, ['class' => 'form-control']) !!}
             {!! $errors->first('sik', '<p class="help-block">:message</p>') !!}
         </div>
