@@ -85,8 +85,8 @@
         <div style="width:50%;float:right;text-align: right;">
             <p>No RM : {{ $model->medical_record_number }}</p>
         </div>
-        <div style="width:100%;float:left;font-size:10px">
-            <p>Obat / Exp : {{ $detail->getMedicineNameAndExp() }}</p>
+        <div style="width:100%;float:left;">
+            <p>Obat / Exp : <span style="font-size:10px">{{ $detail->getMedicineNameAndExp() }}</span></p>
         </div>
         <div style="width:15%;float:right;text-align: right;">
             <p>Qty : {{ $detail->quantity }}</p>
