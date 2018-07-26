@@ -85,7 +85,7 @@
         <div style="width:50%;float:right;text-align: right;">
             <p>No RM : {{ $detail->no_rekam_medis }}</p>
         </div>
-        <div style="width:100%;float:left;">
+        <div style="width:100%;float:left;font-size:10px">
             <p>Obat / Exp : {{ $detail->getMedicineNameAndExp() }}</p>
         </div>
         <div style="width:15%;float:right;text-align: right;">
