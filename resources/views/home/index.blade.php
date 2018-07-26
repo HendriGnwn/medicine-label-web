@@ -174,7 +174,7 @@
                 if (patientPoly.length > 0) {
                     for(var i=0; i<patientPoly.length; i++) {
                         var itemName = patientPoly[i].nama_unit;
-                        $("#patient-poly").append("<tr><td>"+ itemName +"</td><td style='color:#e0e000'>"+ patientPoly[i].qty +"</td></tr>");
+                        $("#patient-poly").append("<tr><td>"+ itemName +"</td><td>"+ patientPoly[i].qty +"</td></tr>");
                     }
                 } else {
                     $("#patient-poly").append("<tr><td colspan='2'>Tidak ada data</td></tr>");
