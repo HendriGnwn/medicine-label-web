@@ -14,11 +14,11 @@
 Route::get('/', function () {
     return redirect('login');
     return view('welcome');
-});
+})->name('/');
 
 Auth::routes();
 
-Route::group(['middleware' => 'auth'], function () {
+Route::group(['middleware' => ['auth', 'revalidate']], function () {
     Route::get('/home', 'HomeController@index')->name('home');
     Route::get('/ajax-home-data', 'AjaxController@getHomeData')->name('ajax.home-data');
     Route::get('/ajax-home-report-label', 'AjaxController@getHomeReportLabel')->name('ajax.home-report-label');
