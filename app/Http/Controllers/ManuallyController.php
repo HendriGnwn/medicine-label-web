@@ -269,6 +269,10 @@ class ManuallyController extends Controller
             $endDate = Carbon::parse($rang[1])->toDateString();
             $datatables->whereBetween('transaction_medicine.updated_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
         }
+        
+        if ($patient = $datatables->request->get('patient')) {
+            $datatables->where('transaction_medicine.medical_record_number', $patient);
+        }
 		
         return $datatables->make(true);
     }

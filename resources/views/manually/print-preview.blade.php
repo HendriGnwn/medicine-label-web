@@ -63,7 +63,7 @@
                 <h3>INSTALASI FARMASI</h3>
                 <p>{{ \App\Setting::getAddressLabel() }}</p>
                 <p>Apoteker : {{ \App\Setting::getApotekerLabel() }}</p>
-                <p>SIK : {{ \App\Setting::getSikLabel() }}</p>
+                <p>SIPA : {{ \App\Setting::getSikLabel() }}</p>
             </div>
             <div style="width:22%;float:right;">
                 <img src="{{ asset('files/rsmm-logo.png') }}" class="rsmm-logo" />
@@ -85,18 +85,22 @@
         <div style="width:50%;float:right;text-align: right;">
             <p>No RM : {{ $model->medical_record_number }}</p>
         </div>
-        <div style="width:85%;float:left;">
-            <p>Obat / Exp : {{ $detail->getMedicineNameAndExp() }}</p>
+        <div style="width:100%;float:left;">
+            <p>Obat / Exp : <span style="font-size:11px">{{ $detail->getMedicineNameAndExp() }}</span></p>
         </div>
         <div style="width:15%;float:right;text-align: right;">
             <p>Qty : {{ $detail->quantity }}</p>
         </div>
         
         <br/><br/>
-        <p class="text-center" style="margin-top:8px">Sehari {{ $detail->how_to_use }} {{ $detail->getItemSmallName() }}</p>
-        <p class="text-center">Sebelum / sesudah makan</p>
-        <br/>
-        <p style="text-align:center">................................................</p>
+        <div style="width:85%">
+            <p class="text-center" style="margin-top:8px">Sehari {{ $detail->how_to_use }} {{ $detail->getItemSmallName() }}</p>
+            <p class="text-center">Sebelum / sesudah makan</p>
+            <br/>
+            <p style="text-align:center">................................................</p>
+        </div>
+        
+        <span style="float:right;font-size:9px;margin-top:-15px;margin-right:10px;">{{ \Auth::user()->username }}</span>
     </div>
 </div>
 @endforeach

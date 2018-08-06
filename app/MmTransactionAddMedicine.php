@@ -151,8 +151,8 @@ class MmTransactionAddMedicine extends BaseModel
         $quantity = ($this->mmItem) ? $this->mmItem->getFormattedItemExpiredAt() : null;;
         
         $resultName = $name;
-        if (strlen($name) > 20) {
-            $resultName = substr($name, 0, 20) . ' ...';
+        if (strlen($name) > 79) {
+            $resultName = substr($name, 0, 79) . ' ...';
         }
         
         return $resultName . ' / ' . $quantity;

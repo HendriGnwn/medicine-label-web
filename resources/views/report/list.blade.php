@@ -12,7 +12,7 @@
             <table class="table table-lg table-bordered table-hover" width="100%">
                 <thead>
                     <tr>
-                        <th>*</th>
+                        <th>No</th>
                         <th>No Pendaftaran</th>
                         <th>No RM</th>
                         <th>Pasien</th>
@@ -43,7 +43,7 @@
                 </tbody>    
                 <tfoot>
                     <tr>
-                        <td colspan="3">Jumlah Keseluruhan</td>
+                        <td colspan="6">Jumlah Keseluruhan</td>
                         @foreach ($medicines as $medicine)
                         <td style="text-align:center;">{{ $medicine->total_jml_permintaan }}</td>
                         @endforeach

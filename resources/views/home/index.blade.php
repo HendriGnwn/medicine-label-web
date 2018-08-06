@@ -5,7 +5,7 @@
 <div class="row">
     <div class="col-md-6">
         <div class="panel panel-default">
-            <div class="panel-heading">Jumlah Pasien Per Poli Hari ini</div>
+            <div class="panel-heading"><b>Jumlah Pasien Per Poli Hari ini</b></div>
 
             <div class="panel-body">
                 
@@ -13,7 +13,7 @@
                     <thead>
                         <tr>
                             <th style="width:80%">Poli</th>
-                            <th style="width:20%">Jumlah</th>
+                            <th style="width:20%;color:#e0e000">Jumlah</th>
                         </tr>
                     </thead>
                 </table>
@@ -34,7 +34,7 @@
             </div>
         </div>
         <div class="panel panel-default">
-            <div class="panel-heading">Laporan Print Obat</div>
+            <div class="panel-heading"><b>Laporan Print Obat</b></div>
             <div class="panel-body">
                 <h1 id="report-print-label" style="text-align:center;">Please wait...</h1>
                 <canvas id="canvas"></canvas>
@@ -43,7 +43,7 @@
     </div>
     <div class="col-md-3">
         <div class="panel panel-default">
-            <div class="panel-heading">Jumlah Pasien Hari ini</div>
+            <div class="panel-heading"><b>Jumlah Pasien Hari ini</b></div>
 
             <div class="panel-body text-center">
                 <h1 id="count-patient-now">Please wait...</h1>
@@ -57,7 +57,7 @@
     </div>
     <div class="col-md-3">
         <div class="panel panel-default">
-            <div class="panel-heading">Jumlah Pasien 1 Bulan Terakhir</div>
+            <div class="panel-heading"><b>Jumlah Pasien 1 Bulan Terakhir</b></div>
 
             <div class="panel-body text-center">
                 <h1 id="count-patient-previous-month">Please wait...</h1>
@@ -73,7 +73,7 @@
 <div class="row">-->
     <div class="col-md-6">
         <div class="panel panel-default">
-            <div class="panel-heading">Daftar 10 User Terakhir Login</div>
+            <div class="panel-heading"><b>Daftar 10 User Terakhir Login</b></div>
 
             <div class="panel-body">
                 <table class="table table-condensed table-hover">
@@ -98,7 +98,7 @@
         </div>
         
         <div class="panel panel-default">
-            <div class="panel-heading">Grafik 10 Obat teratas 1 Bulan Terakhir</div>
+            <div class="panel-heading"><b>Grafik 10 Obat teratas 1 Bulan Terakhir</b></div>
 
             <div class="panel-body">
                 <table class="table table-condensed table-hover">
@@ -162,7 +162,8 @@
                 if (topUsers.length > 0) {
                     for(var i=0; i<topUsers.length; i++) {
                         var itemName = topUsers[i].name;
-                        $("#top-users").append("<tr><td>"+ itemName +"</td><td>"+ topUsers[i].last_login_at +"</td></tr>");
+                        var lastLoginAt = (topUsers[i].last_login_at != null) ? topUsers[i].last_login_at : '-';
+                        $("#top-users").append("<tr><td>"+ itemName +"</td><td>"+ lastLoginAt +"</td></tr>");
                     }
                 } else {
                     $("#top-users").append("<tr><td colspan='2'>Tidak ada data</td></tr>");

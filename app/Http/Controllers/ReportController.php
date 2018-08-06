@@ -59,18 +59,14 @@ class ReportController extends Controller
         $startDate = Carbon::parse($datePeriod)->toDateString() . ' 00:00:00';
         $endDate = Carbon::parse($datePeriod)->toDateString() . ' 23:59:59';
         
-        $models = Cache::remember('reportMmPatientRegistration', 2*60, function() use ($startDate, $endDate) {
-            return MmPatientRegistration::withCacheCooldownSeconds(600)->leftJoin('mm_transaksi_add_obat', 'mm_transaksi_add_obat.id_pendaftaran', '=', 'mm_pasien_pendaftaran.id_pendaftaran')
+        $models = MmPatientRegistration::withCacheCooldownSeconds(100)->leftJoin('mm_transaksi_add_obat', 'mm_transaksi_add_obat.id_pendaftaran', '=', 'mm_pasien_pendaftaran.id_pendaftaran')
              ->whereBetween('mm_transaksi_add_obat.created_date', [$startDate, $endDate])
              ->groupBy('mm_transaksi_add_obat.id_pendaftaran', 'mm_transaksi_add_obat.no_resep')
              ->get();
-        });
-        $medicines = Cache::remember('reportMmPatientRegistration', 2*60, function() use ($startDate, $endDate) {
-            return MmTransactionAddMedicine::withCacheCooldownSeconds(600)->whereBetween('created_date', [$startDate, $endDate])
+        $medicines = MmTransactionAddMedicine::withCacheCooldownSeconds(100)->whereBetween('created_date', [$startDate, $endDate])
                 ->select(['*', DB::raw('SUM(jml_permintaan) as total_jml_permintaan')])
                 ->groupBy('id_barang')
                 ->get();
-        });
         \DB::commit();
         
         return [
@@ -118,6 +114,9 @@ class ReportController extends Controller
         $arrayData[$no][] = "";
         $arrayData[$no][] = "Jml Keseluruhan";
         $arrayData[$no][] = "";
+        $arrayData[$no][] = "";
+        $arrayData[$no][] = "";
+        $arrayData[$no][] = "";
         foreach ($medicines as $medicine) {
             $arrayData[$no][] = $medicine->total_jml_permintaan;
         }
@@ -152,7 +151,7 @@ class ReportController extends Controller
         
         /**autosize*/
 		for ($col = $starRow; $col != $lastColumn; $col++) {
-            if ($col == 'A' || $col == 'B' || $col == 'C') {
+            if ($col == 'A' || $col == 'B' || $col == 'C'  || $col == 'D'  || $col == 'E' || $col == 'F') {
                 $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
             } else {
                 $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setWidth(7);

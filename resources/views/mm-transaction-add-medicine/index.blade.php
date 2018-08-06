@@ -27,7 +27,7 @@
     </div>
 </div>
 <div class="modal fade" id="filter-search-dialog" aria-hidden="true">
-    <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <form id="filter-search-form">
                 <div class="modal-header">
@@ -43,14 +43,14 @@
                         </div>
                         <div class="col-md-12">
                             <div aria-required="true" class="form-group required form-group-default">
-                                {!! Form::label('medical_record_number', 'Pasien') !!}
-                                {!! Form::select('medical_record_number', [], null, ['class' => 'form-control', 'style'=>'width:100%']) !!}
+                                {!! Form::label('medical_record_number', 'No RM / Pasien') !!}
+                                {!! Form::select('medical_record_number', [], null, ['class' => 'form-control']) !!}
                             </div>
                         </div>
                         <div class="col-md-12">
                             <div aria-required="true" class="form-group required form-group-default">
                                 {!! Form::label('doctor_id', 'Dokter') !!}
-                                {!! Form::select('doctor_id', [], null, ['class' => 'form-control', 'style'=>'width:100%']) !!}
+                                {!! Form::select('doctor_id', [], null, ['class' => 'form-control']) !!}
                             </div>
                         </div>
                     </div>
@@ -68,6 +68,7 @@
 <script>
 var oTable;
 oTable = $('#medicine-table').DataTable({
+    searching: false,
     processing: true,
     serverSide: true,
     dom: 'lBfrtip',
@@ -125,7 +126,7 @@ oTable = $('#medicine-table').DataTable({
         data: function (d) {
             d.range = $('input[name=drange]').val();
             d.registration_number = $('input[name=registration_number]').val();
-            d.medical_record_number = $('select[name=medical_record_number] option:selected').val();
+            d.medical_record_number = $('select[name=medical_record_number]').val();
             d.doctor_id = $('select[name=doctor_id] option:selected').val();
         }
     },
@@ -175,7 +176,7 @@ $('.date-range').on('cancel.daterangepicker', function(ev, picker) {
 $('#doctor_id').select2({
     placeholder: "NIP - Nama Dokter",
     allowClear: true,
-    width: 'resolve',
+    width: '100%',
     minimumInputLength: 2,
     ajax: {
         url: "{{ route('doctor.find') }}",
@@ -197,7 +198,7 @@ $('#doctor_id').select2({
 $('#medical_record_number').select2({
     placeholder: "No Rekam Medis - Nama Pasien",
     minimumInputLength: 2,
-    width: 'resolve',
+    width: '100%',
     allowClear: true,
     ajax: {
         url: "{{ route('patient.find') }}",

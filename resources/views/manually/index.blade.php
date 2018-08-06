@@ -29,7 +29,7 @@
     </div>
 </div>
 <div class="modal fade" id="filter-search-dialog" aria-hidden="true">
-    <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <form id="filter-search-form">
                 <div class="modal-header">
@@ -37,6 +37,12 @@
                 </div>
                 <div class="modal-body">
                     <div class="row">
+                        <div class="col-md-12">
+                            <div aria-required="true" class="form-group required form-group-default">
+                                {!! Form::label('medical_record_number', 'No RM / Pasien') !!}
+                                {!! Form::select('medical_record_number', [], null, ['class' => 'form-control']) !!}
+                            </div>
+                        </div>
                         <div class="col-md-12">
                             <div aria-required="true" class="form-group required form-group-default">
                                 {!! Form::label('created_range', 'Tanggal Dibuat') !!}
@@ -64,6 +70,7 @@
 <script>
 var oTable;
 oTable = $('#concept-table').DataTable({
+    searching: false,
     processing: true,
     serverSide: true,
     dom: 'lBfrtip',
@@ -119,6 +126,7 @@ oTable = $('#concept-table').DataTable({
     ajax: {
     url: '{!! route('manually.data') !!}',
         data: function (d) {
+            d.medical_record_number = $('select[name=medical_record_number]').val();
             d.range = $('input[name=drange]').val();
             d.created_range = $('input[name=created_range]').val();
             d.updated_range = $('input[name=updated_range]').val();
@@ -181,6 +189,28 @@ $('.date-range').on('apply.daterangepicker', function(ev, picker) {
 
 $('.date-range').on('cancel.daterangepicker', function(ev, picker) {
     $(this).val('');
+});
+
+$('#medical_record_number').select2({
+    width: '100%',
+    placeholder: "No Rekam Medis - Nama Pasien",
+    minimumInputLength: 2,
+    allowClear: true,
+    ajax: {
+        url: "{{ route('patient.find') }}",
+        dataType: 'json',
+        data: function (params) {
+            return {
+                q: $.trim(params.term)
+            };
+        },
+        processResults: function (data) {
+            return {
+                results: data
+            };
+        },
+        cache: true
+    }
 });
 
 </script>
